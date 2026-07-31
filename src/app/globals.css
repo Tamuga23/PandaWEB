@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Sistema de diseño de Panda Store.
+
+   Los componentes NO usan colores sueltos (zinc-900, slate-50…). Usan tokens
+   semánticos: bg-fondo, bg-superficie, text-suave, border-borde.
+
+   Por qué: cambiar de tema es intercambiar el valor de una variable, no
+   escribir un par `dark:` en cada elemento. El boceto de AI Studio hizo lo
+   segundo y necesitó dos scripts de parcheo para mantenerlo.
+--------------------------------------------------------------------------- */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* `inline` hace que las utilidades compilen a var(--x) en vez de al valor
+   resuelto. Eso es lo que permite cambiar el tema en caliente. */
+@theme inline {
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-superficie2: var(--superficie2);
+  --color-borde: var(--borde);
+  --color-borde2: var(--borde2);
+
+  --color-texto: var(--texto);
+  --color-suave: var(--suave);
+  --color-tenue: var(--tenue);
+
+  --color-acento: var(--acento);
+  --color-precio: var(--precio);
+  --color-agotado: var(--agotado);
+  --color-promo: var(--promo);
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+/* --- Tema oscuro: el predeterminado de la marca ------------------------- */
+:root,
+.dark {
+  color-scheme: dark;
+
+  --fondo: #09090b; /* zinc-950 */
+  --superficie: #18181b; /* zinc-900 */
+  --superficie2: #27272a; /* zinc-800 */
+  --borde: #27272a;
+  --borde2: #3f3f46; /* zinc-700 */
+
+  --texto: #fafafa;
+  --suave: #a1a1aa; /* zinc-400 */
+  --tenue: #71717a; /* zinc-500 */
+
+  --acento: #22d3ee; /* cyan-400 — más legible sobre fondo oscuro */
+  --precio: #34d399; /* emerald-400 */
+  --agotado: #fb7185; /* rose-400 */
+  --promo: #fbbf24; /* amber-400 */
+}
+
+/* --- Tema claro --------------------------------------------------------- */
+.light {
+  color-scheme: light;
+
+  --fondo: #f8fafc; /* slate-50 */
+  --superficie: #ffffff;
+  --superficie2: #f1f5f9; /* slate-100 */
+  --borde: #e2e8f0; /* slate-200 */
+  --borde2: #cbd5e1; /* slate-300 */
+
+  --texto: #0f172a; /* slate-900 */
+  --suave: #64748b; /* slate-500 */
+  --tenue: #94a3b8; /* slate-400 */
+
+  /* Los acentos se oscurecen en claro: el cyan-400 sobre blanco no cumple
+     contraste suficiente para texto. */
+  --acento: #0891b2; /* cyan-600 */
+  --precio: #059669; /* emerald-600 */
+  --agotado: #e11d48; /* rose-600 */
+  --promo: #d97706; /* amber-600 */
+}
+
+/* ---------------------------------------------------------------------------
+   Degradado de marca. Uno solo para todo: píldora activa, botones, badges.
+--------------------------------------------------------------------------- */
+
+@utility bg-marca {
+  background-image: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #0284c7 100%);
+}
+
+@utility bg-marca-hover {
+  background-image: linear-gradient(135deg, #059669 0%, #0891b2 50%, #0369a1 100%);
+}
+
+@utility text-marca {
+  background-image: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #0284c7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  background: var(--fondo);
+}
+
+body {
+  background: var(--fondo);
+  color: var(--texto);
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+::selection {
+  background: #06b6d4;
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* La ficha de producto tiene su propia barra fija de compra en móvil. Cuando
+   está presente, la barra del comparador se corre hacia arriba para no
+   taparla. Con :has() se resuelve en CSS, sin coordinar estado entre
+   componentes que no se conocen. */
+body:has(.barra-producto) .barra-comparar {
+  bottom: 5.25rem;
+}
+
+@media (min-width: 1024px) {
+  body:has(.barra-producto) .barra-comparar {
+    bottom: 1.5rem;
+  }
+}
+
+/* Carruseles horizontales (categorías, miniaturas) sin barra visible. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
