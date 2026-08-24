@@ -43,7 +43,8 @@ export function CatalogoCliente({
     }));
   }, [productos]);
 
-  const filtrados = useMemo(() => {
+  // Los agotados se muestran aparte, al final: nunca mezclados con lo disponible.
+  const { disponibles, agotados } = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
     let out = productos;
 
@@ -60,20 +61,29 @@ export function CatalogoCliente({
       });
     }
 
-    const copia = [...out];
-    switch (orden) {
-      case "precio-asc":
-        return copia.sort(
-          (a, b) => (a.precio.actual ?? Infinity) - (b.precio.actual ?? Infinity),
-        );
-      case "precio-desc":
-        return copia.sort((a, b) => (b.precio.actual ?? 0) - (a.precio.actual ?? 0));
-      case "nombre":
-        return copia.sort((a, b) => a.name.localeCompare(b.name, "es"));
-      default:
-        return copia; // ya viene ordenado del servidor: disponibles primero
+    const comparador = (a: Producto, b: Producto) => {
+      switch (orden) {
+        case "precio-asc":
+          return (a.precio.actual ?? Infinity) - (b.precio.actual ?? Infinity);
+        case "precio-desc":
+          return (b.precio.actual ?? 0) - (a.precio.actual ?? 0);
+        case "nombre":
+          return a.name.localeCompare(b.name, "es");
+        default:
+          return 0; // ya viene ordenado del servidor
+      }
+    };
+
+    const disponibles = out.filter((p) => p.disponible);
+    const agotados = out.filter((p) => !p.disponible);
+    if (orden !== "relevancia") {
+      disponibles.sort(comparador);
+      agotados.sort(comparador);
     }
+    return { disponibles, agotados };
   }, [productos, busqueda, categoria, orden]);
+
+  const total = disponibles.length + agotados.length;
 
   return (
     <>
@@ -121,19 +131,36 @@ export function CatalogoCliente({
       </div>
 
       <p className="mt-6 text-sm text-tenue">
-        {filtrados.length === 0
+        {total === 0
           ? "Ningún producto coincide"
-          : `${filtrados.length} ${filtrados.length === 1 ? "producto" : "productos"}`}
+          : `${total} ${total === 1 ? "producto" : "productos"}`}
       </p>
 
-      {filtrados.length === 0 ? (
+      {total === 0 ? (
         <SinResultados busqueda={busqueda} />
       ) : (
-        <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
-          {filtrados.map((p, i) => (
-            <ProductCard key={p.id} producto={p} tasa={tasa} priority={i < 4} />
-          ))}
-        </div>
+        <>
+          {disponibles.length > 0 && (
+            <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+              {disponibles.map((p, i) => (
+                <ProductCard key={p.id} producto={p} tasa={tasa} priority={i < 4} />
+              ))}
+            </div>
+          )}
+
+          {agotados.length > 0 && (
+            <div className="mt-10">
+              <h2 className="mb-4 text-sm font-semibold text-tenue">
+                Agotados ({agotados.length})
+              </h2>
+              <div className="grid grid-cols-2 gap-4 opacity-70 lg:grid-cols-3 xl:grid-cols-4">
+                {agotados.map((p) => (
+                  <ProductCard key={p.id} producto={p} tasa={tasa} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );

@@ -86,11 +86,14 @@ export function contarPorCategoria(productos: Producto[]): Record<string, number
 
 /**
  * Destacados de la portada: con foto y disponibles, porque un grid de portada
- * con placeholders vacíos espanta. Si no alcanzan, se completa con el resto.
+ * con placeholders vacíos espanta. Si no alcanzan, se completa con disponibles
+ * sin foto — nunca con agotados, porque "Lo más pedido" no puede vender algo
+ * que no hay.
  */
 export function destacados(productos: Producto[], n = 6): Producto[] {
-  const conFoto = productos.filter((p) => p.disponible && p.media.heroImage);
+  const disponibles = productos.filter((p) => p.disponible);
+  const conFoto = disponibles.filter((p) => p.media.heroImage);
   if (conFoto.length >= n) return conFoto.slice(0, n);
-  const resto = productos.filter((p) => !conFoto.includes(p));
-  return [...conFoto, ...resto].slice(0, n);
+  const sinFoto = disponibles.filter((p) => !p.media.heroImage);
+  return [...conFoto, ...sinFoto].slice(0, n);
 }
