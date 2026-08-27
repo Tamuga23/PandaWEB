@@ -7,7 +7,7 @@ import { getCatalogo } from "@/lib/catalog";
 export const metadata: Metadata = {
   title: "Catálogo",
   description:
-    "Proyectores, cámaras de seguridad, dashcams, smartwatches, parlantes y productos smart home. Con financiamiento Banpro sin intereses.",
+    "Proyectores, cámaras de seguridad, dashcams, smartwatches, parlantes y productos smart home. Con financiamiento Banpro en cuotas.",
 };
 
 export default async function CatalogoPage({
@@ -33,7 +33,8 @@ export default async function CatalogoPage({
       <header className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Catálogo</h1>
         <p className="mt-2 max-w-2xl text-suave">
-          Todo lo que tenemos, con precio en córdobas y cuotas sin intereses.{" "}
+          Todo lo que tenemos, con precio en córdobas y la cuota mensual de cada
+          producto.{" "}
           {NOTA_PRECIO}
         </p>
       </header>

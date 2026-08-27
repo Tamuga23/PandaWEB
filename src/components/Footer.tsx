@@ -22,8 +22,8 @@ export function Footer() {
             </span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-suave">
-            {SITE.tagline}. Financiamiento sin intereses, garantía de{" "}
-            {GARANTIA_MESES} meses y entrega inmediata.
+            {SITE.tagline}. Pagá en cuotas, garantía de {GARANTIA_MESES} meses y
+            entrega inmediata.
           </p>
 
           <div className="mt-4 flex gap-2">

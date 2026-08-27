@@ -16,6 +16,7 @@ import {
   SITE,
 } from "@/config/site";
 import { getCatalogo, getProducto } from "@/lib/catalog";
+import { filasDeSpecs } from "@/lib/categorySpecs";
 import { cordobas, linkWhatsApp } from "@/lib/format";
 
 // Regenera la página cada 15 minutos con los datos frescos del espejo.
@@ -51,7 +52,7 @@ export async function generateMetadata({
     const descripcion =
       producto.beneficio ??
       producto.description ??
-      `${producto.name} disponible en ${SITE.nombre}. ${cordobas(producto.precio.actual, tasa)} con financiamiento sin intereses.`;
+      `${producto.name} disponible en ${SITE.nombre}. ${cordobas(producto.precio.actual, tasa)}, con opción de pago en cuotas.`;
 
     return {
       title: producto.name,
@@ -90,6 +91,9 @@ export default async function ProductoPage({
   const categoria = producto.categorySlug
     ? (NOMBRE_CATEGORIA[producto.categorySlug] ?? producto.categorySlug)
     : null;
+  // Filas realmente visibles de la ficha técnica (ordenadas y etiquetadas según
+  // la categoría). Se calculan acá para decidir si la sección existe.
+  const filasSpecs = filasDeSpecs(producto.categorySlug, producto.specs);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 pb-28 lg:pb-8">
@@ -165,7 +169,14 @@ export default async function ProductoPage({
                 {producto.bullets.map((b, i) => (
                   <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-texto">
                     <IconoCheck className="mt-0.5 h-4 w-4 shrink-0 text-acento" />
-                    {b.texto}
+                    <span>
+                      {b.etiqueta && (
+                        <span className="mr-1.5 font-semibold uppercase tracking-wide text-suave">
+                          {b.etiqueta}:
+                        </span>
+                      )}
+                      {b.texto}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -183,13 +194,16 @@ export default async function ProductoPage({
             </section>
           )}
 
-          {producto.specs && (
+          {/* `specs` puede existir pero no dejar ninguna fila visible (todo
+              vacío, o booleanos en false). Se pregunta por las filas reales
+              para no mostrar un título sobre una tabla en blanco. */}
+          {filasSpecs.length > 0 && (
             <section className="mt-8">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-suave">
                 Especificaciones
               </h2>
               <div className="mt-3">
-                <TablaSpecs specs={producto.specs} />
+                <TablaSpecs specs={producto.specs ?? {}} categorySlug={producto.categorySlug} />
               </div>
             </section>
           )}

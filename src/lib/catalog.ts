@@ -2,6 +2,12 @@ import "server-only";
 
 import { cache } from "react";
 import { USD_TO_NIO_FALLBACK } from "@/config/site";
+import {
+  CONFIG_FINANCIAMIENTO_DEFAULT,
+  calcularPlanes,
+  normalizarConfig,
+  type ConfigFinanciamiento,
+} from "./financiamiento";
 import { listCollection } from "./firestore-rest";
 import { normalizarProducto } from "./normalize";
 import type { CatalogoData, Producto } from "./types";
@@ -34,6 +40,31 @@ async function getTasa(): Promise<number> {
   return USD_TO_NIO_FALLBACK;
 }
 
+/**
+ * Reglas de financiamiento vigentes (doc `config/financiamiento`, editable desde
+ * Configuración del POS).
+ *
+ * Si falla, se usa el default del módulo compartido. OJO con el sentido del
+ * respaldo: el default trae proyectores en 0% y el resto con recargo, o sea la
+ * política vigente. Nunca hay que ponerle 0% a todo como respaldo, porque una
+ * caída de Firestore anunciaría 0% en productos que sí lo cobran.
+ */
+async function getConfigFinanciamiento(): Promise<ConfigFinanciamiento> {
+  try {
+    const docs = await listCollection("config", { revalidate: REVALIDATE, limit: 5 });
+    for (const d of docs) {
+      // `listCollection` no devuelve el id del doc, así que se identifica por
+      // forma: el de financiamiento es el único con `recargoPorDefecto`.
+      if (d && typeof d === "object" && "recargoPorDefecto" in d) {
+        return normalizarConfig(d);
+      }
+    }
+  } catch {
+    // Sin permisos o sin red: seguimos con el respaldo.
+  }
+  return CONFIG_FINANCIAMIENTO_DEFAULT;
+}
+
 /** Disponibles primero, y dentro de cada grupo los de mayor precio arriba. */
 function ordenarPorDefecto(a: Producto, b: Producto): number {
   const disp = (b.disponible ? 1 : 0) - (a.disponible ? 1 : 0);
@@ -46,23 +77,41 @@ function ordenarPorDefecto(a: Producto, b: Producto): number {
  * pide el catálogo una vez aunque lo consulten varios componentes.
  */
 export const getCatalogo = cache(async (): Promise<CatalogoData> => {
-  const [docs, tasa] = await Promise.all([
+  const [docs, tasa, configFinanciamiento] = await Promise.all([
     listCollection("catalogo_publico", { revalidate: REVALIDATE }),
     getTasa(),
+    getConfigFinanciamiento(),
   ]);
 
   const productos = docs
     .map(normalizarProducto)
     .filter((p): p is Producto => p !== null)
+    // Las cuotas se resuelven ACÁ, una sola vez, con la tasa y las reglas ya en
+    // mano, y viajan dentro del producto. Ningún componente vuelve a calcularlas:
+    // así la tarjeta, la ficha y el comparador no pueden mostrar números
+    // distintos para el mismo producto.
+    .map((p) => ({
+      ...p,
+      planes: calcularPlanes(p.precio.actual, tasa, {
+        config: configFinanciamiento,
+        categoria: p.categorySlug,
+        override: p.financiamientoOverride,
+      }),
+    }))
     .sort(ordenarPorDefecto);
 
-  return { productos, tasa, leidoEn: Date.now() };
+  return { productos, tasa, configFinanciamiento, leidoEn: Date.now() };
 });
 
 export async function getProducto(
   id: string,
-): Promise<{ producto: Producto; tasa: number; relacionados: Producto[] } | null> {
-  const { productos, tasa } = await getCatalogo();
+): Promise<{
+  producto: Producto;
+  tasa: number;
+  configFinanciamiento: ConfigFinanciamiento;
+  relacionados: Producto[];
+} | null> {
+  const { productos, tasa, configFinanciamiento } = await getCatalogo();
   const producto = productos.find((p) => p.id === id);
   if (!producto) return null;
 
@@ -71,7 +120,7 @@ export async function getProducto(
     .filter((p) => p.id !== producto.id && p.categorySlug === producto.categorySlug)
     .slice(0, 4);
 
-  return { producto, tasa, relacionados };
+  return { producto, tasa, configFinanciamiento, relacionados };
 }
 
 /** Categorías que realmente tienen productos, con su conteo. */

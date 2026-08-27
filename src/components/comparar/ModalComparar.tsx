@@ -6,7 +6,8 @@ import { ProductImage } from "@/components/ProductImage";
 import { ORDEN_SPECS, etiquetaSpec, formatearValorSpec } from "@/components/Specs";
 import { IconoWhatsApp } from "@/components/iconos";
 import { CATEGORIAS, CONTACTO } from "@/config/site";
-import { cordobas, cuotaMinima, linkWhatsApp, porcentajeDescuento } from "@/lib/format";
+import { planMasBajo, todosSinInteres } from "@/lib/financiamiento";
+import { cordobas, linkWhatsApp, porcentajeDescuento } from "@/lib/format";
 import type { Producto } from "@/lib/types";
 import { useComparar } from "./CompararProvider";
 
@@ -41,13 +42,19 @@ export function ModalComparar() {
   if (!abierto || seleccion.length < 2) return null;
 
   // Unión de todas las specs presentes, en el orden de presentación habitual.
+  // Se descartan las claves que no producen texto en NINGÚN producto (`extra`,
+  // que es un mapa, o valores vacíos): una fila en blanco no aporta al comparar.
   const clavesSpec = Array.from(
     new Set(seleccion.flatMap((p) => Object.keys(p.specs ?? {}))),
-  ).sort((a, b) => {
-    const ia = ORDEN_SPECS.indexOf(a);
-    const ib = ORDEN_SPECS.indexOf(b);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-  });
+  )
+    .filter((clave) =>
+      seleccion.some((p) => formatearValorSpec(clave, p.specs?.[clave]) !== ""),
+    )
+    .sort((a, b) => {
+      const ia = ORDEN_SPECS.indexOf(a);
+      const ib = ORDEN_SPECS.indexOf(b);
+      return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+    });
 
   // Una fila donde todos valen lo mismo no aporta nada al comparar; se marca
   // para atenuarla y que resalten las diferencias.
@@ -133,13 +140,18 @@ export function ModalComparar() {
               <Fila
                 etiqueta="Cuota desde"
                 productos={seleccion}
-                atenuar={filaIgual((p) => String(cuotaMinima(p.precio.actual, tasa)?.montoNio))}
+                atenuar={filaIgual((p) => String(planMasBajo(p.planes)?.cuotaNio))}
                 render={(p) => {
-                  const c = cuotaMinima(p.precio.actual, tasa);
+                  // Ya vienen calculadas en el producto: el comparador no puede
+                  // mostrar una cuota distinta a la de la ficha.
+                  const c = planMasBajo(p.planes);
                   return c ? (
                     <>
-                      C${c.montoNio.toLocaleString("es-NI")}
+                      C${c.cuotaNio.toLocaleString("es-NI")}
                       <span className="text-tenue"> / {c.meses} meses</span>
+                      {todosSinInteres(p.planes) && (
+                        <span className="text-precio"> · 0%</span>
+                      )}
                     </>
                   ) : (
                     <span className="text-tenue">Sin cuotas</span>

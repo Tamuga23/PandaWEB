@@ -1,87 +1,64 @@
 import type { Specs } from "@/lib/types";
+import {
+  SPECS_POR_CATEGORIA,
+  etiquetaDeSpec,
+  filasDeSpecs,
+  formatearSpec,
+} from "@/lib/categorySpecs";
 
-// Etiquetas legibles y orden de presentación. Lo que no esté acá se muestra al
-// final con el nombre del campo formateado, así un campo nuevo en el POS
-// aparece igual en vez de desaparecer sin aviso.
-const ETIQUETAS: Record<string, string> = {
-  ansi: "Brillo",
-  lumens: "Brillo",
-  resolucion: "Resolución",
-  contraste: "Contraste",
-  throwRatio: "Relación de proyección",
-  distMinEnfoque: "Distancia mínima de enfoque",
-  autofoco: "Autofoco",
-  conectividad: "Conectividad",
-  garantiaMeses: "Garantía",
-  extra: "Otros detalles",
-};
+// Las etiquetas, el orden y el formato de cada spec salen de `lib/categorySpecs.ts`,
+// el MISMO archivo que usa el POS para editarlas y PandaLink para mostrarlas. Así
+// una spec nueva aparece en los tres lados con el mismo texto sin tocar tres
+// archivos distintos. Lo que no esté definido se muestra igual, con el nombre del
+// campo formateado: un campo nuevo del POS nunca desaparece sin aviso.
 
-const ORDEN = [
-  "ansi",
-  "lumens",
-  "resolucion",
-  "contraste",
-  "throwRatio",
-  "distMinEnfoque",
-  "autofoco",
-  "conectividad",
-  "garantiaMeses",
-  "extra",
-];
+/**
+ * Orden de presentación para el comparador, que mezcla productos de distintas
+ * categorías: la unión de todas las fichas, en el orden en que están definidas.
+ */
+export const ORDEN_SPECS: string[] = (() => {
+  const vistos = new Set<string>();
+  const orden: string[] = [];
+  for (const campos of Object.values(SPECS_POR_CATEGORIA)) {
+    for (const c of campos) {
+      if (!vistos.has(c.key)) {
+        vistos.add(c.key);
+        orden.push(c.key);
+      }
+    }
+  }
+  return orden;
+})();
 
-/** Orden de presentación de las especificaciones, para el comparador. */
-export const ORDEN_SPECS = ORDEN;
-
+/** Valor formateado sin conocer la categoría (comparador). */
 export function formatearValorSpec(clave: string, valor: unknown): string {
-  return formatearValor(clave, valor);
+  return formatearSpec(undefined, clave, valor);
 }
 
+/** Etiqueta legible sin conocer la categoría (comparador). */
 export function etiquetaSpec(clave: string): string {
-  return formatearClave(clave);
+  return etiquetaDeSpec(undefined, clave);
 }
 
-function formatearValor(clave: string, valor: unknown): string {
-  if (typeof valor === "boolean") return valor ? "Sí" : "No";
-  if (Array.isArray(valor)) return valor.join(", ");
-  if (clave === "ansi" || clave === "lumens") return `${valor} lúmenes ANSI`;
-  if (clave === "garantiaMeses") return `${valor} meses`;
-  if (clave === "distMinEnfoque" && typeof valor === "number") return `${valor} m`;
-  return String(valor);
-}
-
-function formatearClave(clave: string): string {
-  if (ETIQUETAS[clave]) return ETIQUETAS[clave];
-  // camelCase → "Camel case"
-  const conEspacios = clave.replace(/([A-Z])/g, " $1").toLowerCase();
-  return conEspacios.charAt(0).toUpperCase() + conEspacios.slice(1);
-}
-
-export function TablaSpecs({ specs }: { specs: Specs }) {
-  const claves = Object.keys(specs).sort((a, b) => {
-    const ia = ORDEN.indexOf(a);
-    const ib = ORDEN.indexOf(b);
-    return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-  });
-
-  // `ansi` y `lumens` son el mismo dato con dos nombres en el POS.
-  const vistas = new Set<string>();
+export function TablaSpecs({
+  specs,
+  categorySlug,
+}: {
+  specs: Specs;
+  /** Ordena y etiqueta según la ficha de la categoría. Opcional. */
+  categorySlug?: string;
+}) {
+  const filas = filasDeSpecs(categorySlug, specs);
+  if (filas.length === 0) return null;
 
   return (
     <dl className="divide-y divide-borde overflow-hidden rounded-2xl border border-borde">
-      {claves.map((k) => {
-        const etiqueta = formatearClave(k);
-        if (vistas.has(etiqueta)) return null;
-        vistas.add(etiqueta);
-
-        return (
-          <div key={k} className="grid grid-cols-2 gap-4 px-4 py-3 text-sm">
-            <dt className="text-suave">{etiqueta}</dt>
-            <dd className="font-medium text-texto">
-              {formatearValor(k, specs[k])}
-            </dd>
-          </div>
-        );
-      })}
+      {filas.map((f) => (
+        <div key={f.key} className="grid grid-cols-2 gap-4 px-4 py-3 text-sm">
+          <dt className="text-suave">{f.label}</dt>
+          <dd className="font-medium text-texto">{f.valor}</dd>
+        </div>
+      ))}
     </dl>
   );
 }

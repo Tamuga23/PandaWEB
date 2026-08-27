@@ -7,7 +7,7 @@ export const SITE = {
   nombre: "Panda Store",
   tagline: "Tecnología para tu casa y tu negocio",
   descripcion:
-    "Proyectores, cámaras de seguridad, smartwatches, parlantes y más. Financiamiento sin intereses con Banpro, garantía de 3 meses y entrega inmediata en Managua.",
+    "Proyectores, cámaras de seguridad, smartwatches, parlantes y más. Pagá en cuotas con Banpro, garantía de 3 meses y entrega inmediata en Managua.",
   // Se completa cuando haya dominio propio. Afecta a los metadatos y al sitemap.
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
 } as const;
@@ -63,11 +63,18 @@ export const REDES = [
 // company/shared_store.defaultExchangeRate — ver lib/catalog.ts.
 export const USD_TO_NIO_FALLBACK = 36.6243;
 
+// OJO: el mínimo, los plazos y el interés YA NO se definen acá. Viven en
+// Firestore (`config/financiamiento`, editable desde Configuración del POS) y
+// los calcula `lib/financiamiento.ts`, el mismo módulo que usa PandaLink.
+//
+// El interés dejó de ser 0% parejo: los proyectores siguen en 0% pero otras
+// categorías llevan recargo, así que NINGÚN texto puede prometer "sin
+// intereses" de forma general. Los que sí lo tienen se resaltan producto por
+// producto con el badge "0% interés".
+//
+// Acá queda solo el nombre del banco, que es fijo y se usa en la copy.
 export const FINANCIAMIENTO = {
   banco: "Banpro",
-  minUsd: 100, // por debajo de este monto no se ofrecen cuotas
-  plazos: [3, 6] as const, // meses
-  interes: 0,
 } as const;
 
 export const GARANTIA_MESES = 3;
@@ -134,7 +141,7 @@ export const CATEGORIAS: CategoriaDef[] = [
 // ---------------------------------------------------------------------------
 
 export const PROPUESTA_VALOR = [
-  { titulo: "Financiamiento Banpro", texto: "Hasta 6 cuotas sin intereses" },
+  { titulo: "Financiamiento Banpro", texto: "Llevalo hasta en 6 cuotas" },
   { titulo: `Garantía ${GARANTIA_MESES} meses`, texto: "Respaldo con factura" },
   { titulo: "Entrega inmediata", texto: "Delivery en Managua" },
   { titulo: "Atención personal", texto: "Te asesoramos por WhatsApp" },

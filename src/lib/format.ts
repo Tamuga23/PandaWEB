@@ -1,5 +1,3 @@
-import { FINANCIAMIENTO } from "@/config/site";
-
 /** Precio en córdobas, redondeado a la decena para que se lea limpio. */
 export function cordobas(usd: number | undefined, tasa: number): string {
   if (usd == null) return "Consultar";
@@ -13,29 +11,11 @@ export function cordobasExacto(usd: number | undefined, tasa: number): string {
   return "C$" + Math.round(usd * tasa).toLocaleString("es-NI");
 }
 
-export interface Cuota {
-  meses: number;
-  montoNio: number;
-}
-
-/**
- * Cuotas Banpro. Misma regla que PandaLink: solo a partir del monto mínimo,
- * 0% de interés, sin prima, división simple del precio vigente.
- */
-export function calcularCuotas(usd: number | undefined, tasa: number): Cuota[] {
-  if (usd == null || usd < FINANCIAMIENTO.minUsd) return [];
-  return FINANCIAMIENTO.plazos.map((meses) => ({
-    meses,
-    montoNio: Math.round((usd * tasa) / meses),
-  }));
-}
-
-/** La cuota más baja disponible, para el gancho "desde C$X/mes" en la tarjeta. */
-export function cuotaMinima(usd: number | undefined, tasa: number): Cuota | null {
-  const cuotas = calcularCuotas(usd, tasa);
-  if (cuotas.length === 0) return null;
-  return cuotas.reduce((min, c) => (c.montoNio < min.montoNio ? c : min));
-}
+// Las cuotas ya NO se calculan acá. `calcularCuotas` y `cuotaMinima` dividían el
+// precio entre los meses asumiendo 0% parejo, lo que hoy sería mentira en las
+// categorías con recargo. Ahora se resuelven una sola vez en `lib/catalog.ts`
+// con `lib/financiamiento.ts` y viajan en `producto.planes`; para leerlas usá
+// `planMasBajo(producto.planes)` y `todosSinInteres(producto.planes)`.
 
 /** Porcentaje de descuento respecto al precio de lista. */
 export function porcentajeDescuento(

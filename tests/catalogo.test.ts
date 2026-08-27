@@ -10,9 +10,14 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { decodeDocument } from "../src/lib/firestore-decode";
 import {
-  calcularCuotas,
+  CONFIG_FINANCIAMIENTO_DEFAULT,
+  calcularPlanes,
+  esCategoriaSinInteres,
+  planMasBajo,
+  todosSinInteres,
+} from "../src/lib/financiamiento";
+import {
   cordobas,
-  cuotaMinima,
   linkWhatsApp,
   porcentajeDescuento,
   youTubeId,
@@ -254,28 +259,64 @@ describe("precios y cuotas", () => {
     assert.equal(cordobas(undefined, TASA), "Consultar");
   });
 
+  // El 0% dejó de ser parejo: los proyectores lo mantienen y las demás
+  // categorías llevan recargo. Ver src/lib/financiamiento.ts.
+  const CFG = CONFIG_FINANCIAMIENTO_DEFAULT;
+  const planes = (usd: number | undefined, categoria: string) =>
+    calcularPlanes(usd, TASA, { config: CFG, categoria });
+
   it("no ofrece cuotas por debajo del mínimo", () => {
-    assert.deepEqual(calcularCuotas(99, TASA), []);
+    assert.deepEqual(planes(99, "proyector"), []);
   });
 
   it("ofrece cuotas justo en el mínimo", () => {
-    assert.equal(calcularCuotas(100, TASA).length, 2);
+    assert.equal(planes(100, "proyector").length, 2);
   });
 
-  it("divide el precio entre los meses, sin intereses", () => {
-    const cuotas = calcularCuotas(199, TASA);
-    // 199 × 36.6243 / 3 = 2429.4 → 2429
-    assert.deepEqual(cuotas, [
-      { meses: 3, montoNio: 2429 },
-      { meses: 6, montoNio: 1215 },
-    ]);
-    // Sin intereses: 3 cuotas × monto ≈ precio total.
-    assert.ok(Math.abs(cuotas[0].montoNio * 3 - 199 * TASA) < 3);
+  it("en proyectores divide el precio entre los meses, sin recargo", () => {
+    const p = planes(199, "proyector");
+    assert.deepEqual(
+      p.map((x) => ({ meses: x.meses, cuotaNio: x.cuotaNio })),
+      [
+        { meses: 3, cuotaNio: 2430 },
+        { meses: 6, cuotaNio: 1215 },
+      ],
+    );
+    assert.ok(todosSinInteres(p));
+    // Sin recargo: 3 cuotas × monto ≈ precio de contado.
+    assert.ok(Math.abs(p[0].cuotaNio * 3 - 199 * TASA) < 5);
+  });
+
+  it("en las demás categorías suma el recargo al total, no al precio de lista", () => {
+    const p = planes(199, "smartwatch");
+    assert.equal(p[0].recargoPct, 3);
+    assert.equal(p[1].recargoPct, 6);
+    assert.ok(!todosSinInteres(p));
+    // El total a plazos supera al de contado; el precio de lista no cambió.
+    assert.ok(p[0].totalNio > 199 * TASA);
+    assert.ok(p[1].totalNio > p[0].totalNio);
+  });
+
+  it("el total mostrado siempre es cuota × meses", () => {
+    for (const categoria of ["proyector", "smartwatch", "dashcam"]) {
+      for (const x of planes(199, categoria)) {
+        assert.equal(x.cuotaNio * x.meses, x.totalNio, `${categoria} a ${x.meses} meses`);
+      }
+    }
   });
 
   it("la cuota mínima es la del plazo más largo", () => {
-    assert.deepEqual(cuotaMinima(199, TASA), { meses: 6, montoNio: 1215 });
-    assert.equal(cuotaMinima(50, TASA), null);
+    const min = planMasBajo(planes(199, "proyector"));
+    assert.equal(min?.meses, 6);
+    assert.equal(min?.cuotaNio, 1215);
+    assert.equal(planMasBajo(planes(50, "proyector")), null);
+  });
+
+  it("solo los proyectores se anuncian como 0% interés", () => {
+    assert.equal(esCategoriaSinInteres(CFG, "proyector"), true);
+    for (const c of ["smartwatch", "camara", "dashcam", "parlante", "smarthome"]) {
+      assert.equal(esCategoriaSinInteres(CFG, c), false, c);
+    }
   });
 
   it("calcula el porcentaje de descuento", () => {

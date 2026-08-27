@@ -1,5 +1,6 @@
 import { FINANCIAMIENTO } from "@/config/site";
-import { calcularCuotas, cordobas, cuotaMinima, porcentajeDescuento } from "@/lib/format";
+import { planMasBajo, todosSinInteres } from "@/lib/financiamiento";
+import { cordobas, porcentajeDescuento } from "@/lib/format";
 import type { Producto } from "@/lib/types";
 
 /**
@@ -8,6 +9,13 @@ import type { Producto } from "@/lib/types";
  * Nunca muestra el precio de efectivo: ese descuento es la carta del asesor
  * para cerrar la venta por WhatsApp, y ni siquiera llega al navegador (se
  * descarta en lib/normalize.ts).
+ *
+ * Las cuotas vienen YA CALCULADAS en `producto.planes` (ver lib/catalog.ts).
+ * Acá no se hace ninguna cuenta: el recargo por categoría, el mínimo y el
+ * redondeo ya se resolvieron con el mismo módulo que usa la tablet.
+ *
+ * El 0% ya no es parejo: el badge se muestra solo en los productos que de verdad
+ * no llevan recargo en ningún plazo.
  */
 export function PrecioFicha({
   producto,
@@ -18,7 +26,8 @@ export function PrecioFicha({
 }) {
   const { lista, actual } = producto.precio;
   const desc = porcentajeDescuento(lista, actual);
-  const cuotas = calcularCuotas(actual, tasa);
+  const planes = producto.planes;
+  const sinInteres = todosSinInteres(planes);
 
   return (
     <div>
@@ -38,27 +47,37 @@ export function PrecioFicha({
         )}
       </div>
 
-      {cuotas.length > 0 && (
+      {planes.length > 0 && (
         <div className="mt-5 rounded-2xl border border-precio/20 bg-precio/5 p-4">
-          <p className="text-sm font-semibold text-precio">
-            Financiamiento {FINANCIAMIENTO.banco} · 0% interés
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm font-semibold text-precio">
+              Pagalo en cuotas con {FINANCIAMIENTO.banco}
+            </p>
+            {sinInteres && (
+              <span className="rounded-full bg-precio/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-precio">
+                0% interés
+              </span>
+            )}
+          </div>
+
           <div className="mt-3 grid grid-cols-2 gap-3">
-            {cuotas.map((c) => (
+            {planes.map((p) => (
               <div
-                key={c.meses}
+                key={p.meses}
                 className="rounded-xl border border-borde bg-superficie px-3 py-3 text-center"
               >
-                <p className="text-xs font-medium text-suave">{c.meses} cuotas de</p>
+                <p className="text-xs font-medium text-suave">{p.meses} cuotas de</p>
                 <p className="mt-0.5 text-xl font-bold text-texto">
-                  C${c.montoNio.toLocaleString("es-NI")}
+                  C${p.cuotaNio.toLocaleString("es-NI")}
                 </p>
                 <p className="text-xs text-tenue">al mes</p>
               </div>
             ))}
           </div>
+
           <p className="mt-3 text-xs text-tenue">
-            Sin prima. Sujeto a aprobación de {FINANCIAMIENTO.banco}.
+            Sin prima. Sujeto a aprobación de {FINANCIAMIENTO.banco}. El monto exacto de
+            las cuotas se confirma al momento del trámite.
           </p>
         </div>
       )}
@@ -75,7 +94,8 @@ export function PrecioTarjeta({
   tasa: number;
 }) {
   const { lista, actual } = producto.precio;
-  const cuota = cuotaMinima(actual, tasa);
+  const cuota = planMasBajo(producto.planes);
+  const sinInteres = todosSinInteres(producto.planes);
 
   return (
     <div className="min-w-0">
@@ -91,9 +111,10 @@ export function PrecioTarjeta({
         <p className="mt-0.5 text-xs text-suave">
           desde{" "}
           <span className="font-semibold text-texto">
-            C${cuota.montoNio.toLocaleString("es-NI")}
+            C${cuota.cuotaNio.toLocaleString("es-NI")}
           </span>{" "}
-          / mes · 0%
+          / mes
+          {sinInteres && <span className="font-semibold text-precio"> · 0%</span>}
         </p>
       )}
     </div>

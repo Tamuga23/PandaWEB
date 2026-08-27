@@ -9,6 +9,7 @@
 //      aunque un componente los pidiera.
 
 import { CATEGORIAS } from "@/config/site";
+import { normalizarOverride } from "./financiamiento";
 import type { Bullet, FotoGaleria, Media, Producto, Specs } from "./types";
 
 // Índice alias → slug canónico, construido una sola vez.
@@ -106,7 +107,11 @@ function normalizarBullets(raw: unknown): Bullet[] {
     .filter((b): b is Record<string, unknown> => b !== null)
     .slice()
     .sort((a, b) => (num(a.order) ?? 99) - (num(b.order) ?? 99))
-    .map((b) => ({ texto: str(b.texto) ?? str(b.text) ?? "", icon: str(b.icon) }))
+    .map((b) => ({
+      texto: str(b.texto) ?? str(b.text) ?? "",
+      etiqueta: str(b.etiqueta),
+      icon: str(b.icon),
+    }))
     .filter((b) => b.texto.length > 0);
 }
 
@@ -204,6 +209,10 @@ export function normalizarProducto(raw: Record<string, unknown>): Producto | nul
     bullets: normalizarBullets(raw.bullets),
     specs: normalizarSpecs(raw),
     media: normalizarMedia(raw.media, raw),
+    financiamientoOverride: normalizarOverride(raw.financiamientoOverride),
+    // Las cuotas se calculan en lib/catalog.ts, que es donde se conocen la tasa
+    // y las reglas vigentes. Acá quedan vacías a propósito.
+    planes: [],
     updatedAt: num(raw.updatedAt),
   };
 }

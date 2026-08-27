@@ -20,6 +20,7 @@ import {
   SITE,
 } from "@/config/site";
 import { contarPorCategoria, destacados, getCatalogo } from "@/lib/catalog";
+import { esCategoriaSinInteres, type ConfigFinanciamiento } from "@/lib/financiamiento";
 import { linkWhatsApp } from "@/lib/format";
 
 export const revalidate = 900;
@@ -32,22 +33,22 @@ export default async function Home() {
     return <ErrorDatos error={e} />;
   }
 
-  const { productos, tasa } = datos;
+  const { productos, tasa, configFinanciamiento } = datos;
   const conteo = contarPorCategoria(productos);
   const catsConProductos = CATEGORIAS.filter((c) => (conteo[c.slug] ?? 0) > 0);
   const top = destacados(productos, 8);
 
   return (
     <>
-      <Hero />
-      <Ventajas />
+      <Hero config={configFinanciamiento} />
+      <Ventajas config={configFinanciamiento} />
       {catsConProductos.length > 0 && (
         <Categorias
           categorias={catsConProductos.map((c) => ({ ...c, total: conteo[c.slug] }))}
         />
       )}
       {top.length > 0 && <Destacados productos={top} tasa={tasa} />}
-      <Financiamiento />
+      <Financiamiento config={configFinanciamiento} />
       <Ubicacion />
       <NegocioJsonLd />
     </>
@@ -95,7 +96,9 @@ function NegocioJsonLd() {
 
 // ---------------------------------------------------------------------------
 
-function Hero() {
+function Hero({ config }: { config: ConfigFinanciamiento }) {
+  const plazoMaximo = Math.max(...config.plazos);
+
   return (
     <section className="relative overflow-hidden border-b border-borde">
       {/* Resplandor cyan de fondo: da profundidad sin costar una imagen. */}
@@ -116,9 +119,8 @@ function Hero() {
         </h1>
 
         <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-suave">
-          Proyectores, cámaras de seguridad, smartwatches y más. Con hasta{" "}
-          {Math.max(...FINANCIAMIENTO.plazos)} cuotas sin intereses y garantía de{" "}
-          {GARANTIA_MESES} meses.
+          Proyectores, cámaras de seguridad, smartwatches y más. Pagá hasta en{" "}
+          {plazoMaximo} cuotas y llevate {GARANTIA_MESES} meses de garantía.
         </p>
 
         <div className="mt-9 flex flex-wrap justify-center gap-3">
@@ -144,12 +146,13 @@ function Hero() {
   );
 }
 
-function Ventajas() {
+function Ventajas({ config }: { config: ConfigFinanciamiento }) {
+  const plazoMaximo = Math.max(...config.plazos);
   const items = [
     {
       Icono: IconoTarjeta,
       titulo: `Financiamiento ${FINANCIAMIENTO.banco}`,
-      texto: `Hasta ${Math.max(...FINANCIAMIENTO.plazos)} cuotas sin intereses`,
+      texto: `Llevalo hasta en ${plazoMaximo} cuotas mensuales`,
     },
     {
       Icono: IconoEscudo,
@@ -256,7 +259,15 @@ function Destacados({
   );
 }
 
-function Financiamiento() {
+function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
+  const plazos = [...config.plazos].sort((a, b) => a - b);
+  const minUsd = config.minUsd;
+  // Las categorías que de verdad van a 0%. La copy las nombra en vez de
+  // prometer "sin intereses" en todo, que ya sería falso.
+  const categoriasCero = CATEGORIAS.filter((c) =>
+    esCategoriaSinInteres(config, c.slug),
+  ).map((c) => c.nombre.toLowerCase());
+
   const pasos = [
     "Elegís el producto que querés",
     "Nos escribís por WhatsApp",
@@ -272,16 +283,22 @@ function Financiamiento() {
             Financiamiento {FINANCIAMIENTO.banco}
           </p>
           <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
-            Pagá en cuotas, sin intereses
+            Llevalo hoy y pagalo en cuotas
           </h2>
           <p className="mt-4 leading-relaxed text-texto">
-            Llevátelo hoy y pagalo en {FINANCIAMIENTO.plazos.join(" o ")} cuotas
-            mensuales al {FINANCIAMIENTO.interes}% de interés. Sin prima y sin
-            cargos escondidos.
+            Pagalo en {plazos.join(" o ")} cuotas mensuales, sin prima y sin cargos
+            escondidos.{" "}
+            {categoriasCero.length > 0 && (
+              <>
+                En <b>{categoriasCero.join(" y ")}</b> las cuotas son a{" "}
+                <b className="text-precio">0% de interés</b>.
+              </>
+            )}
           </p>
           <p className="mt-3 text-sm text-tenue">
-            Aplica a productos desde US${FINANCIAMIENTO.minUsd}. Sujeto a
-            aprobación de {FINANCIAMIENTO.banco}.
+            Aplica a productos desde US${minUsd}. Cada producto muestra su cuota
+            exacta en la ficha; los que van a 0% llevan el sello.{" "}
+            Sujeto a aprobación de {FINANCIAMIENTO.banco}.
           </p>
           <a
             href={linkWhatsApp(CONTACTO.whatsapp)}
