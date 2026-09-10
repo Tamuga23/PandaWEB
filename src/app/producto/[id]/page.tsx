@@ -17,7 +17,7 @@ import {
 } from "@/config/site";
 import { getCatalogo, getProducto } from "@/lib/catalog";
 import { filasDeSpecs } from "@/lib/categorySpecs";
-import { cordobas, linkWhatsApp } from "@/lib/format";
+import { cordobas, cordobasNumero, linkWhatsApp } from "@/lib/format";
 
 // Regenera la página cada 15 minutos con los datos frescos del espejo.
 export const revalidate = 900;
@@ -241,9 +241,10 @@ export default async function ProductoPage({
         descripcion={producto.beneficio ?? producto.description}
         imagen={producto.media.heroImage}
         sku={producto.sku}
+        url={`${SITE.url}/producto/${id}`}
         precioNio={
           producto.precio.actual != null
-            ? Math.round(producto.precio.actual * tasa)
+            ? cordobasNumero(producto.precio.actual, tasa)
             : undefined
         }
         disponible={producto.disponible}
@@ -303,6 +304,7 @@ function ProductoJsonLd({
   descripcion,
   imagen,
   sku,
+  url,
   precioNio,
   disponible,
 }: {
@@ -310,6 +312,7 @@ function ProductoJsonLd({
   descripcion?: string;
   imagen?: string;
   sku?: string;
+  url: string;
   precioNio?: number;
   disponible: boolean;
 }) {
@@ -317,6 +320,7 @@ function ProductoJsonLd({
     "@context": "https://schema.org",
     "@type": "Product",
     name: nombre,
+    url,
     ...(descripcion && { description: descripcion }),
     ...(imagen && !imagen.startsWith("data:") && { image: imagen }),
     ...(sku && { sku }),
@@ -324,6 +328,7 @@ function ProductoJsonLd({
     ...(precioNio != null && {
       offers: {
         "@type": "Offer",
+        url,
         priceCurrency: "NIO",
         price: precioNio,
         availability: disponible
