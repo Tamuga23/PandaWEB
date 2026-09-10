@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { IconoWhatsApp } from "@/components/iconos";
 import { CONTACTO } from "@/config/site";
 import { linkWhatsApp } from "@/lib/format";
@@ -20,15 +21,13 @@ export default function NotFound() {
         >
           Ver el catálogo
         </Link>
-        <a
+        <EnlaceWhatsApp
           href={linkWhatsApp(CONTACTO.whatsapp)}
-          target="_blank"
-          rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-full border border-borde2 px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
         >
           <IconoWhatsApp className="h-4 w-4" />
           Preguntar por WhatsApp
-        </a>
+        </EnlaceWhatsApp>
       </div>
     </div>
   );

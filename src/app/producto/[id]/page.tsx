@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
+import { EventoVerFicha } from "@/components/EventoVerFicha";
 import { Galeria } from "@/components/Galeria";
 import { PrecioFicha } from "@/components/Precio";
 import { ProductCard } from "@/components/ProductCard";
@@ -248,6 +250,7 @@ export default async function ProductoPage({
         }
         disponible={producto.disponible}
       />
+      <EventoVerFicha sku={producto.sku} />
     </div>
   );
 }
@@ -280,17 +283,15 @@ function CtaWhatsApp({
   compacto?: boolean;
 }) {
   return (
-    <a
+    <EnlaceWhatsApp
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
       className={`flex shrink-0 items-center justify-center gap-2 rounded-full bg-marca font-semibold text-white transition hover:opacity-90 ${
         compacto ? "px-5 py-3 text-sm" : "w-full px-6 py-4 text-base"
       }`}
     >
       <IconoWhatsApp className="h-5 w-5" />
       {disponible ? "Lo quiero" : "Avisarme cuando llegue"}
-    </a>
+    </EnlaceWhatsApp>
   );
 }
 

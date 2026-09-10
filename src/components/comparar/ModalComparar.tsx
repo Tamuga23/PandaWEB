@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ProductImage } from "@/components/ProductImage";
 import { ORDEN_SPECS, etiquetaSpec, formatearValorSpec } from "@/components/Specs";
 import { IconoWhatsApp } from "@/components/iconos";
@@ -203,15 +204,13 @@ export function ModalComparar() {
         </div>
 
         <footer className="shrink-0 border-t border-borde p-4">
-          <a
+          <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            target="_blank"
-            rel="noopener noreferrer"
             className="flex w-full items-center justify-center gap-2 rounded-full bg-marca px-6 py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
           >
             <IconoWhatsApp className="h-5 w-5" />
             ¿Cuál me conviene? Preguntale a un asesor
-          </a>
+          </EnlaceWhatsApp>
         </footer>
       </div>
     </div>

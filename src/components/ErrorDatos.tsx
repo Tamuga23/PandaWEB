@@ -1,5 +1,6 @@
 import { CONTACTO } from "@/config/site";
 import { linkWhatsApp } from "@/lib/format";
+import { EnlaceWhatsApp } from "./EnlaceWhatsApp";
 import { IconoWhatsApp } from "./iconos";
 
 /**
@@ -22,15 +23,13 @@ export function ErrorDatos({ error }: { error: unknown }) {
         atendemos al momento.
       </p>
 
-      <a
+      <EnlaceWhatsApp
         href={linkWhatsApp(CONTACTO.whatsapp)}
-        target="_blank"
-        rel="noopener noreferrer"
         className="mt-6 inline-flex items-center gap-2 rounded-full bg-marca px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
       >
         <IconoWhatsApp className="h-4 w-4" />
         Escribir por WhatsApp
-      </a>
+      </EnlaceWhatsApp>
 
       {esDev && (
         <pre className="mt-8 overflow-x-auto rounded-xl border border-agotado/30 bg-agotado/5 p-4 text-left text-xs text-agotado">

@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { CATEGORIAS, CONTACTO, GARANTIA_MESES, REDES, SITE } from "@/config/site";
 import { linkWhatsApp } from "@/lib/format";
+import { EnlaceConversion } from "./EnlaceConversion";
+import { EnlaceWhatsApp } from "./EnlaceWhatsApp";
+import { CONVERSIONES } from "@/lib/gtag";
 import { ICONOS_RED, IconoUbicacion, IconoWhatsApp } from "./iconos";
 
 export function Footer() {
@@ -43,16 +46,14 @@ export function Footer() {
                 </a>
               );
             })}
-            <a
+            <EnlaceWhatsApp
               href={linkWhatsApp(CONTACTO.whatsapp)}
-              target="_blank"
-              rel="noopener noreferrer"
               aria-label={`Escribir a ${SITE.nombre} por WhatsApp`}
               title="WhatsApp"
               className="grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition hover:bg-marca hover:text-white"
             >
               <IconoWhatsApp className="h-4 w-4" />
-            </a>
+            </EnlaceWhatsApp>
           </div>
         </div>
 
@@ -76,15 +77,13 @@ export function Footer() {
           <h3 className="text-sm font-semibold text-texto">Contacto</h3>
           <ul className="mt-3 space-y-3 text-sm text-suave">
             <li>
-              <a
+              <EnlaceWhatsApp
                 href={linkWhatsApp(CONTACTO.whatsapp)}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="flex items-center gap-2 transition hover:text-precio"
               >
                 <IconoWhatsApp className="h-4 w-4 shrink-0" />
                 {CONTACTO.whatsappVisible}
-              </a>
+              </EnlaceWhatsApp>
             </li>
             <li>
               <a
@@ -93,6 +92,15 @@ export function Footer() {
               >
                 {CONTACTO.email}
               </a>
+            </li>
+            <li>
+              <EnlaceConversion
+                href={`tel:+${CONTACTO.whatsapp}`}
+                gtag={CONVERSIONES.llamada}
+                className="transition hover:text-acento"
+              >
+                Llamar: {CONTACTO.whatsappVisible}
+              </EnlaceConversion>
             </li>
           </ul>
         </div>
