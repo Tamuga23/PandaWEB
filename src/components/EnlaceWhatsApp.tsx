@@ -1,6 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { agregarRef } from "@/lib/atribucion";
 import { CONVERSIONES, conversion } from "@/lib/gtag";
 
 interface Props {
@@ -20,9 +21,19 @@ interface Props {
  * armados a mano para que ninguno quede sin medir.
  */
 export function EnlaceWhatsApp({ href, valor, children, ...rest }: Props) {
+  // El gclid vive en el navegador, así que la ref solo se puede agregar
+  // después de hidratar. Empezar con `href` evita el mismatch de hidratación.
+  const [url, setUrl] = useState(href);
+  useEffect(() => {
+    // Sincroniza con localStorage (gclid guardado), que no existe en el
+    // servidor: no es un valor derivable durante el render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUrl(agregarRef(href));
+  }, [href]);
+
   return (
     <a
-      href={href}
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() =>

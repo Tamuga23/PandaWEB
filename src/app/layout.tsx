@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import { CapturaAtribucion } from "@/components/CapturaAtribucion";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { BarraComparar } from "@/components/comparar/BarraComparar";
@@ -77,6 +78,7 @@ export default function RootLayout({
             </Script>
           </>
         )}
+        <CapturaAtribucion />
         <TemaProvider>
           <CompararProvider>
             <Header />
