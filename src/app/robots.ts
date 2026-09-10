@@ -9,7 +9,7 @@ import { SITE } from "@/config/site";
  *   2. `robots.index` a `true` en src/app/layout.tsx.
  * Si se cambia solo una, Google recibe señales contradictorias.
  */
-const EN_CONSTRUCCION = true;
+const EN_CONSTRUCCION = false;
 
 export default function robots(): MetadataRoute.Robots {
   if (EN_CONSTRUCCION) {
