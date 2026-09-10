@@ -1,8 +1,12 @@
+/** Precio en córdobas ya redondeado a la decena, como número. Fuente única del monto. */
+export function cordobasNumero(usd: number, tasa: number): number {
+  return Math.round((usd * tasa) / 10) * 10;
+}
+
 /** Precio en córdobas, redondeado a la decena para que se lea limpio. */
 export function cordobas(usd: number | undefined, tasa: number): string {
   if (usd == null) return "Consultar";
-  const nio = Math.round((usd * tasa) / 10) * 10;
-  return "C$" + nio.toLocaleString("es-NI");
+  return "C$" + cordobasNumero(usd, tasa).toLocaleString("es-NI");
 }
 
 /** Igual que `cordobas` pero sin redondear a la decena (para cuotas). */
