@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { BarraComparar } from "@/components/comparar/BarraComparar";
@@ -14,6 +15,10 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 });
+
+// Sin esta variable no se carga la etiqueta: en desarrollo no se mandan hits
+// que contaminen los datos de la cuenta real.
+const ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -58,6 +63,20 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
       </head>
       <body className="flex min-h-dvh flex-col bg-fondo font-sans text-texto">
+        {ADS_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${ADS_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="gtag-init" strategy="afterInteractive">
+              {`window.dataLayer=window.dataLayer||[];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js',new Date());
+                gtag('config','${ADS_ID}');`}
+            </Script>
+          </>
+        )}
         <TemaProvider>
           <CompararProvider>
             <Header />

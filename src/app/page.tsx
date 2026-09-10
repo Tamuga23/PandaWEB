@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EnlaceConversion } from "@/components/EnlaceConversion";
+import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
 import { ProductCard } from "@/components/ProductCard";
 import {
@@ -22,6 +24,7 @@ import {
 import { contarPorCategoria, destacados, getCatalogo } from "@/lib/catalog";
 import { esCategoriaSinInteres, type ConfigFinanciamiento } from "@/lib/financiamiento";
 import { linkWhatsApp } from "@/lib/format";
+import { CONVERSIONES } from "@/lib/gtag";
 
 export const revalidate = 900;
 
@@ -131,15 +134,13 @@ function Hero({ config }: { config: ConfigFinanciamiento }) {
             Ver catálogo
             <IconoFlecha className="h-4 w-4" />
           </Link>
-          <a
+          <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            target="_blank"
-            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie px-6 py-3.5 text-sm font-semibold text-texto transition hover:border-precio hover:text-precio"
           >
             <IconoWhatsApp className="h-4 w-4" />
             Hablar con un asesor
-          </a>
+          </EnlaceWhatsApp>
         </div>
       </div>
     </section>
@@ -300,15 +301,13 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
             exacta en la ficha; los que van a 0% llevan el sello.{" "}
             Sujeto a aprobación de {FINANCIAMIENTO.banco}.
           </p>
-          <a
+          <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            target="_blank"
-            rel="noopener noreferrer"
             className="mt-7 inline-flex items-center gap-2 rounded-full bg-marca px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
           >
             <IconoWhatsApp className="h-4 w-4" />
             Consultar mi caso
-          </a>
+          </EnlaceWhatsApp>
         </div>
 
         <ol className="space-y-4">
@@ -363,23 +362,29 @@ function Ubicacion() {
           <div className="mt-7 flex flex-wrap gap-3">
             {/* Abre la navegación paso a paso, no la ficha del local: si alguien
                 toca "Cómo llegar" es porque va en camino. */}
-            <a
+            <EnlaceConversion
               href={CONTACTO.comoLlegarUrl}
+              gtag={CONVERSIONES.comoLlegar}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-borde2 px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
             >
               Cómo llegar
-            </a>
-            <a
+            </EnlaceConversion>
+            <EnlaceWhatsApp
               href={linkWhatsApp(CONTACTO.whatsapp)}
-              target="_blank"
-              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-marca px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
             >
               <IconoWhatsApp className="h-4 w-4" />
               {CONTACTO.whatsappVisible}
-            </a>
+            </EnlaceWhatsApp>
+            <EnlaceConversion
+              href={`tel:+${CONTACTO.whatsapp}`}
+              gtag={CONVERSIONES.llamada}
+              className="rounded-full border border-borde2 px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
+            >
+              Llamar
+            </EnlaceConversion>
           </div>
         </div>
 

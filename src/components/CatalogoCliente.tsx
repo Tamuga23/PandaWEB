@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { CATEGORIAS, CONTACTO } from "@/config/site";
 import { linkWhatsApp } from "@/lib/format";
 import type { Producto } from "@/lib/types";
+import { EnlaceWhatsApp } from "./EnlaceWhatsApp";
 import { IconoBuscar, IconoWhatsApp } from "./iconos";
 import { ProductCard } from "./ProductCard";
 
@@ -205,15 +206,13 @@ function SinResultados({ busqueda }: { busqueda: string }) {
       <p className="mt-1 text-sm text-suave">
         Puede que lo tengamos sin publicar. Preguntanos y te confirmamos.
       </p>
-      <a
+      <EnlaceWhatsApp
         href={linkWhatsApp(CONTACTO.whatsapp)}
-        target="_blank"
-        rel="noopener noreferrer"
         className="mt-5 inline-flex items-center gap-2 rounded-full bg-marca px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
       >
         <IconoWhatsApp className="h-4 w-4" />
         Consultar por WhatsApp
-      </a>
+      </EnlaceWhatsApp>
     </div>
   );
 }
