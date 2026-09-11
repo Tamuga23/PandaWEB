@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE.nombre}`,
   },
   description: SITE.descripcion,
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "es_NI",
@@ -36,10 +37,8 @@ export const metadata: Metadata = {
     description: SITE.descripcion,
   },
   robots: {
-    // La web todavía no es pública. Al lanzar, cambiar a index: true
-    // Y a la vez EN_CONSTRUCCION = false en src/app/robots.ts
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
   },
 };
 

@@ -3,13 +3,26 @@
 // Nada de esto debe duplicarse dentro de los componentes.
 // ---------------------------------------------------------------------------
 
+// Producción no puede caer a localhost en silencio: sin dominio real, el
+// sitemap, el canonical y el Open Graph quedan rotos sin que nadie lo note.
+const urlPorDefecto =
+  process.env.VERCEL_ENV === "production"
+    ? undefined
+    : "http://localhost:3000";
+
 export const SITE = {
   nombre: "Panda Store",
   tagline: "Tecnología para tu casa y tu negocio",
   descripcion:
     "Proyectores, cámaras de seguridad, smartwatches, parlantes y más. Pagá en cuotas con Banpro, garantía de 3 meses y entrega inmediata en Managua.",
-  // Se completa cuando haya dominio propio. Afecta a los metadatos y al sitemap.
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    urlPorDefecto ??
+    (() => {
+      throw new Error(
+        "NEXT_PUBLIC_SITE_URL es obligatoria en producción: sin ella el sitemap y los canonical publican localhost.",
+      );
+    })(),
 } as const;
 
 // Coordenadas exactas del local. Es la única fuente de verdad de la ubicación:
