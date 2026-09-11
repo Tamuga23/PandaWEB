@@ -61,8 +61,8 @@ npm run backfill
 
 | Valor | Qué hace | Cuándo |
 |---|---|---|
-| `anon` | pide un token anónimo antes de leer | **ahora** (las reglas exigen sesión) |
-| `public` | lee sin token | tras abrir las reglas en la Fase 0 |
+| `anon` | pide un token anónimo antes de leer | **default actual** — sigue funcionando con las reglas nuevas |
+| `public` | lee sin token | disponible desde que se cerró la Fase 0; opcional, no seteado todavía |
 
 ---
 
@@ -135,17 +135,22 @@ plazos de financiamiento, dirección, categorías: un solo lugar.
 
 ## Antes de hacerla pública
 
-Esto **no** está hecho todavía y es bloqueante:
+Los bloqueantes de seguridad ya se resolvieron (2026-09-11) y el sitio está
+público desde entonces. Quedan dos ítems de contenido, no bloqueantes:
 
-- [ ] **Cerrar `products` y `sales`.** Hoy cualquier sesión anónima puede leer
-      los costos y todas las ventas. Publicar la web amplifica esa exposición.
-- [ ] **Rotar la llave de service account** que está en la raíz del repo del POS.
-- [ ] Abrir lectura pública de `catalogo_publico` y pasar `CATALOG_ACCESS=public`.
-- [ ] Poner `EN_CONSTRUCCION = false` en `src/app/robots.ts` **y** `index: true`
-      en `src/app/layout.tsx`. Las dos cosas, o Google recibe señales opuestas.
+- [x] **Cerrar `products` y `sales`.** Las reglas de Firestore (repo del POS)
+      ahora exigen el custom claim `admin`; una sesión anónima ya no puede
+      leer costos ni ventas.
+- [x] **Rotar la llave de service account** que estaba en la raíz del repo del POS.
+- [x] Abrir lectura pública de `catalogo_publico`, `config` y el `get()` puntual
+      de `company/shared_store`. `CATALOG_ACCESS` se dejó en `anon`: sigue
+      funcionando con las reglas nuevas, y pasar a `public` (saltarse el login
+      anónimo del todo) queda como optimización opcional, no como requisito.
+- [x] Poner `EN_CONSTRUCCION = false` en `src/app/robots.ts` **y** `index: true`
+      en `src/app/layout.tsx` — mergeado y verificado en producción.
+- [x] `NEXT_PUBLIC_SITE_URL` con el dominio definitivo (`panda-web-nine.vercel.app`).
 - [ ] Cargar fotos: hoy los productos sin imagen muestran un marcador "Sin foto".
 - [ ] Logo real de Panda Store (el PNG que existe es de PandaLink).
-- [ ] `NEXT_PUBLIC_SITE_URL` con el dominio definitivo.
 
 ---
 
