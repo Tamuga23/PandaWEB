@@ -8,6 +8,7 @@ const METADATA_GENERAL: Metadata = {
   title: "Catálogo",
   description:
     "Proyectores, cámaras de seguridad, dashcams, smartwatches, parlantes y productos smart home. Con financiamiento Banpro en cuotas.",
+  alternates: { canonical: "/catalogo" },
 };
 
 export async function generateMetadata({
@@ -22,6 +23,7 @@ export async function generateMetadata({
   return {
     title: categoria.nombre,
     description: `${categoria.descripcion}. Con financiamiento Banpro en cuotas.`,
+    alternates: { canonical: `/catalogo?cat=${categoria.slug}` },
   };
 }
 
