@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CONTACTO, SITE } from "@/config/site";
 import { linkWhatsApp } from "@/lib/format";
+import { EnlaceWhatsApp } from "./EnlaceWhatsApp";
 import { BotonTema } from "./tema/BotonTema";
 import { IconoWhatsApp } from "./iconos";
 
@@ -39,15 +40,13 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-2 sm:ml-0">
           <BotonTema />
-          <a
+          <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            target="_blank"
-            rel="noopener noreferrer"
             className="flex items-center gap-2 rounded-full bg-marca px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
           >
             <IconoWhatsApp className="h-4 w-4" />
             <span>Escribinos</span>
-          </a>
+          </EnlaceWhatsApp>
         </div>
       </div>
 

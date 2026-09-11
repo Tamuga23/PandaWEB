@@ -4,11 +4,26 @@ import { ErrorDatos } from "@/components/ErrorDatos";
 import { CATEGORIAS, NOTA_PRECIO } from "@/config/site";
 import { getCatalogo } from "@/lib/catalog";
 
-export const metadata: Metadata = {
+const METADATA_GENERAL: Metadata = {
   title: "Catálogo",
   description:
     "Proyectores, cámaras de seguridad, dashcams, smartwatches, parlantes y productos smart home. Con financiamiento Banpro en cuotas.",
 };
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ cat?: string }>;
+}): Promise<Metadata> {
+  const { cat } = await searchParams;
+  const categoria = CATEGORIAS.find((c) => c.slug === cat);
+  if (!categoria) return METADATA_GENERAL;
+
+  return {
+    title: categoria.nombre,
+    description: `${categoria.descripcion}. Con financiamiento Banpro en cuotas.`,
+  };
+}
 
 export default async function CatalogoPage({
   searchParams,

@@ -8,7 +8,7 @@ import {
   normalizarConfig,
   type ConfigFinanciamiento,
 } from "./financiamiento";
-import { listCollection } from "./firestore-rest";
+import { getDocument, listCollection } from "./firestore-rest";
 import { normalizarProducto } from "./normalize";
 import type { CatalogoData, Producto } from "./types";
 
@@ -20,20 +20,19 @@ const REVALIDATE = 900;
 /**
  * Tasa USD→NIO vigente, para que la web use el mismo número que el POS.
  *
- * La colección `company` tiene un documento por usuario, con el uid como id
- * (no existe un `shared_store` fijo). Así que se consulta la colección y se
- * toma el primer documento que traiga una tasa válida.
+ * `company` tiene un único documento fijo, `shared_store`, con la config del
+ * negocio. Las reglas de Firestore ya no permiten listar la colección
+ * `company` sin el claim `admin` (solo el `get` de ese doc puntual es
+ * público), así que se lee directo por su path.
  *
  * Si algo falla, se usa el respaldo: una tasa desactualizada es mejor que una
  * página caída, y de todos modos el precio final se confirma por WhatsApp.
  */
 async function getTasa(): Promise<number> {
   try {
-    const docs = await listCollection("company", { revalidate: REVALIDATE, limit: 10 });
-    for (const d of docs) {
-      const tasa = d.defaultExchangeRate;
-      if (typeof tasa === "number" && tasa > 0) return tasa;
-    }
+    const doc = await getDocument("company/shared_store", { revalidate: REVALIDATE });
+    const tasa = doc?.defaultExchangeRate;
+    if (typeof tasa === "number" && tasa > 0) return tasa;
   } catch {
     // Sin permisos o sin red: seguimos con el respaldo.
   }

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
+import { EventoVerFicha } from "@/components/EventoVerFicha";
 import { Galeria } from "@/components/Galeria";
 import { PrecioFicha } from "@/components/Precio";
 import { ProductCard } from "@/components/ProductCard";
@@ -17,7 +19,7 @@ import {
 } from "@/config/site";
 import { getCatalogo, getProducto } from "@/lib/catalog";
 import { filasDeSpecs } from "@/lib/categorySpecs";
-import { cordobas, linkWhatsApp } from "@/lib/format";
+import { cordobas, cordobasNumero, linkWhatsApp } from "@/lib/format";
 
 // Regenera la página cada 15 minutos con los datos frescos del espejo.
 export const revalidate = 900;
@@ -241,13 +243,15 @@ export default async function ProductoPage({
         descripcion={producto.beneficio ?? producto.description}
         imagen={producto.media.heroImage}
         sku={producto.sku}
+        url={`${SITE.url}/producto/${id}`}
         precioNio={
           producto.precio.actual != null
-            ? Math.round(producto.precio.actual * tasa)
+            ? cordobasNumero(producto.precio.actual, tasa)
             : undefined
         }
         disponible={producto.disponible}
       />
+      <EventoVerFicha sku={producto.sku} />
     </div>
   );
 }
@@ -280,17 +284,15 @@ function CtaWhatsApp({
   compacto?: boolean;
 }) {
   return (
-    <a
+    <EnlaceWhatsApp
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
       className={`flex shrink-0 items-center justify-center gap-2 rounded-full bg-marca font-semibold text-white transition hover:opacity-90 ${
         compacto ? "px-5 py-3 text-sm" : "w-full px-6 py-4 text-base"
       }`}
     >
       <IconoWhatsApp className="h-5 w-5" />
       {disponible ? "Lo quiero" : "Avisarme cuando llegue"}
-    </a>
+    </EnlaceWhatsApp>
   );
 }
 
@@ -303,6 +305,7 @@ function ProductoJsonLd({
   descripcion,
   imagen,
   sku,
+  url,
   precioNio,
   disponible,
 }: {
@@ -310,6 +313,7 @@ function ProductoJsonLd({
   descripcion?: string;
   imagen?: string;
   sku?: string;
+  url: string;
   precioNio?: number;
   disponible: boolean;
 }) {
@@ -317,6 +321,7 @@ function ProductoJsonLd({
     "@context": "https://schema.org",
     "@type": "Product",
     name: nombre,
+    url,
     ...(descripcion && { description: descripcion }),
     ...(imagen && !imagen.startsWith("data:") && { image: imagen }),
     ...(sku && { sku }),
@@ -324,6 +329,7 @@ function ProductoJsonLd({
     ...(precioNio != null && {
       offers: {
         "@type": "Offer",
+        url,
         priceCurrency: "NIO",
         price: precioNio,
         availability: disponible
