@@ -17,6 +17,7 @@ import {
   todosSinInteres,
 } from "../src/lib/financiamiento";
 import {
+  beneficioDesdeSpecs,
   cordobas,
   linkWhatsApp,
   porcentajeDescuento,
@@ -323,6 +324,19 @@ describe("precios y cuotas", () => {
     assert.equal(porcentajeDescuento(250, 199), 20);
     assert.equal(porcentajeDescuento(100, 100), null);
     assert.equal(porcentajeDescuento(undefined, 100), null);
+  });
+
+  it("arma un beneficio corto con las specs cuando el POS no cargó uno", () => {
+    const resumen = beneficioDesdeSpecs([
+      { valor: "1100 lúmenes ANSI" },
+      { valor: "1080p Full HD" },
+      { valor: "12 W, suficiente para una sala" },
+    ]);
+    assert.equal(resumen, "1100 lúmenes ANSI · 1080p Full HD");
+  });
+
+  it("no inventa un beneficio si no hay specs", () => {
+    assert.equal(beneficioDesdeSpecs([]), undefined);
   });
 });
 

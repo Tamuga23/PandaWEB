@@ -30,6 +30,25 @@ export function porcentajeDescuento(
   return Math.round(((lista - actual) / lista) * 100);
 }
 
+/**
+ * Resumen corto a partir de las specs, para cuando el POS no cargó `beneficio`
+ * ni `description`. Sin esto, una ficha sin esos campos colapsa a: pill de
+ * disponibilidad → nombre → precio → tabla de specs, indistinguible de
+ * cualquier catálogo genérico. Usa las primeras filas YA formateadas por
+ * `filasDeSpecs` (mismo orden y texto que la tabla de abajo) — no inventa
+ * ningún dato, solo adelanta lo más relevante como una línea de una oración.
+ */
+export function beneficioDesdeSpecs(
+  filas: { valor: string }[],
+  max = 2,
+): string | undefined {
+  if (filas.length === 0) return undefined;
+  return filas
+    .slice(0, max)
+    .map((f) => f.valor)
+    .join(" · ");
+}
+
 /** Extrae el ID de un video de YouTube de cualquier formato de URL. */
 export function youTubeId(url: string | undefined): string | null {
   if (!url) return null;
