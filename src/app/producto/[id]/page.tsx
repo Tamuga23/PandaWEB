@@ -7,6 +7,7 @@ import { EventoVerFicha } from "@/components/EventoVerFicha";
 import { Galeria } from "@/components/Galeria";
 import { PrecioFicha } from "@/components/Precio";
 import { ProductCard } from "@/components/ProductCard";
+import { PropuestaValorCompacta } from "@/components/PropuestaValor";
 import { TablaSpecs } from "@/components/Specs";
 import { BotonComparar } from "@/components/comparar/BotonComparar";
 import { IconoCheck, IconoWhatsApp } from "@/components/iconos";
@@ -89,7 +90,8 @@ export default async function ProductoPage({
   }
   if (!datos) notFound();
 
-  const { producto, tasa, relacionados } = datos;
+  const { producto, tasa, relacionados, configFinanciamiento } = datos;
+  const plazoMaximo = Math.max(...configFinanciamiento.plazos);
   const wa = linkWhatsApp(CONTACTO.whatsapp, producto);
   const categoria = producto.categorySlug
     ? (NOMBRE_CATEGORIA[producto.categorySlug] ?? producto.categorySlug)
@@ -158,6 +160,8 @@ export default async function ProductoPage({
           <div className="mt-7 lg:hidden">
             <BotonComparar producto={producto} tasa={tasa} variante="completo" />
           </div>
+
+          <PropuestaValorCompacta plazoMaximo={plazoMaximo} />
 
           <p className="mt-4 text-xs leading-relaxed text-tenue">
             {NOTA_PRECIO} Incluye factura y garantía de {GARANTIA_MESES} meses.
