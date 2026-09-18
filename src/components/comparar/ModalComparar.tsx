@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ProductImage } from "@/components/ProductImage";
 import { ORDEN_SPECS, etiquetaSpec, formatearValorSpec } from "@/components/Specs";
@@ -24,10 +24,18 @@ const NOMBRE_CATEGORIA = Object.fromEntries(CATEGORIAS.map((c) => [c.slug, c.nom
  */
 export function ModalComparar() {
   const { seleccion, tasa, abierto, cerrar, quitar } = useComparar();
+  const dialogRef = useRef<HTMLDivElement>(null);
 
-  // Cerrar con Escape y bloquear el scroll del fondo mientras está abierto.
+  // Cerrar con Escape, bloquear el scroll del fondo, y manejar el foco: al
+  // abrir entra al diálogo, al cerrar vuelve a quien lo activó. Sin esto, un
+  // usuario de teclado o lector de pantalla no tiene ninguna señal de que se
+  // abrió un diálogo hasta tabular varias veces, y al cerrarlo el foco queda
+  // donde sea que haya estado en vez de volver al control que lo abrió.
   useEffect(() => {
     if (!abierto) return;
+    const disparador = document.activeElement as HTMLElement | null;
+    dialogRef.current?.focus();
+
     const alPresionar = (e: KeyboardEvent) => {
       if (e.key === "Escape") cerrar();
     };
@@ -37,6 +45,7 @@ export function ModalComparar() {
     return () => {
       document.removeEventListener("keydown", alPresionar);
       document.body.style.overflow = overflowPrevio;
+      disparador?.focus();
     };
   }, [abierto, cerrar]);
 
@@ -66,7 +75,9 @@ export function ModalComparar() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      ref={dialogRef}
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm outline-none sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-label="Comparación de productos"
