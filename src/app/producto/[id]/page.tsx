@@ -20,7 +20,13 @@ import {
 } from "@/config/site";
 import { getCatalogo, getProducto } from "@/lib/catalog";
 import { filasDeSpecs } from "@/lib/categorySpecs";
-import { beneficioDesdeSpecs, cordobas, cordobasNumero, linkWhatsApp } from "@/lib/format";
+import {
+  MAX_SPECS_EN_BENEFICIO,
+  beneficioDesdeSpecs,
+  cordobas,
+  cordobasNumero,
+  linkWhatsApp,
+} from "@/lib/format";
 
 // Regenera la página cada 15 minutos con los datos frescos del espejo.
 export const revalidate = 900;
@@ -101,7 +107,15 @@ export default async function ProductoPage({
   const filasSpecs = filasDeSpecs(producto.categorySlug, producto.specs);
   // Si el POS no cargó beneficio, la ficha no se queda en blanco justo debajo
   // del precio: se arma un resumen de una línea con las specs más relevantes.
+  // Esas mismas filas se excluyen de la tabla de abajo — mostrar el mismo
+  // dato dos veces lee como ficha técnica generada, no como una razón para
+  // comprar.
+  const beneficioEsDeSpecs = !producto.beneficio && filasSpecs.length > 0;
+  const clavesEnBeneficio = beneficioEsDeSpecs
+    ? filasSpecs.slice(0, MAX_SPECS_EN_BENEFICIO).map((f) => f.key)
+    : [];
   const beneficioMostrado = producto.beneficio ?? beneficioDesdeSpecs(filasSpecs);
+  const filasParaTabla = filasSpecs.filter((f) => !clavesEnBeneficio.includes(f.key));
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 pb-28 lg:pb-8">
@@ -205,15 +219,20 @@ export default async function ProductoPage({
           )}
 
           {/* `specs` puede existir pero no dejar ninguna fila visible (todo
-              vacío, o booleanos en false). Se pregunta por las filas reales
-              para no mostrar un título sobre una tabla en blanco. */}
-          {filasSpecs.length > 0 && (
+              vacío, booleanos en false, o las únicas filas ya usadas en el
+              resumen de beneficio de arriba). Se pregunta por las filas
+              reales para no mostrar un título sobre una tabla en blanco. */}
+          {filasParaTabla.length > 0 && (
             <section className="mt-8">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-suave">
                 Especificaciones
               </h2>
               <div className="mt-3">
-                <TablaSpecs specs={producto.specs ?? {}} categorySlug={producto.categorySlug} />
+                <TablaSpecs
+                  specs={producto.specs ?? {}}
+                  categorySlug={producto.categorySlug}
+                  omitirClaves={clavesEnBeneficio}
+                />
               </div>
             </section>
           )}

@@ -31,6 +31,14 @@ export function porcentajeDescuento(
 }
 
 /**
+ * Cuántas filas de specs se adelantan en el resumen de beneficio. Exportada
+ * para que producto/[id]/page.tsx pueda excluir esas mismas filas de la
+ * tabla de "Especificaciones" — mostrar dos veces el mismo dato lee como
+ * ficha técnica generada, no como una razón para comprar.
+ */
+export const MAX_SPECS_EN_BENEFICIO = 2;
+
+/**
  * Resumen corto a partir de las specs, para cuando el POS no cargó `beneficio`
  * ni `description`. Sin esto, una ficha sin esos campos colapsa a: pill de
  * disponibilidad → nombre → precio → tabla de specs, indistinguible de
@@ -40,7 +48,7 @@ export function porcentajeDescuento(
  */
 export function beneficioDesdeSpecs(
   filas: { valor: string }[],
-  max = 2,
+  max = MAX_SPECS_EN_BENEFICIO,
 ): string | undefined {
   if (filas.length === 0) return undefined;
   return filas
