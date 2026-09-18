@@ -52,13 +52,18 @@ export function BotonComparar({
       aria-pressed={activo}
       aria-label={activo ? `Quitar ${producto.name} de comparación` : `Comparar ${producto.name}`}
       title={activo ? "Quitar de comparación" : "Comparar"}
-      className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg border transition ${
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition ${
         activo
           ? "border-acento/40 bg-acento/15 text-acento"
           : "border-borde bg-superficie2 text-tenue hover:border-borde2 hover:text-texto"
       }`}
     >
-      <IconoComparar className="h-4 w-4" />
+      <IconoComparar className="h-3.5 w-3.5 shrink-0" />
+      {/* Etiqueta visible, no solo aria-label: un ícono de flechas cruzadas no
+          se autoexplica en una tienda sin carrito, sin modelo mental previo
+          de "comparar". `aria-label` sigue llevando el nombre del producto,
+          que este texto corto no necesita repetir. */}
+      {activo ? "Quitar" : "Comparar"}
     </button>
   );
 }
