@@ -69,7 +69,10 @@ export function linkWhatsApp(
   numero: string,
   producto?: { name: string; sku?: string; disponible?: boolean },
 ): string {
-  const skuTexto = producto?.sku ? ` (SKU ${producto.sku})` : "";
+  // "Código", no "SKU": es como la propia ficha le llama al mismo dato
+  // (`Código {producto.sku}`) — un cliente que lea el mensaje antes de
+  // mandarlo no debería encontrarse con un término que no vio en la página.
+  const skuTexto = producto?.sku ? ` (Código ${producto.sku})` : "";
   const texto = !producto
     ? "Hola 👋 Vi su catálogo en la web y quiero más información."
     : producto.disponible === false
