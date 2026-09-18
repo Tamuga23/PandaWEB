@@ -421,12 +421,16 @@ describe("propuesta de valor", () => {
     assert.ok(items.some((i) => i.id === "financiamiento"));
   });
 
-  it("saca el financiamiento cuando el producto está agotado", () => {
+  it("saca financiamiento y entrega inmediata cuando el producto está agotado", () => {
     const items = itemsPropuestaValor(6, false);
     assert.ok(
       !items.some((i) => i.id === "financiamiento"),
       "prometer cuotas de algo agotado contradice el CTA de avisar cuando llegue",
     );
-    assert.equal(items.length, 3);
+    assert.ok(
+      !items.some((i) => i.id === "entrega"),
+      "prometer entrega inmediata de algo agotado es la misma contradicción",
+    );
+    assert.equal(items.length, 2);
   });
 });
