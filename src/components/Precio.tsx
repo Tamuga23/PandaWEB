@@ -1,6 +1,6 @@
 import { FINANCIAMIENTO } from "@/config/site";
 import { planMasBajo, todosSinInteres } from "@/lib/financiamiento";
-import { cordobas, porcentajeDescuento } from "@/lib/format";
+import { cordobas } from "@/lib/format";
 import type { Producto } from "@/lib/types";
 
 /**
@@ -25,13 +25,15 @@ export function PrecioFicha({
   tasa: number;
 }) {
   const { lista, actual } = producto.precio;
-  const desc = porcentajeDescuento(lista, actual);
   const planes = producto.planes;
   const sinInteres = todosSinInteres(planes);
   const { disponible } = producto;
 
   return (
     <div>
+      {/* El badge de "Oferta" vive sobre la imagen de la Galería, no acá —
+          es la Regla de DESIGN.md ("siempre sobre imagen, nunca en línea de
+          texto"), y ya es donde vive en la tarjeta del catálogo. */}
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span
           className={`font-bold tracking-tight ${
@@ -43,11 +45,6 @@ export function PrecioFicha({
         {lista != null && (
           <span className="text-lg text-tenue line-through">
             {cordobas(lista, tasa)}
-          </span>
-        )}
-        {desc != null && (
-          <span className="rounded-lg bg-marca px-2.5 py-1 text-xs font-black uppercase tracking-wider text-white">
-            −{desc}% Oferta
           </span>
         )}
       </div>
