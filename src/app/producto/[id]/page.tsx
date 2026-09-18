@@ -20,7 +20,7 @@ import {
 } from "@/config/site";
 import { getCatalogo, getProducto } from "@/lib/catalog";
 import { filasDeSpecs } from "@/lib/categorySpecs";
-import { cordobas, cordobasNumero, linkWhatsApp } from "@/lib/format";
+import { beneficioDesdeSpecs, cordobas, cordobasNumero, linkWhatsApp } from "@/lib/format";
 
 // Regenera la página cada 15 minutos con los datos frescos del espejo.
 export const revalidate = 900;
@@ -99,6 +99,9 @@ export default async function ProductoPage({
   // Filas realmente visibles de la ficha técnica (ordenadas y etiquetadas según
   // la categoría). Se calculan acá para decidir si la sección existe.
   const filasSpecs = filasDeSpecs(producto.categorySlug, producto.specs);
+  // Si el POS no cargó beneficio, la ficha no se queda en blanco justo debajo
+  // del precio: se arma un resumen de una línea con las specs más relevantes.
+  const beneficioMostrado = producto.beneficio ?? beneficioDesdeSpecs(filasSpecs);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 pb-28 lg:pb-8">
@@ -140,9 +143,9 @@ export default async function ProductoPage({
             <p className="mt-1.5 text-xs text-tenue">Código {producto.sku}</p>
           )}
 
-          {producto.beneficio && (
+          {beneficioMostrado && (
             <p className="mt-4 text-lg leading-relaxed text-texto">
-              {producto.beneficio}
+              {beneficioMostrado}
             </p>
           )}
 
@@ -245,7 +248,7 @@ export default async function ProductoPage({
 
       <ProductoJsonLd
         nombre={producto.name}
-        descripcion={producto.beneficio ?? producto.description}
+        descripcion={beneficioMostrado ?? producto.description}
         imagen={producto.media.heroImage}
         sku={producto.sku}
         url={`${SITE.url}/producto/${id}`}
