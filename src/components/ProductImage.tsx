@@ -66,7 +66,7 @@ function Placeholder({ className = "" }: { className?: string }) {
       aria-hidden="true"
     >
       <IconoImagen className="h-8 w-8" />
-      <span className="text-[10px] font-medium uppercase tracking-wide">Sin foto</span>
+      <span className="text-micro font-medium uppercase tracking-wide">Sin foto</span>
     </div>
   );
 }

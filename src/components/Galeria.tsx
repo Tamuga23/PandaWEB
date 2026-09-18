@@ -90,7 +90,7 @@ export function Galeria({ media, nombre }: { media: Media; nombre: string }) {
                 alt=""
                 className="absolute inset-0 h-full w-full object-cover opacity-50"
               />
-              <span className="relative grid h-7 w-7 place-items-center rounded-full bg-fondo/80 text-[10px] text-acento">
+              <span className="relative grid h-7 w-7 place-items-center rounded-full bg-fondo/80 text-micro text-acento">
                 ▶
               </span>
             </button>
