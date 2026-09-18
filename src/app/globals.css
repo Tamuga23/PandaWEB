@@ -98,6 +98,26 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Tipografía: tamaños Label (11px) y Micro (10px) de DESIGN.md. Antes cada
+   componente repetía el tamaño a mano con text-[10px]/text-[11px] — mismo
+   problema que bg-marca ya resuelve para el degradado: un solo lugar con el
+   valor real, en vez de que el próximo componente tenga que adivinarlo.
+   Solo fijan tamaño y interlineado; el peso, el tracking y las mayúsculas
+   siguen siendo utilidades propias de cada uso, porque hoy varían entre
+   ellos y no es parte de lo que este fix busca cambiar.
+--------------------------------------------------------------------------- */
+
+@utility text-label {
+  font-size: 0.6875rem;
+  line-height: 1.3;
+}
+
+@utility text-micro {
+  font-size: 0.625rem;
+  line-height: 1.2;
+}
+
+/* ---------------------------------------------------------------------------
    Base
 --------------------------------------------------------------------------- */
 

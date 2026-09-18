@@ -104,7 +104,7 @@ export function ModalComparar() {
                       <div className="relative mx-auto aspect-square w-full max-w-[8rem] overflow-hidden rounded-xl bg-fondo p-2">
                         <ProductImage src={p.media.heroImage} alt={p.name} sizes="140px" />
                         {desc != null && (
-                          <span className="absolute left-1 top-1 rounded-md bg-marca px-1.5 py-0.5 text-[10px] font-black text-white">
+                          <span className="absolute left-1 top-1 rounded-md bg-marca px-1.5 py-0.5 text-micro font-black text-white">
                             −{desc}%
                           </span>
                         )}
@@ -118,7 +118,7 @@ export function ModalComparar() {
                       <button
                         type="button"
                         onClick={() => quitar(p.id)}
-                        className="mt-1 text-[11px] font-medium text-tenue transition hover:text-texto"
+                        className="mt-1 text-label font-medium text-tenue transition hover:text-texto"
                       >
                         Quitar
                       </button>

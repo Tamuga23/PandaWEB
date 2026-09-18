@@ -38,13 +38,13 @@ export function ProductCard({
         />
 
         {descuento != null && (
-          <span className="absolute right-3 top-3 rounded-lg bg-marca px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-md">
+          <span className="absolute right-3 top-3 rounded-lg bg-marca px-2.5 py-1 text-micro font-black uppercase tracking-wider text-white shadow-md">
             −{descuento}% Oferta
           </span>
         )}
 
         {!producto.disponible && (
-          <span className="absolute left-3 top-3 rounded-full bg-fondo/90 px-2.5 py-1 text-[11px] font-semibold text-agotado ring-1 ring-agotado/30">
+          <span className="absolute left-3 top-3 rounded-full bg-fondo/90 px-2.5 py-1 text-label font-semibold text-agotado ring-1 ring-agotado/30">
             Agotado
           </span>
         )}
@@ -52,7 +52,7 @@ export function ProductCard({
 
       <div className="flex flex-1 flex-col p-4">
         {producto.categorySlug && (
-          <p className="text-[11px] font-medium uppercase tracking-wide text-tenue">
+          <p className="text-label font-medium uppercase tracking-wide text-tenue">
             {NOMBRE_CATEGORIA[producto.categorySlug] ?? producto.categorySlug}
           </p>
         )}
