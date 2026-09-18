@@ -192,3 +192,11 @@ body:has(.barra-producto) .barra-comparar {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* `list-none` ya saca el triángulo de <summary> en Firefox/Chrome (usan
+   list-style para eso), pero Safari lo dibuja aparte con su propio
+   pseudo-elemento — sin esto, la tabla de specs colapsada mostraría dos
+   indicadores de "expandir" en vez de uno. */
+summary::-webkit-details-marker {
+  display: none;
+}

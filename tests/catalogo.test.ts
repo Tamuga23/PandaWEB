@@ -18,6 +18,7 @@ import {
 } from "../src/lib/financiamiento";
 import { proximaSeleccion } from "../src/components/comparar/CompararProvider";
 import { itemsPropuestaValor } from "../src/components/PropuestaValor";
+import { dividirFilasSpecs } from "../src/components/Specs";
 import {
   beneficioDesdeSpecs,
   cordobas,
@@ -432,5 +433,28 @@ describe("propuesta de valor", () => {
       "prometer entrega inmediata de algo agotado es la misma contradicción",
     );
     assert.equal(items.length, 2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("colapso de la tabla de specs", () => {
+  const filas = (n: number) => Array.from({ length: n }, (_, i) => `spec-${i}`);
+
+  it("no colapsa nada si entra dentro del umbral", () => {
+    const { visibles, resto } = dividirFilasSpecs(filas(6), 6);
+    assert.equal(visibles.length, 6);
+    assert.equal(resto.length, 0);
+  });
+
+  it("colapsa el resto cuando supera el umbral", () => {
+    const { visibles, resto } = dividirFilasSpecs(filas(12), 6);
+    assert.equal(visibles.length, 6);
+    assert.equal(resto.length, 6);
+    assert.deepEqual(visibles, filas(6));
+  });
+
+  it("categorías densas reales (proyector 12, smartwatch 13) sí colapsan", () => {
+    assert.ok(dividirFilasSpecs(filas(12)).resto.length > 0);
+    assert.ok(dividirFilasSpecs(filas(13)).resto.length > 0);
   });
 });
