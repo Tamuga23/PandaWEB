@@ -28,11 +28,16 @@ export function PrecioFicha({
   const desc = porcentajeDescuento(lista, actual);
   const planes = producto.planes;
   const sinInteres = todosSinInteres(planes);
+  const { disponible } = producto;
 
   return (
     <div>
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="text-4xl font-bold tracking-tight text-precio">
+        <span
+          className={`font-bold tracking-tight ${
+            disponible ? "text-4xl text-precio" : "text-2xl text-tenue"
+          }`}
+        >
           {cordobas(actual, tasa)}
         </span>
         {lista != null && (
@@ -47,7 +52,11 @@ export function PrecioFicha({
         )}
       </div>
 
-      {planes.length > 0 && (
+      {/* Las cuotas no aplican a algo que no se puede comprar ahora mismo:
+          mostrar un pago mensual concreto sería anunciar una compra que no
+          existe. Vuelven a aparecer solo cuando el producto vuelve a tener
+          stock. */}
+      {disponible && planes.length > 0 && (
         <div className="mt-5 rounded-2xl border border-precio/20 bg-precio/5 p-4">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm font-semibold text-precio">
