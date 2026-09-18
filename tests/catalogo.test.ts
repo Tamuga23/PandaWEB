@@ -16,6 +16,7 @@ import {
   planMasBajo,
   todosSinInteres,
 } from "../src/lib/financiamiento";
+import { proximaSeleccion } from "../src/components/comparar/CompararProvider";
 import {
   beneficioDesdeSpecs,
   cordobas,
@@ -24,6 +25,7 @@ import {
   youTubeId,
 } from "../src/lib/format";
 import { canonizarSlug, normalizarProducto } from "../src/lib/normalize";
+import type { Producto } from "../src/lib/types";
 
 const TASA = 36.6243;
 
@@ -379,5 +381,28 @@ describe("enlaces", () => {
     assert.equal(youTubeId("https://www.youtube.com/shorts/dQw4w9WgXcQ"), "dQw4w9WgXcQ");
     assert.equal(youTubeId("https://vimeo.com/123"), null);
     assert.equal(youTubeId(undefined), null);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("selección del comparador", () => {
+  const p = (id: string) => ({ id, name: id } as Producto);
+
+  it("agrega un producto nuevo sin descartar nada, bajo el tope", () => {
+    const { seleccion, descartado } = proximaSeleccion([p("a"), p("b")], p("c"), 3);
+    assert.deepEqual(seleccion.map((x) => x.id), ["a", "b", "c"]);
+    assert.equal(descartado, null);
+  });
+
+  it("quita el producto si ya estaba seleccionado (toggle)", () => {
+    const { seleccion, descartado } = proximaSeleccion([p("a"), p("b")], p("a"), 3);
+    assert.deepEqual(seleccion.map((x) => x.id), ["b"]);
+    assert.equal(descartado, null);
+  });
+
+  it("al llegar al tope, descarta el más viejo y avisa cuál fue", () => {
+    const { seleccion, descartado } = proximaSeleccion([p("a"), p("b"), p("c")], p("d"), 3);
+    assert.deepEqual(seleccion.map((x) => x.id), ["b", "c", "d"]);
+    assert.equal(descartado?.id, "a", "el descarte silencioso era justo el problema a evitar");
   });
 });
