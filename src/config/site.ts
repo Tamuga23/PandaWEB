@@ -153,12 +153,10 @@ export const CATEGORIAS: CategoriaDef[] = [
 // Textos comerciales
 // ---------------------------------------------------------------------------
 
-export const PROPUESTA_VALOR = [
-  { titulo: "Financiamiento Banpro", texto: "Llevalo hasta en 6 cuotas" },
-  { titulo: `Garantía ${GARANTIA_MESES} meses`, texto: "Respaldo con factura" },
-  { titulo: "Entrega inmediata", texto: "Delivery en Managua" },
-  { titulo: "Atención personal", texto: "Te asesoramos por WhatsApp" },
-];
+// Los cuatro props de valor (Financiamiento, Garantía, Entrega, Atención) ya
+// no viven acá: eran un texto fijo que se desincronizó del real (decía "6
+// cuotas" aunque el plazo vigente cambiara). Ver
+// components/PropuestaValor.tsx, que los calcula con el financiamiento real.
 
 // Nota que acompaña siempre al precio: el espejo del catálogo se sincroniza
 // una vez al día, así que el precio final se confirma con el asesor.

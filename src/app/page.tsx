@@ -3,12 +3,10 @@ import { EnlaceConversion } from "@/components/EnlaceConversion";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
 import { ProductCard } from "@/components/ProductCard";
+import { itemsPropuestaValor } from "@/components/PropuestaValor";
 import {
-  IconoCamion,
   IconoCheck,
-  IconoEscudo,
   IconoFlecha,
-  IconoTarjeta,
   IconoUbicacion,
   IconoWhatsApp,
 } from "@/components/iconos";
@@ -149,28 +147,7 @@ function Hero({ config }: { config: ConfigFinanciamiento }) {
 
 function Ventajas({ config }: { config: ConfigFinanciamiento }) {
   const plazoMaximo = Math.max(...config.plazos);
-  const items = [
-    {
-      Icono: IconoTarjeta,
-      titulo: `Financiamiento ${FINANCIAMIENTO.banco}`,
-      texto: `Llevalo hasta en ${plazoMaximo} cuotas mensuales`,
-    },
-    {
-      Icono: IconoEscudo,
-      titulo: `Garantía ${GARANTIA_MESES} meses`,
-      texto: "Con factura y respaldo real",
-    },
-    {
-      Icono: IconoCamion,
-      titulo: "Entrega inmediata",
-      texto: "Delivery en Managua",
-    },
-    {
-      Icono: IconoWhatsApp,
-      titulo: "Atención personal",
-      texto: "Te asesoramos antes de comprar",
-    },
-  ];
+  const items = itemsPropuestaValor(plazoMaximo);
 
   return (
     <section className="border-b border-borde bg-superficie/40">
