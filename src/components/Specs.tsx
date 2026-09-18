@@ -43,12 +43,17 @@ export function etiquetaSpec(clave: string): string {
 export function TablaSpecs({
   specs,
   categorySlug,
+  omitirClaves,
 }: {
   specs: Specs;
   /** Ordena y etiqueta según la ficha de la categoría. Opcional. */
   categorySlug?: string;
+  /** Claves a no repetir — ya se mostraron en el resumen de beneficio, arriba. */
+  omitirClaves?: string[];
 }) {
-  const filas = filasDeSpecs(categorySlug, specs);
+  const filas = filasDeSpecs(categorySlug, specs).filter(
+    (f) => !omitirClaves?.includes(f.key),
+  );
   if (filas.length === 0) return null;
 
   return (
