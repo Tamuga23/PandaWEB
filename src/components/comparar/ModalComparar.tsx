@@ -93,7 +93,7 @@ export function ModalComparar() {
             type="button"
             onClick={cerrar}
             aria-label="Cerrar comparación"
-            className="grid h-9 w-9 place-items-center rounded-full text-suave transition hover:bg-superficie2 hover:text-texto"
+            className="grid h-11 w-11 place-items-center rounded-full text-suave transition hover:bg-superficie2 hover:text-texto"
           >
             ✕
           </button>
