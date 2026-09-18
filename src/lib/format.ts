@@ -39,13 +39,22 @@ export function youTubeId(url: string | undefined): string | null {
   return m ? m[1] : null;
 }
 
-/** Enlace de WhatsApp con el producto ya identificado en el mensaje. */
+/**
+ * Enlace de WhatsApp con el producto ya identificado en el mensaje.
+ *
+ * Si el producto está agotado (`disponible: false`), el mensaje no pregunta
+ * "¿Está disponible?" — la ficha ya le dijo que no lo está. Preguntarlo de
+ * todos modos contradice lo que la propia página acaba de mostrar.
+ */
 export function linkWhatsApp(
   numero: string,
-  producto?: { name: string; sku?: string },
+  producto?: { name: string; sku?: string; disponible?: boolean },
 ): string {
-  const texto = producto
-    ? `Hola 👋 Me interesa el ${producto.name}${producto.sku ? ` (SKU ${producto.sku})` : ""} que vi en la web. ¿Está disponible?`
-    : "Hola 👋 Vi su catálogo en la web y quiero más información.";
+  const skuTexto = producto?.sku ? ` (SKU ${producto.sku})` : "";
+  const texto = !producto
+    ? "Hola 👋 Vi su catálogo en la web y quiero más información."
+    : producto.disponible === false
+      ? `Hola 👋 Avísenme cuando llegue el ${producto.name}${skuTexto} que vi en la web.`
+      : `Hola 👋 Me interesa el ${producto.name}${skuTexto} que vi en la web. ¿Está disponible?`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
 }

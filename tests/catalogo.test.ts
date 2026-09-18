@@ -341,6 +341,19 @@ describe("enlaces", () => {
     assert.ok(link.includes("text="));
   });
 
+  it("no pregunta '¿Está disponible?' si el producto está agotado", () => {
+    const link = linkWhatsApp("50583725528", {
+      name: "Proyector HY310X",
+      sku: "PRY-1",
+      disponible: false,
+    });
+    const texto = decodeURIComponent(link.split("text=")[1]);
+    assert.ok(!texto.includes("¿Está disponible?"));
+    assert.ok(texto.includes("Avísenme cuando llegue"));
+    assert.ok(texto.includes("Proyector HY310X"));
+    assert.ok(texto.includes("PRY-1"));
+  });
+
   it("escapa caracteres especiales del nombre", () => {
     const link = linkWhatsApp("505", { name: "Proyector 4K & HDR" });
     assert.ok(!link.includes(" & "), "un & sin escapar rompe el mensaje");
