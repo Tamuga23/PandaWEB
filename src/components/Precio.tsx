@@ -80,6 +80,15 @@ export function PrecioFicha({
                   C${p.cuotaNio.toLocaleString("es-NI")}
                 </p>
                 <p className="text-xs text-tenue">al mes</p>
+                {/* El recargo ya está calculado (financiamiento.ts): mostrarlo
+                    es la diferencia entre que el cliente lo descubra acá o se
+                    lo tenga que explicar el asesor por WhatsApp. */}
+                {p.recargoPct > 0 && (
+                  <p className="mt-1 text-xs text-tenue">
+                    Total C${p.totalNio.toLocaleString("es-NI")} · +C$
+                    {p.sobrePrecioNio.toLocaleString("es-NI")} vs. contado
+                  </p>
+                )}
               </div>
             ))}
           </div>
