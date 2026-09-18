@@ -9,10 +9,11 @@ import { IconoCamion, IconoEscudo, IconoTarjeta, IconoWhatsApp } from "./iconos"
  * duplicado en dos archivos.
  *
  * `disponible` (default true, para la home donde no hay un producto puntual)
- * saca el ítem de financiamiento cuando el producto está agotado: prometer
- * cuotas de algo que no se puede comprar ahora mismo contradice el propio
- * CTA de "Avisarme cuando llegue" — mismo criterio que ya usa `PrecioFicha`
- * para ocultar su panel de cuotas.
+ * saca los ítems que prometen algo que un producto agotado no puede cumplir
+ * ahora mismo — financiamiento (cuotas de algo que no se puede comprar) y
+ * entrega inmediata (no hay nada que entregar) — porque ambos contradicen
+ * el propio CTA de "Avisarme cuando llegue". Mismo criterio que ya usa
+ * `PrecioFicha` para ocultar su panel de cuotas.
  */
 export function itemsPropuestaValor(plazoMaximo: number, disponible = true) {
   const items = [
@@ -41,7 +42,10 @@ export function itemsPropuestaValor(plazoMaximo: number, disponible = true) {
       texto: "Te asesoramos antes de comprar",
     },
   ];
-  return disponible ? items : items.filter((item) => item.id !== "financiamiento");
+  const idsSoloDisponible = ["financiamiento", "entrega"];
+  return disponible
+    ? items
+    : items.filter((item) => !idsSoloDisponible.includes(item.id));
 }
 
 /**
