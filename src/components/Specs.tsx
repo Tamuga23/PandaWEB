@@ -5,6 +5,23 @@ import {
   filasDeSpecs,
   formatearSpec,
 } from "@/lib/categorySpecs";
+import { IconoChevron } from "./iconos";
+
+/**
+ * Filas visibles de entrada, antes de tener que abrir "ver todas". Las
+ * categorías densas (proyector, smartwatch) pasan de 10 filas incluso
+ * después de sacar las que ya están en el resumen de beneficio — una tabla
+ * plana así es el tipo de carga cognitiva que un colapso resuelve gratis.
+ */
+export const UMBRAL_COLAPSO_SPECS = 6;
+
+/** Pura, para poder probar el punto de corte sin renderizar. */
+export function dividirFilasSpecs<T>(
+  filas: T[],
+  umbral: number = UMBRAL_COLAPSO_SPECS,
+): { visibles: T[]; resto: T[] } {
+  return { visibles: filas.slice(0, umbral), resto: filas.slice(umbral) };
+}
 
 // Las etiquetas, el orden y el formato de cada spec salen de `lib/categorySpecs.ts`,
 // el MISMO archivo que usa el POS para editarlas y PandaLink para mostrarlas. Así
@@ -56,14 +73,38 @@ export function TablaSpecs({
   );
   if (filas.length === 0) return null;
 
+  const { visibles, resto } = dividirFilasSpecs(filas);
+
   return (
-    <dl className="divide-y divide-borde overflow-hidden rounded-2xl border border-borde">
-      {filas.map((f) => (
-        <div key={f.key} className="grid grid-cols-2 gap-4 px-4 py-3 text-sm">
-          <dt className="text-suave">{f.label}</dt>
-          <dd className="font-medium text-texto">{f.valor}</dd>
-        </div>
-      ))}
-    </dl>
+    <div className="overflow-hidden rounded-2xl border border-borde">
+      <dl className="divide-y divide-borde">
+        {visibles.map((f) => (
+          <FilaSpec key={f.key} label={f.label} valor={f.valor} />
+        ))}
+      </dl>
+
+      {resto.length > 0 && (
+        <details className="group border-t border-borde">
+          <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium text-acento transition hover:bg-superficie2">
+            Ver las {filas.length} especificaciones completas
+            <IconoChevron className="h-4 w-4 transition group-open:rotate-180" />
+          </summary>
+          <dl className="divide-y divide-borde border-t border-borde">
+            {resto.map((f) => (
+              <FilaSpec key={f.key} label={f.label} valor={f.valor} />
+            ))}
+          </dl>
+        </details>
+      )}
+    </div>
+  );
+}
+
+function FilaSpec({ label, valor }: { label: string; valor: string }) {
+  return (
+    <div className="grid grid-cols-2 gap-4 px-4 py-3 text-sm">
+      <dt className="text-suave">{label}</dt>
+      <dd className="font-medium text-texto">{valor}</dd>
+    </div>
   );
 }

@@ -187,3 +187,21 @@ export function IconoImagen({ className = "h-5 w-5" }: Props) {
     </svg>
   );
 }
+
+/** Indicador de expandir/colapsar (tabla de specs, etc). Rota 180° al abrir. */
+export function IconoChevron({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
