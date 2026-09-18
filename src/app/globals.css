@@ -149,6 +149,21 @@ body:has(.barra-producto) .barra-comparar {
   }
 }
 
+/* El header mide dos filas en móvil (la fila de navegación secundaria se
+   oculta desde `sm`) y una sola en desktop. El toast de descarte del
+   comparador tiene que quedar debajo del header, no superpuesto — es la
+   única pieza pensada para evitar una pérdida de datos silenciosa, así que
+   perderla detrás del header sería repetir el mismo problema. */
+.toast-comparar {
+  top: 8rem;
+}
+
+@media (min-width: 640px) {
+  .toast-comparar {
+    top: 5rem;
+  }
+}
+
 /* Carruseles horizontales (categorías, miniaturas) sin barra visible. */
 .scrollbar-none {
   scrollbar-width: none;
