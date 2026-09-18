@@ -13,7 +13,16 @@ import { ProductImage } from "./ProductImage";
  * Las etiquetas de la galería ("A oscuras", "Con luz") vienen del POS y son
  * información de venta: se muestran sobre la foto.
  */
-export function Galeria({ media, nombre }: { media: Media; nombre: string }) {
+export function Galeria({
+  media,
+  nombre,
+  descuentoPct,
+}: {
+  media: Media;
+  nombre: string;
+  /** Porcentaje de descuento, si el producto tiene precio de lista. */
+  descuentoPct?: number | null;
+}) {
   const fotos = media.gallery ?? [];
   const videoId = youTubeId(media.videoUrl);
   const total = fotos.length + (videoId ? 1 : 0);
@@ -24,6 +33,16 @@ export function Galeria({ media, nombre }: { media: Media; nombre: string }) {
   return (
     <div>
       <div className="relative aspect-square overflow-hidden rounded-2xl border border-borde bg-superficie p-6">
+        {/* Mismo patrón que la tarjeta del catálogo (ProductCard): el badge
+            de oferta va sobre la imagen, no compitiendo con el precio en
+            texto — y así el cliente ve la misma señal en el mismo lugar en
+            ambas pantallas. Fuera del condicional de video para que siga
+            visible aunque esté viendo la diapositiva de YouTube. */}
+        {descuentoPct != null && (
+          <span className="absolute right-3 top-3 z-10 rounded-lg bg-marca px-2.5 py-1 text-micro font-black uppercase tracking-wider text-white shadow-md">
+            −{descuentoPct}% Oferta
+          </span>
+        )}
         {esVideo ? (
           <iframe
             src={`https://www.youtube.com/embed/${videoId}`}

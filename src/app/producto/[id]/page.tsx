@@ -26,6 +26,7 @@ import {
   cordobas,
   cordobasNumero,
   linkWhatsApp,
+  porcentajeDescuento,
 } from "@/lib/format";
 
 // Regenera la página cada 15 minutos con los datos frescos del espejo.
@@ -116,6 +117,7 @@ export default async function ProductoPage({
     : [];
   const beneficioMostrado = producto.beneficio ?? beneficioDesdeSpecs(filasSpecs);
   const filasParaTabla = filasSpecs.filter((f) => !clavesEnBeneficio.includes(f.key));
+  const descuentoPct = porcentajeDescuento(producto.precio.lista, producto.precio.actual);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 pb-28 lg:pb-8">
@@ -137,7 +139,11 @@ export default async function ProductoPage({
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-2">
-        <Galeria media={producto.media} nombre={producto.name} />
+        <Galeria
+          media={producto.media}
+          nombre={producto.name}
+          descuentoPct={descuentoPct}
+        />
 
         <div>
           <div className="flex flex-wrap items-center gap-2">
