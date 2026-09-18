@@ -7,6 +7,7 @@ import { Header } from "@/components/Header";
 import { BarraComparar } from "@/components/comparar/BarraComparar";
 import { CompararProvider } from "@/components/comparar/CompararProvider";
 import { ModalComparar } from "@/components/comparar/ModalComparar";
+import { ToastComparar } from "@/components/comparar/ToastComparar";
 import { SCRIPT_TEMA, TemaProvider } from "@/components/tema/TemaProvider";
 import { SITE } from "@/config/site";
 import "./globals.css";
@@ -88,6 +89,7 @@ export default function RootLayout({
             <Footer />
             <BarraComparar />
             <ModalComparar />
+            <ToastComparar />
           </CompararProvider>
         </TemaProvider>
       </body>
