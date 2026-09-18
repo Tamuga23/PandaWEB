@@ -24,7 +24,7 @@ export function ToastComparar() {
   return (
     <div
       role="status"
-      className="fixed inset-x-0 top-4 z-50 flex justify-center px-3"
+      className="toast-comparar fixed inset-x-0 z-50 flex justify-center px-3"
     >
       <div className="flex items-center gap-3 rounded-full border border-borde2 bg-superficie px-4 py-2.5 text-sm text-texto shadow-2xl">
         <span>
