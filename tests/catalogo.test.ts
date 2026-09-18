@@ -17,6 +17,7 @@ import {
   todosSinInteres,
 } from "../src/lib/financiamiento";
 import { proximaSeleccion } from "../src/components/comparar/CompararProvider";
+import { itemsPropuestaValor } from "../src/components/PropuestaValor";
 import {
   beneficioDesdeSpecs,
   cordobas,
@@ -404,5 +405,28 @@ describe("selección del comparador", () => {
     const { seleccion, descartado } = proximaSeleccion([p("a"), p("b"), p("c")], p("d"), 3);
     assert.deepEqual(seleccion.map((x) => x.id), ["b", "c", "d"]);
     assert.equal(descartado?.id, "a", "el descarte silencioso era justo el problema a evitar");
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("propuesta de valor", () => {
+  it("incluye financiamiento cuando el producto está disponible", () => {
+    const items = itemsPropuestaValor(6, true);
+    assert.ok(items.some((i) => i.id === "financiamiento"));
+    assert.equal(items.length, 4);
+  });
+
+  it("por defecto incluye financiamiento (uso general, sin producto puntual)", () => {
+    const items = itemsPropuestaValor(6);
+    assert.ok(items.some((i) => i.id === "financiamiento"));
+  });
+
+  it("saca el financiamiento cuando el producto está agotado", () => {
+    const items = itemsPropuestaValor(6, false);
+    assert.ok(
+      !items.some((i) => i.id === "financiamiento"),
+      "prometer cuotas de algo agotado contradice el CTA de avisar cuando llegue",
+    );
+    assert.equal(items.length, 3);
   });
 });

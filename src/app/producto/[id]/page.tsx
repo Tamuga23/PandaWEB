@@ -178,7 +178,10 @@ export default async function ProductoPage({
             <BotonComparar producto={producto} tasa={tasa} variante="completo" />
           </div>
 
-          <PropuestaValorCompacta plazoMaximo={plazoMaximo} />
+          <PropuestaValorCompacta
+            plazoMaximo={plazoMaximo}
+            disponible={producto.disponible}
+          />
 
           <p className="mt-4 text-xs leading-relaxed text-tenue">
             {NOTA_PRECIO} Incluye factura y garantía de {GARANTIA_MESES} meses.
