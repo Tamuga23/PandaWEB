@@ -23,16 +23,22 @@ export function BarraComparar() {
       <div className="mx-auto flex max-w-2xl items-center gap-3 rounded-2xl border border-borde2 bg-superficie p-3 shadow-2xl">
         <div className="flex gap-2">
           {seleccion.map((p) => (
-            <div
-              key={p.id}
-              className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-borde bg-fondo p-1"
-            >
-              <ProductImage src={p.media.heroImage} alt={p.name} sizes="48px" />
+            <div key={p.id} className="relative h-12 w-12 shrink-0">
+              <div className="h-full w-full overflow-hidden rounded-lg border border-borde bg-fondo p-1">
+                <ProductImage src={p.media.heroImage} alt={p.name} sizes="48px" />
+              </div>
+              {/* El glifo visual se queda chico (mismo círculo de 20px de
+                  siempre): lo que crece es el área de toque real, con un
+                  ::after invisible que la lleva a 44px — el mínimo táctil
+                  que pide PRODUCT.md, sin agrandar nada que se vea. Este
+                  botón vive fuera del contenedor con overflow-hidden de
+                  arriba a propósito, porque ese recorte también recortaría
+                  el área de toque expandida. */}
               <button
                 type="button"
                 onClick={() => quitar(p.id)}
                 aria-label={`Quitar ${p.name}`}
-                className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-superficie2 text-xs text-suave ring-1 ring-borde2 transition hover:text-texto"
+                className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-superficie2 text-xs text-suave ring-1 ring-borde2 transition after:absolute after:-inset-3 after:content-[''] hover:text-texto"
               >
                 ×
               </button>
