@@ -7,7 +7,7 @@ import { ProductImage } from "@/components/ProductImage";
 import { ORDEN_SPECS, etiquetaSpec, formatearValorSpec } from "@/components/Specs";
 import { IconoWhatsApp } from "@/components/iconos";
 import { CATEGORIAS, CONTACTO } from "@/config/site";
-import { planMasBajo, todosSinInteres } from "@/lib/financiamiento";
+import { planMasBajo } from "@/lib/financiamiento";
 import { cordobas, linkWhatsApp, porcentajeDescuento } from "@/lib/format";
 import type { Producto } from "@/lib/types";
 import { useComparar } from "./CompararProvider";
@@ -150,8 +150,13 @@ export function ModalComparar() {
                     <>
                       C${c.cuotaNio.toLocaleString("es-NI")}
                       <span className="text-tenue"> / {c.meses} meses</span>
-                      {todosSinInteres(p.planes) && (
+                      {c.sinInteres ? (
                         <span className="text-precio"> · 0%</span>
+                      ) : (
+                        <span className="text-tenue">
+                          {" "}
+                          · +C${c.sobrePrecioNio.toLocaleString("es-NI")}
+                        </span>
                       )}
                     </>
                   ) : (
