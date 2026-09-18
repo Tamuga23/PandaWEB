@@ -238,7 +238,15 @@ export default async function ProductoPage({
         <div className="mx-auto flex max-w-6xl items-center gap-3">
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs text-tenue">{producto.name}</p>
-            <p className="text-lg font-bold text-precio">
+            {/* Mismo criterio que PrecioFicha: en agotado, el precio no
+                puede llevar el mismo tratamiento que "esto se puede
+                comprar ahora" — esta barra sigue el pulgar todo el scroll
+                en móvil, así que la contradicción se ve todo el tiempo. */}
+            <p
+              className={`font-bold ${
+                producto.disponible ? "text-lg text-precio" : "text-sm text-tenue"
+              }`}
+            >
               {cordobas(producto.precio.actual, tasa)}
             </p>
           </div>
