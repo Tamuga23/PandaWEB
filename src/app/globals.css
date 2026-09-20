@@ -79,10 +79,24 @@
 
 /* ---------------------------------------------------------------------------
    Degradado de marca. Uno solo para todo: píldora activa, botones, badges.
+   Los tres tonos no cambian con el tema (a diferencia de --fondo, --acento,
+   etc. de arriba), así que viven en su propio :root en vez del bloque de
+   tema oscuro/claro.
 --------------------------------------------------------------------------- */
 
+:root {
+  --marca-inicio: #10b981;
+  --marca-medio: #06b6d4;
+  --marca-fin: #0284c7;
+}
+
 @utility bg-marca {
-  background-image: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #0284c7 100%);
+  background-image: linear-gradient(
+    135deg,
+    var(--marca-inicio) 0%,
+    var(--marca-medio) 50%,
+    var(--marca-fin) 100%
+  );
 }
 
 @utility bg-marca-hover {
@@ -90,11 +104,25 @@
 }
 
 @utility text-marca {
-  background-image: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #0284c7 100%);
+  background-image: linear-gradient(
+    135deg,
+    var(--marca-inicio) 0%,
+    var(--marca-medio) 50%,
+    var(--marca-fin) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+}
+
+/* Botón primario: la única forma de CTA fuerte del sitio. Antes se repetía
+   a mano en 10 archivos (rounded-full bg-marca ... hover:opacity-90) — el
+   padding y el layout (flex/inline-flex, ancho) siguen siendo propios de
+   cada uso porque varían de verdad; esto centraliza solo lo que era
+   idéntico en los 10. */
+@utility btn-primary {
+  @apply rounded-full bg-marca font-semibold text-white transition hover:opacity-90;
 }
 
 /* ---------------------------------------------------------------------------
@@ -136,7 +164,7 @@ body {
 }
 
 ::selection {
-  background: #06b6d4;
+  background: var(--marca-medio);
   color: #ffffff;
 }
 

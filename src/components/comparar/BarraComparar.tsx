@@ -69,7 +69,7 @@ export function BarraComparar() {
           type="button"
           onClick={abrir}
           disabled={faltaUno}
-          className="shrink-0 rounded-full bg-marca px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="btn-primary shrink-0 px-5 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-40"
         >
           Comparar
         </button>
