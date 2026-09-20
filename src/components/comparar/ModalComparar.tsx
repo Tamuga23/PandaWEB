@@ -157,17 +157,21 @@ export function ModalComparar() {
                       >
                         {p.name}
                       </Link>
-                      {/* Mismo patrón que el × de BarraComparar: el glifo se
-                          queda del mismo tamaño, el área de toque real crece
-                          a ~44px con un ::after invisible. `relative` es
-                          necesario acá porque el <th> es `sticky` (cuenta
-                          como posicionado) — sin eso, el ::after se
-                          posicionaría contra toda la columna, no contra el
-                          botón. */}
+                      {/* Mismo patrón que el × de BarraComparar (::after
+                          invisible con after:-inset-3), pero acá el glifo es
+                          texto sin caja fija: el py-1.5 es necesario para que
+                          la caja de contenido llegue a ~26px ANTES del
+                          ::after — sin padding, el -inset-3 solo agrega 24px
+                          a los ~14px de una línea de texto, y el área de
+                          toque real se queda corta de los 44px que dice
+                          replicar. `relative` es necesario porque el <th> es
+                          `sticky` (cuenta como posicionado) — sin eso, el
+                          ::after se posicionaría contra toda la columna, no
+                          contra el botón. */}
                       <button
                         type="button"
                         onClick={() => quitar(p.id)}
-                        className="relative mt-1 text-label font-medium text-tenue transition after:absolute after:-inset-3 after:content-[''] hover:text-texto"
+                        className="relative mt-1 py-1.5 text-label font-medium text-tenue transition after:absolute after:-inset-3 after:content-[''] hover:text-texto"
                       >
                         Quitar
                       </button>
