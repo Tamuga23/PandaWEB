@@ -330,7 +330,7 @@ function CtaWhatsApp({
   return (
     <EnlaceWhatsApp
       href={href}
-      className={`flex shrink-0 items-center justify-center gap-2 rounded-full bg-marca font-semibold text-white transition hover:opacity-90 ${
+      className={`btn-primary flex shrink-0 items-center justify-center gap-2 ${
         compacto ? "px-5 py-3 text-sm" : "w-full px-6 py-4 text-base"
       }`}
     >

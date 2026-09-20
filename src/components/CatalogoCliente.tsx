@@ -219,7 +219,7 @@ function SinResultados({ busqueda }: { busqueda: string }) {
       </p>
       <EnlaceWhatsApp
         href={linkWhatsApp(CONTACTO.whatsapp)}
-        className="mt-5 inline-flex items-center gap-2 rounded-full bg-marca px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+        className="btn-primary mt-5 inline-flex items-center gap-2 px-5 py-2.5 text-sm"
       >
         <IconoWhatsApp className="h-4 w-4" />
         Consultar por WhatsApp

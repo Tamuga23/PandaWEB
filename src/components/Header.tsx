@@ -42,7 +42,7 @@ export function Header() {
           <BotonTema />
           <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            className="flex items-center gap-2 rounded-full bg-marca px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+            className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm"
           >
             <IconoWhatsApp className="h-4 w-4" />
             <span>Escribinos</span>

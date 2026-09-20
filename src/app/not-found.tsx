@@ -17,7 +17,7 @@ export default function NotFound() {
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link
           href="/catalogo"
-          className="rounded-full bg-marca px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+          className="btn-primary px-5 py-3 text-sm"
         >
           Ver el catálogo
         </Link>

@@ -126,7 +126,7 @@ export function ModalComparar() {
             aria-label="Cerrar comparación"
             className="grid h-11 w-11 place-items-center rounded-full text-suave transition hover:bg-superficie2 hover:text-texto"
           >
-            ✕
+            ×
           </button>
         </header>
 
@@ -146,7 +146,7 @@ export function ModalComparar() {
                       <div className="relative mx-auto aspect-square w-full max-w-[8rem] overflow-hidden rounded-xl bg-fondo p-2">
                         <ProductImage src={p.media.heroImage} alt={p.name} sizes="140px" />
                         {desc != null && (
-                          <span className="absolute left-1 top-1 rounded-md bg-marca px-1.5 py-0.5 text-micro font-black text-white">
+                          <span className="absolute left-1 top-1 rounded-lg bg-marca px-1.5 py-0.5 text-micro font-black text-white">
                             −{desc}%
                           </span>
                         )}
@@ -264,7 +264,7 @@ export function ModalComparar() {
         <footer className="shrink-0 border-t border-borde p-4">
           <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-marca px-6 py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
+            className="btn-primary flex w-full items-center justify-center gap-2 px-6 py-3.5 text-sm"
           >
             <IconoWhatsApp className="h-5 w-5" />
             ¿Cuál me conviene? Preguntale a un asesor

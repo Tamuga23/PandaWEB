@@ -127,7 +127,7 @@ function Hero({ config }: { config: ConfigFinanciamiento }) {
         <div className="mt-9 flex flex-wrap justify-center gap-3">
           <Link
             href="/catalogo"
-            className="inline-flex items-center gap-2 rounded-full bg-marca px-6 py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
+            className="btn-primary inline-flex items-center gap-2 px-6 py-3.5 text-sm"
           >
             Ver catálogo
             <IconoFlecha className="h-4 w-4" />
@@ -280,7 +280,7 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
           </p>
           <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            className="mt-7 inline-flex items-center gap-2 rounded-full bg-marca px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            className="btn-primary mt-7 inline-flex items-center gap-2 px-5 py-3 text-sm"
           >
             <IconoWhatsApp className="h-4 w-4" />
             Consultar mi caso
@@ -350,7 +350,7 @@ function Ubicacion() {
             </EnlaceConversion>
             <EnlaceWhatsApp
               href={linkWhatsApp(CONTACTO.whatsapp)}
-              className="inline-flex items-center gap-2 rounded-full bg-marca px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+              className="btn-primary inline-flex items-center gap-2 px-5 py-3 text-sm"
             >
               <IconoWhatsApp className="h-4 w-4" />
               {CONTACTO.whatsappVisible}
