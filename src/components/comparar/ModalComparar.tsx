@@ -54,10 +54,18 @@ export function ModalComparar() {
       if (enfocables.length === 0) return;
       const primero = enfocables[0];
       const ultimo = enfocables[enfocables.length - 1];
-      if (e.shiftKey && document.activeElement === primero) {
-        e.preventDefault();
-        ultimo.focus();
-      } else if (!e.shiftKey && document.activeElement === ultimo) {
+      // El foco cae en el propio diálogo al abrir (para que el lector de
+      // pantalla anuncie "Comparación de productos" antes que el primer
+      // botón), y ese contenedor queda fuera de `enfocables` a propósito
+      // (tabIndex={-1}). Si la primera tecla que se presiona es Shift+Tab,
+      // hay que tratarlo igual que si ya estuviera en `primero` — si no, se
+      // escapa hacia lo que sea que esté antes del diálogo en el DOM.
+      if (e.shiftKey) {
+        if (document.activeElement === primero || document.activeElement === dialogo) {
+          e.preventDefault();
+          ultimo.focus();
+        }
+      } else if (document.activeElement === ultimo) {
         e.preventDefault();
         primero.focus();
       }

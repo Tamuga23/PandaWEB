@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { BarraComparar } from "@/components/comparar/BarraComparar";
 import { CompararProvider } from "@/components/comparar/CompararProvider";
+import { FondoDePagina } from "@/components/comparar/FondoDePagina";
 import { ModalComparar } from "@/components/comparar/ModalComparar";
 import { ToastComparar } from "@/components/comparar/ToastComparar";
 import { SCRIPT_TEMA, TemaProvider } from "@/components/tema/TemaProvider";
@@ -84,9 +85,11 @@ export default function RootLayout({
         <CapturaAtribucion />
         <TemaProvider>
           <CompararProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <FondoDePagina>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </FondoDePagina>
             <BarraComparar />
             <ModalComparar />
             <ToastComparar />
