@@ -126,10 +126,17 @@ export function ModalComparar() {
                       >
                         {p.name}
                       </Link>
+                      {/* Mismo patrón que el × de BarraComparar: el glifo se
+                          queda del mismo tamaño, el área de toque real crece
+                          a ~44px con un ::after invisible. `relative` es
+                          necesario acá porque el <th> es `sticky` (cuenta
+                          como posicionado) — sin eso, el ::after se
+                          posicionaría contra toda la columna, no contra el
+                          botón. */}
                       <button
                         type="button"
                         onClick={() => quitar(p.id)}
-                        className="mt-1 text-label font-medium text-tenue transition hover:text-texto"
+                        className="relative mt-1 text-label font-medium text-tenue transition after:absolute after:-inset-3 after:content-[''] hover:text-texto"
                       >
                         Quitar
                       </button>
