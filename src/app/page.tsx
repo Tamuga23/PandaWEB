@@ -249,7 +249,7 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
   const pasos = [
     "Elegís el producto que querés",
     "Nos escribís por WhatsApp",
-    `Te ayudamos con el trámite en ${FINANCIAMIENTO.banco}`,
+    `Venís a la tienda con tu tarjeta ${FINANCIAMIENTO.banco}`,
     "Te lo entregamos con factura y garantía",
   ];
 
@@ -276,7 +276,8 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
           <p className="mt-3 text-sm text-tenue">
             Aplica a productos desde US${minUsd}. Cada producto muestra su cuota
             exacta en la ficha; los que van a 0% llevan el sello.{" "}
-            Sujeto a aprobación de {FINANCIAMIENTO.banco}.
+            Necesitás tarjeta de crédito {FINANCIAMIENTO.banco} — se aplica
+            directo en el POS de la tienda, sin trámites.
           </p>
           <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}

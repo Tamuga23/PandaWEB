@@ -91,8 +91,8 @@ export function PrecioFicha({
           </div>
 
           <p className="mt-3 text-xs text-tenue">
-            Sin prima. Sujeto a aprobación de {FINANCIAMIENTO.banco}. El monto exacto de
-            las cuotas se confirma al momento del trámite.
+            Sin prima. Pagalo en cuotas con tu tarjeta de crédito{" "}
+            {FINANCIAMIENTO.banco}, directo en la tienda.
           </p>
         </div>
       )}
