@@ -37,7 +37,30 @@ export function ModalComparar() {
     dialogRef.current?.focus();
 
     const alPresionar = (e: KeyboardEvent) => {
-      if (e.key === "Escape") cerrar();
+      if (e.key === "Escape") {
+        cerrar();
+        return;
+      }
+      // Trap de foco: Tab en el último elemento vuelve al primero, y
+      // Shift+Tab en el primero va al último. Sin esto, aria-modal="true"
+      // le miente a la tecnología asistiva — Tab se escapa hacia contenido
+      // detrás del fondo que el diálogo dice estar bloqueando.
+      if (e.key !== "Tab") return;
+      const dialogo = dialogRef.current;
+      if (!dialogo) return;
+      const enfocables = dialogo.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (enfocables.length === 0) return;
+      const primero = enfocables[0];
+      const ultimo = enfocables[enfocables.length - 1];
+      if (e.shiftKey && document.activeElement === primero) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault();
+        primero.focus();
+      }
     };
     document.addEventListener("keydown", alPresionar);
     const overflowPrevio = document.body.style.overflow;
