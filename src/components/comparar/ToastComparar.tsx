@@ -31,11 +31,14 @@ export function ToastComparar() {
           Se quitó <span className="font-semibold">{descartado.name}</span> de la
           comparación — máximo 3 a la vez.
         </span>
+        {/* Mismo patrón de área táctil que el resto del comparador
+            (BarraComparar, ModalComparar): el glifo se queda chico, el
+            área de toque real crece a ~44px con un ::after invisible. */}
         <button
           type="button"
           onClick={descartarAviso}
           aria-label="Cerrar aviso"
-          className="shrink-0 text-tenue transition hover:text-texto"
+          className="relative shrink-0 text-tenue transition after:absolute after:-inset-3 after:content-[''] hover:text-texto"
         >
           ×
         </button>
