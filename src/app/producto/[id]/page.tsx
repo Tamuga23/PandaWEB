@@ -305,7 +305,7 @@ function Disponibilidad({ disponible }: { disponible: boolean }) {
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
         disponible
-          ? "bg-marca/10 text-precio"
+          ? "bg-precio/10 text-precio"
           : "bg-agotado/10 text-agotado"
       }`}
     >
