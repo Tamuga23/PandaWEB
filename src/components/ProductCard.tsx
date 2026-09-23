@@ -24,10 +24,19 @@ export function ProductCard({
   const descuento = porcentajeDescuento(producto.precio.lista, producto.precio.actual);
 
   return (
-    <Link
-      href={`/producto/${producto.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition hover:border-acento/50"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition hover:border-acento/50">
+      {/* Toda la tarjeta es clicable, pero un <button> (BotonComparar, más
+          abajo) no puede vivir adentro de un <a> — HTML no lo permite. Este
+          link "estirado" cubre la tarjeta entera por detrás (z-10, encima
+          de la imagen y el badge, que no tienen z-index propio);
+          BotonComparar se para más arriba todavía (z-20) para seguir
+          siendo su propio elemento clicable en vez de quedar tapado. */}
+      <Link
+        href={`/producto/${producto.id}`}
+        aria-label={`Ver ${producto.name}`}
+        className="absolute inset-0 z-10"
+      />
+
       <div className="relative aspect-square overflow-hidden bg-fondo/40 p-4">
         <ProductImage
           src={producto.media.heroImage}
@@ -70,6 +79,6 @@ export function ProductCard({
           <BotonComparar producto={producto} tasa={tasa} />
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

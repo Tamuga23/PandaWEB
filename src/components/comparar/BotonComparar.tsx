@@ -5,9 +5,6 @@ import { useComparar } from "./CompararProvider";
 
 /**
  * Botón de comparar. Sirve tanto en la tarjeta del catálogo como en la ficha.
- *
- * En la tarjeta va dentro de un <Link>, así que hay que frenar la propagación:
- * sin eso, tocar comparar navegaría al producto.
  */
 export function BotonComparar({
   producto,
@@ -20,12 +17,7 @@ export function BotonComparar({
 }) {
   const { alternar, estaSeleccionado } = useComparar();
   const activo = estaSeleccionado(producto.id);
-
-  const alHacerClic = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    alternar(producto, tasa);
-  };
+  const alHacerClic = () => alternar(producto, tasa);
 
   if (variante === "completo") {
     return (
@@ -52,7 +44,7 @@ export function BotonComparar({
       aria-pressed={activo}
       aria-label={activo ? `Quitar ${producto.name} de comparación` : `Comparar ${producto.name}`}
       title={activo ? "Quitar de comparación" : "Comparar"}
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition ${
+      className={`relative z-20 inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition ${
         activo
           ? "border-acento/40 bg-acento/15 text-acento"
           : "border-borde bg-superficie2 text-tenue hover:border-borde2 hover:text-texto"
