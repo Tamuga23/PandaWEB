@@ -47,7 +47,12 @@
 
   --texto: #fafafa;
   --suave: #a1a1aa; /* zinc-400 */
-  --tenue: #71717a; /* zinc-500 */
+  /* zinc-500 (#71717a) medía 3.67:1 contra bg-superficie y 4.12:1 contra
+     bg-fondo — falla AA (4.5:1) en los dos fondos donde de verdad aparece
+     (precio tachado, nota de financiamiento, SKU). Este tono a medida
+     mide ~4.9:1 y ~5.5:1 respectivamente: el mínimo más chico que sigue
+     leyéndose claramente más apagado que --suave. */
+  --tenue: #86868f;
 
   --acento: #22d3ee; /* cyan-400 — más legible sobre fondo oscuro */
   --precio: #34d399; /* emerald-400 */
@@ -67,7 +72,12 @@
 
   --texto: #0f172a; /* slate-900 */
   --suave: #64748b; /* slate-500 */
-  --tenue: #94a3b8; /* slate-400 */
+  /* slate-400 (#94a3b8) medía ~2.56:1 contra el fondo blanco — falla feo.
+     bg-fondo claro (#f8fafc) es tan brillante que el mínimo real que
+     alcanza 4.5:1 ahí es slate-500, el mismo tono que --suave: no hay
+     margen para un tercer nivel más claro y que siga pasando AA en este
+     tema. Mejor compartir el tono que fallar contraste. */
+  --tenue: #64748b; /* slate-500, igual que --suave — ver nota arriba */
 
   /* Los acentos se oscurecen en claro: el cyan-400 sobre blanco no cumple
      contraste suficiente para texto. */
