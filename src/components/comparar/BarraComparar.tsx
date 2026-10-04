@@ -62,8 +62,18 @@ export function BarraComparar() {
           )}
         </div>
 
-        {/* aria-live: al pasar de 1 a 2 productos se anuncia "2 de 3". */}
-        <p aria-live="polite" className="min-w-[7rem] flex-1 text-xs leading-snug text-suave">
+        {/* aria-live: al pasar de 1 a 2 productos se anuncia "2 de 3".
+            min-w más chico por debajo de 360px: a 320, con 3 productos, las
+            miniaturas (160) + gap (12) + 7rem (112) no entraban en los 270px
+            de ancho útil, el texto bajaba solo y los botones pasaban a una
+            tercera fila. Con 5.5rem (88) entra en la primera ("3 de 3 /
+            seleccionados" en dos renglones). Desde 360 queda en 7rem: con
+            5.5rem en todos los anchos, entre ~440 y ~520px la barra se
+            juntaba en una sola fila con el texto apretado en tres renglones. */}
+        <p
+          aria-live="polite"
+          className="min-w-[5.5rem] flex-1 text-xs leading-snug text-suave min-[360px]:min-w-[7rem]"
+        >
           {faltaUno
             ? "Elegí otro producto para comparar"
             : `${seleccion.length} de ${MAX_COMPARAR} seleccionados`}
