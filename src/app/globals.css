@@ -197,6 +197,37 @@ body:has(.barra-producto) .barra-comparar {
   }
 }
 
+/* Las barras fijas flotan sobre el final de la página. Sin reservar su alto
+   tapaban siempre el texto legal del footer (y con el comparador activo,
+   también la dirección), y al tabular el navegador dejaba el foco justo
+   debajo de ellas (WCAG 2.4.11). --reserva-barras es lo que ocupan desde el
+   borde inferior: el body lo suma como padding para que el final de la
+   página quede a la vista, y el html como scroll-padding para que el foco
+   nunca quede tapado. Se define en html porque es el contenedor de scroll. */
+html:has(.barra-comparar) {
+  --reserva-barras: 7rem; /* bottom-6 + barra de una fila (~74px) + aire */
+}
+
+@media (max-width: 1023.98px) {
+  html:has(.barra-producto) {
+    --reserva-barras: 4.5rem; /* barra de compra: ~69px */
+  }
+  html:has(.barra-comparar) {
+    --reserva-barras: 9rem; /* comparador en dos filas (~126px) + pb-3 */
+  }
+  html:has(.barra-producto):has(.barra-comparar) {
+    --reserva-barras: 14rem; /* comparador a 5.25rem del borde + ~126px + aire */
+  }
+}
+
+html {
+  scroll-padding-bottom: var(--reserva-barras, 0);
+}
+
+body {
+  padding-bottom: var(--reserva-barras, 0);
+}
+
 /* El header mide dos filas en móvil (la fila de navegación secundaria se
    oculta desde `sm`) y una sola en desktop. El toast de descarte del
    comparador tiene que quedar debajo del header, no superpuesto — es la

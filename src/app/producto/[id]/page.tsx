@@ -120,7 +120,10 @@ export default async function ProductoPage({
   const descuentoPct = porcentajeDescuento(producto.precio.lista, producto.precio.actual);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 pb-28 lg:pb-8">
+    // El espacio para la barra fija de compra lo reserva el body
+    // (globals.css, --reserva-barras): acá dejaba el hueco antes del footer
+    // y la barra seguía tapando el final de la página.
+    <div className="mx-auto max-w-6xl px-4 py-8">
       <nav className="mb-6 flex items-center gap-1.5 text-sm text-tenue">
         <Link href="/catalogo" className="transition hover:text-acento">
           Catálogo
