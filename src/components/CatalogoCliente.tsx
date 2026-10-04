@@ -1,7 +1,8 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { CATEGORIAS, CONTACTO } from "@/config/site";
 import { linkWhatsApp } from "@/lib/format";
 import type { Producto } from "@/lib/types";
@@ -42,6 +43,8 @@ export function CatalogoCliente({
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState<string | null>(categoriaInicial ?? null);
   const [orden, setOrden] = useState<Orden>("relevancia");
+  const refBusqueda = useRef<HTMLInputElement>(null);
+  const refConteo = useRef<HTMLParagraphElement>(null);
 
   // El estado sigue siendo la fuente de verdad del render; la URL es un
   // espejo para que la vista filtrada se pueda compartir, guardar en
@@ -115,6 +118,22 @@ export function CatalogoCliente({
 
   const total = disponibles.length + agotados.length;
 
+  // El botón del estado vacío desaparece apenas hay resultados y el foco
+  // caería a <body>: un lector de pantalla puede perder el lugar. flushSync
+  // aplica el cambio antes de mover el foco, para que lo que se lea ya sea
+  // lo nuevo y no "Ningún producto coincide" ni la búsqueda vieja.
+  const verTodo = () => {
+    flushSync(() => setCategoria(null));
+    // Si lo buscado no está en ningún lado, el mismo botón sigue ahí (ahora
+    // dice "Borrar búsqueda") con el foco puesto: no hay que moverlo.
+    if (document.activeElement === document.body) refConteo.current?.focus();
+  };
+  // Al borrar, el foco va al buscador: queda listo para escribir otra cosa.
+  const borrarBusqueda = () => {
+    flushSync(() => setBusqueda(""));
+    refBusqueda.current?.focus();
+  };
+
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -122,6 +141,7 @@ export function CatalogoCliente({
           <div className="relative flex-1">
             <IconoBuscar className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-tenue" />
             <input
+              ref={refBusqueda}
               type="search"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
@@ -167,8 +187,16 @@ export function CatalogoCliente({
       </div>
 
       {/* role="status": quien usa lector de pantalla se entera de cuántos
-          resultados quedan al buscar o filtrar. */}
-      <p className="mt-6 text-sm text-tenue" role="status">
+          resultados quedan al buscar o filtrar. tabIndex={-1}: es adonde
+          vuelve el foco después de "Buscar en todo el catálogo" o "Ver todo
+          el catálogo" (ver verTodo); w-fit para que el anillo de foco abrace
+          el texto y no todo el ancho. */}
+      <p
+        ref={refConteo}
+        tabIndex={-1}
+        className="mt-6 w-fit text-sm text-tenue"
+        role="status"
+      >
         {total === 0
           ? "Ningún producto coincide"
           : `${total} ${total === 1 ? "producto" : "productos"}`}
@@ -178,8 +206,8 @@ export function CatalogoCliente({
         <SinResultados
           busqueda={busqueda.trim()}
           categoria={categoria ? (NOMBRE_CATEGORIA[categoria] ?? categoria) : null}
-          onVerTodo={() => setCategoria(null)}
-          onBorrarBusqueda={() => setBusqueda("")}
+          onVerTodo={verTodo}
+          onBorrarBusqueda={borrarBusqueda}
         />
       ) : (
         <>
