@@ -30,11 +30,14 @@ export function ProductCard({
           link "estirado" cubre la tarjeta entera por detrás (z-10, encima
           de la imagen y el badge, que no tienen z-index propio);
           BotonComparar se para más arriba todavía (z-20) para seguir
-          siendo su propio elemento clicable en vez de quedar tapado. */}
+          siendo su propio elemento clicable en vez de quedar tapado.
+          El outline de foco global cae afuera del link y el overflow-hidden
+          de la tarjeta lo recortaba entero: sin el ring inset, una tarjeta
+          enfocada con teclado se veía igual a las demás. */}
       <Link
         href={`/producto/${producto.id}`}
         aria-label={`Ver ${producto.name}`}
-        className="absolute inset-0 z-10"
+        className="absolute inset-0 z-10 rounded-2xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-acento"
       />
 
       <div className="relative aspect-square overflow-hidden bg-fondo/40 p-4">
