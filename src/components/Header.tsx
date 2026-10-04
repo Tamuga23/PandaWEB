@@ -12,7 +12,7 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2"
+          className="flex shrink-0 items-center gap-2 py-1"
           aria-label={`${SITE.nombre} — inicio`}
         >
           {/* El ícono ya trae sus esquinas redondeadas y el borde degradado
@@ -32,7 +32,7 @@ export function Header() {
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-1 sm:flex">
+        <nav aria-label="Principal" className="ml-auto hidden items-center gap-1 sm:flex">
           <NavLink href="/catalogo">Catálogo</NavLink>
           <NavLink href="/#financiamiento">Financiamiento</NavLink>
           <NavLink href="/#ubicacion">Dónde estamos</NavLink>
@@ -42,16 +42,19 @@ export function Header() {
           <BotonTema />
           <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm"
+            className="btn-primary relative flex items-center gap-2 px-4 py-2.5 text-sm after:absolute after:inset-x-0 after:-inset-y-0.5 after:content-['']"
           >
             <IconoWhatsApp className="h-4 w-4" />
-            <span>Escribinos</span>
+            {/* Debajo de 360px (iPhone SE de 1.ª gen., Android chicos) el texto no
+                entra junto al logo y desbordaba 25px el header: queda solo el
+                ícono, y "Escribinos" sigue siendo el nombre accesible. */}
+            <span className="max-[359px]:sr-only">Escribinos</span>
           </EnlaceWhatsApp>
         </div>
       </div>
 
       {/* En móvil la navegación no cabe arriba: va en una fila propia. */}
-      <nav className="flex gap-1 overflow-x-auto border-t border-borde/70 px-4 py-2 scrollbar-none sm:hidden">
+      <nav aria-label="Principal" className="flex gap-1 overflow-x-auto border-t border-borde/70 px-4 py-2 scrollbar-none sm:hidden">
         <NavLink href="/catalogo">Catálogo</NavLink>
         <NavLink href="/#financiamiento">Financiamiento</NavLink>
         <NavLink href="/#ubicacion">Dónde estamos</NavLink>
@@ -64,7 +67,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="shrink-0 rounded-lg px-3 py-2 text-sm font-medium text-suave transition hover:bg-superficie2 hover:text-texto"
+      className="relative shrink-0 rounded-full px-3 py-2 text-sm font-medium text-suave transition after:absolute after:inset-x-0 after:-inset-y-1 after:content-[''] hover:bg-superficie2 hover:text-texto"
     >
       {children}
     </Link>

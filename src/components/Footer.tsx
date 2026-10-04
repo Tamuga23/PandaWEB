@@ -40,7 +40,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   aria-label={`${SITE.nombre} en ${red.nombre}`}
                   title={red.nombre}
-                  className="grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition hover:bg-marca hover:text-white"
+                  className="relative grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition after:absolute after:-inset-1 after:content-[''] hover:bg-marca hover:text-white"
                 >
                   <Icono className="h-4 w-4" />
                 </a>
@@ -50,7 +50,7 @@ export function Footer() {
               href={linkWhatsApp(CONTACTO.whatsapp)}
               aria-label={`Escribir a ${SITE.nombre} por WhatsApp`}
               title="WhatsApp"
-              className="grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition hover:bg-marca hover:text-white"
+              className="relative grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition after:absolute after:-inset-1 after:content-[''] hover:bg-marca hover:text-white"
             >
               <IconoWhatsApp className="h-4 w-4" />
             </EnlaceWhatsApp>
@@ -58,7 +58,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-texto">Categorías</h3>
+          <h2 className="text-sm font-semibold text-texto">Categorías</h2>
           <ul className="mt-3 space-y-2">
             {CATEGORIAS.map((c) => (
               <li key={c.slug}>
@@ -74,7 +74,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-texto">Contacto</h3>
+          <h2 className="text-sm font-semibold text-texto">Contacto</h2>
           <ul className="mt-3 space-y-3 text-sm text-suave">
             <li>
               <EnlaceWhatsApp
@@ -106,7 +106,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="text-sm font-semibold text-texto">Dónde estamos</h3>
+          <h2 className="text-sm font-semibold text-texto">Dónde estamos</h2>
           <a
             href={CONTACTO.mapsUrl}
             target="_blank"

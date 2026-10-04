@@ -121,7 +121,7 @@ export default async function ProductoPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 pb-28 lg:pb-8">
-      <nav className="mb-6 flex items-center gap-1.5 text-sm text-tenue">
+      <nav aria-label="Ruta de navegación" className="mb-6 flex items-center gap-1.5 text-sm text-tenue">
         <Link href="/catalogo" className="transition hover:text-acento">
           Catálogo
         </Link>
