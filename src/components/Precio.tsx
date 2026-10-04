@@ -80,10 +80,18 @@ export function PrecioFicha({
                 {/* El recargo ya está calculado (financiamiento.ts): mostrarlo
                     es la diferencia entre que el cliente lo descubra acá o se
                     lo tenga que explicar el asesor por WhatsApp. */}
+                {/* Dos renglones fijos: en una sola línea, cada casilla de
+                    móvil (~141px) la partía distinto ("·" colgando,
+                    "contado" huérfano) y las dos casillas se veían
+                    desparejas. */}
                 {p.recargoPct > 0 && (
                   <p className="mt-1 text-xs text-tenue">
-                    Total C${p.totalNio.toLocaleString("es-NI")} · +C$
-                    {p.sobrePrecioNio.toLocaleString("es-NI")} vs. contado
+                    <span className="block">
+                      Total C${p.totalNio.toLocaleString("es-NI")}
+                    </span>
+                    <span className="block">
+                      +C${p.sobrePrecioNio.toLocaleString("es-NI")} vs. contado
+                    </span>
                   </p>
                 )}
               </div>

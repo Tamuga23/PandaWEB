@@ -63,7 +63,7 @@ export function PropuestaValorCompacta({
   const items = itemsPropuestaValor(plazoMaximo, disponible);
 
   return (
-    <div className="mt-5 grid grid-cols-2 gap-2">
+    <div className="mt-5 grid auto-rows-fr grid-cols-2 gap-2">
       {items.map(({ Icono, titulo }) => (
         <div
           key={titulo}
