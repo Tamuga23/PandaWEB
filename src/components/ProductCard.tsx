@@ -74,7 +74,10 @@ export function ProductCard({
           </p>
         )}
 
-        <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+        {/* Precio arriba, Comparar abajo. En la misma fila, el botón (103px
+            con su etiqueta visible) le dejaba al precio ~11px en móvil: la
+            cuota se partía palabra por palabra y quedaba tapada por el botón. */}
+        <div className="mt-auto flex flex-col items-start gap-2 pt-3">
           <PrecioTarjeta producto={producto} tasa={tasa} />
           <BotonComparar producto={producto} tasa={tasa} />
         </div>
