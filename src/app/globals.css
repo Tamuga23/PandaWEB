@@ -242,3 +242,19 @@ summary::-webkit-details-marker {
     align-self: start;
   }
 }
+
+/* Con algo en el comparador, su barra (fixed, bottom-6, con su envoltorio
+   transparente) ocupa en todo el ancho la franja de vh−110 a vh−24. Con la
+   columna en su ancho máximo, la galería fija deja las miniaturas siempre
+   en y=640–704 (708 con el anillo de foco): con menos de 820px de alto la
+   barra les tapa el borde de abajo, y por debajo de ~780px también el
+   centro, así que se queda con el clic mientras se lee la columna derecha.
+   Ahí la galería vuelve a desplazarse con la página, como antes: las
+   miniaturas salen de debajo de la barra apenas se baja un poco. No alcanza
+   con pointer-events-none en el envoltorio: la tarjeta visible de la barra
+   (max-w-2xl, centrada) igual tapa la miniatura del video. */
+@media (min-width: 1024px) and (max-height: 819px) {
+  body:has(.barra-comparar) .galeria-ficha {
+    position: static;
+  }
+}
