@@ -30,7 +30,8 @@ export function BarraComparar() {
       {/* flex-wrap: en móvil miniaturas + texto + Limpiar + Comparar no
           entran en una fila (con 3 productos Comparar se salía de la pantalla
           y el texto quedaba en 0px de ancho, encimado sobre Limpiar). Los
-          botones bajan juntos a una segunda fila; desde ~640px es una sola. */}
+          botones bajan juntos a una segunda fila; desde ~470px (1-2
+          productos) o ~525px (3) es una sola. */}
       <div className="mx-auto flex max-w-2xl flex-wrap items-center gap-3 rounded-2xl border border-borde2 bg-superficie p-3 shadow-2xl">
         <div className="flex gap-2">
           {seleccion.map((p) => (
@@ -68,8 +69,9 @@ export function BarraComparar() {
             de ancho útil, el texto bajaba solo y los botones pasaban a una
             tercera fila. Con 5.5rem (88) entra en la primera ("3 de 3 /
             seleccionados" en dos renglones). Desde 360 queda en 7rem: con
-            5.5rem en todos los anchos, entre ~440 y ~520px la barra se
-            juntaba en una sola fila con el texto apretado en tres renglones. */}
+            5.5rem en todos los anchos, con 1 producto, entre ~444 y ~465px
+            la barra se juntaba en una sola fila con el texto apretado en
+            tres renglones. */}
         <p
           aria-live="polite"
           className="min-w-[5.5rem] flex-1 text-xs leading-snug text-suave min-[360px]:min-w-[7rem]"
