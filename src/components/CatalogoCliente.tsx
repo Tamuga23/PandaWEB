@@ -190,11 +190,14 @@ export function CatalogoCliente({
           resultados quedan al buscar o filtrar. tabIndex={-1}: es adonde
           vuelve el foco después de "Buscar en todo el catálogo" o "Ver todo
           el catálogo" (ver verTodo); w-fit para que el anillo de foco abrace
-          el texto y no todo el ancho. */}
+          el texto y no todo el ancho. scroll-mt-36: en el celular el conteo
+          puede quedar detrás del header sticky (118px de alto) y focus() no
+          lo mueve porque cree que ya se ve; con el margen lo baja hasta
+          dejarlo debajo del header, con el anillo a la vista. */}
       <p
         ref={refConteo}
         tabIndex={-1}
-        className="mt-6 w-fit text-sm text-tenue"
+        className="mt-6 w-fit scroll-mt-36 text-sm text-tenue"
         role="status"
       >
         {total === 0
