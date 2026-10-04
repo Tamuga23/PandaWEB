@@ -228,3 +228,17 @@ body:has(.barra-producto) .barra-comparar {
 summary::-webkit-details-marker {
   display: none;
 }
+
+/* En escritorio la columna derecha de la ficha (cuotas, "Por qué te sirve",
+   descripción, specs) es mucho más larga que la galería: debajo de las
+   miniaturas quedaba más de una pantalla de columna vacía. La galería se
+   queda fija mientras se lee, solo si entra entera en la pantalla: el
+   bloque mide ~620px y el header 64px, así que en una laptop de 768px de
+   alto no se activa (cortaría las miniaturas) y queda como antes. */
+@media (min-width: 1024px) and (min-height: 740px) {
+  .galeria-ficha {
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+  }
+}

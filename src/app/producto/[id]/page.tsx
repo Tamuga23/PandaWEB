@@ -139,11 +139,13 @@ export default async function ProductoPage({
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-2">
-        <Galeria
-          media={producto.media}
-          nombre={producto.name}
-          descuentoPct={descuentoPct}
-        />
+        <div className="galeria-ficha">
+          <Galeria
+            media={producto.media}
+            nombre={producto.name}
+            descuentoPct={descuentoPct}
+          />
+        </div>
 
         <div>
           <div className="flex flex-wrap items-center gap-2">
