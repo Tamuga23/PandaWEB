@@ -220,11 +220,11 @@ html:has(.barra-comparar, .modal-comparar) {
     --reserva-barras: 5rem; /* barra de compra (~69px) + aire */
   }
   html:has(.barra-comparar, .modal-comparar) {
-    --reserva-barras: 9rem; /* comparador en dos filas (~126px) + pb-3 */
+    --reserva-barras: 9rem; /* comparador en móvil (~92px; ~109px con un solo producto) + pb-3 + aire */
   }
-  /* Tiene que ir última: las tres reglas pesan lo mismo y gana la de abajo. */
+  /* Con las dos barras gana esta: sus dos :has() pesan más que las otras reglas, así que no depende del orden. */
   html:has(.barra-producto):has(.barra-comparar, .modal-comparar) {
-    --reserva-barras: 14rem; /* comparador a 5.25rem del borde + ~126px + aire */
+    --reserva-barras: 14rem; /* comparador a 5.25rem del borde + pb-3 + ~92px (~109px con un solo producto) + aire */
   }
 }
 
