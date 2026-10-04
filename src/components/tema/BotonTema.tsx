@@ -5,13 +5,16 @@ import { useTema } from "./TemaProvider";
 export function BotonTema() {
   const { tema, alternar, listo } = useTema();
 
+  // Área táctil de 44px sin agrandar el botón: el ::after absoluto se mide
+  // desde el padding box, y el borde de 1px le resta 2px a los 40 de la caja
+  // (quedan 38). Por eso -3px y no -2px: 38 + 2×3 = 44.
   return (
     <button
       type="button"
       onClick={alternar}
       aria-label={tema === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
       title={tema === "dark" ? "Tema claro" : "Tema oscuro"}
-      className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl after:absolute after:-inset-0.5 after:content-[''] border border-borde bg-superficie text-suave transition hover:border-borde2 hover:text-texto"
+      className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl after:absolute after:-inset-[3px] after:content-[''] border border-borde bg-superficie text-suave transition hover:border-borde2 hover:text-texto"
     >
       {/* Hasta hidratar no sabemos el tema real: reservamos el espacio con un
           ícono invisible para que el encabezado no salte. */}

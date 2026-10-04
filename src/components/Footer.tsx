@@ -29,6 +29,11 @@ export function Footer() {
             entrega inmediata.
           </p>
 
+          {/* Áreas táctiles de 44px sin agrandar los íconos: el ::after absoluto
+              se mide desde el padding box, y el borde de 1px le resta 2px a los
+              36 de la caja (quedan 34). Por eso -5px y no -4px: 34 + 2×5 = 44.
+              Con el gap-2 (8px) las zonas de dos íconos vecinos se tocan justo,
+              sin pisarse. */}
           <div className="mt-4 flex gap-2">
             {REDES.map((red) => {
               const Icono = ICONOS_RED[red.icono];
@@ -40,7 +45,7 @@ export function Footer() {
                   rel="noopener noreferrer"
                   aria-label={`${SITE.nombre} en ${red.nombre}`}
                   title={red.nombre}
-                  className="relative grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition after:absolute after:-inset-1 after:content-[''] hover:bg-marca hover:text-white"
+                  className="relative grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition after:absolute after:-inset-[5px] after:content-[''] hover:bg-marca hover:text-white"
                 >
                   <Icono className="h-4 w-4" />
                 </a>
@@ -50,7 +55,7 @@ export function Footer() {
               href={linkWhatsApp(CONTACTO.whatsapp)}
               aria-label={`Escribir a ${SITE.nombre} por WhatsApp`}
               title="WhatsApp"
-              className="relative grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition after:absolute after:-inset-1 after:content-[''] hover:bg-marca hover:text-white"
+              className="relative grid h-9 w-9 place-items-center rounded-xl border border-borde bg-superficie text-suave transition after:absolute after:-inset-[5px] after:content-[''] hover:bg-marca hover:text-white"
             >
               <IconoWhatsApp className="h-4 w-4" />
             </EnlaceWhatsApp>

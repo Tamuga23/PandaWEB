@@ -42,12 +42,15 @@ export function Header() {
           <BotonTema />
           <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
-            className="btn-primary relative flex items-center gap-2 px-4 py-2.5 text-sm after:absolute after:inset-x-0 after:-inset-y-0.5 after:content-['']"
+            className="btn-primary relative flex items-center gap-2 px-4 py-2.5 text-sm after:absolute after:inset-x-0 after:-inset-y-0.5 after:content-[''] max-[359px]:py-3"
           >
             <IconoWhatsApp className="h-4 w-4" />
-            {/* Debajo de 360px (iPhone SE de 1.ª gen., Android chicos) el texto no
-                entra junto al logo y desbordaba 25px el header: queda solo el
-                ícono, y "Escribinos" sigue siendo el nombre accesible. */}
+            {/* Con menos de 359px (iPhone SE de 1.ª gen., Android chicos) el texto
+                no entra junto al logo y desbordaba 25px el header: queda solo el
+                ícono, y "Escribinos" sigue siendo el nombre accesible. Sin el
+                texto, el alto sale del ícono de 16px y no de la línea de 20px:
+                por eso py-3 ahí, para que la caja siga en 40px (pareja con el
+                botón de tema) y el ::after llegue a 44. */}
             <span className="max-[359px]:sr-only">Escribinos</span>
           </EnlaceWhatsApp>
         </div>
