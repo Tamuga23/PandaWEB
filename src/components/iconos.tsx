@@ -45,6 +45,23 @@ export function IconoCheck({ className = "h-5 w-5" }: Props) {
   );
 }
 
+/** Cerrar / quitar. Reemplaza al carácter ×, cuyo grosor dependía de la fuente. */
+export function IconoCerrar({ className = "h-5 w-5" }: Props) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
 export function IconoFlecha({ className = "h-5 w-5" }: Props) {
   return (
     <svg

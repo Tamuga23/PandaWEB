@@ -2,6 +2,7 @@
 
 import { ProductImage } from "@/components/ProductImage";
 import { MAX_COMPARAR, useComparar } from "./CompararProvider";
+import { IconoCerrar } from "@/components/iconos";
 import { IconoComparar } from "./BotonComparar";
 
 /**
@@ -19,8 +20,18 @@ export function BarraComparar() {
   const faltaUno = seleccion.length < 2;
 
   return (
-    <div className="barra-comparar fixed inset-x-0 bottom-0 z-40 px-3 pb-3 lg:bottom-6 lg:px-0">
-      <div className="mx-auto flex max-w-2xl items-center gap-3 rounded-2xl border border-borde2 bg-superficie p-3 shadow-2xl">
+    // role="region": se puede saltar a la barra por landmarks; está al final
+    // del DOM (después del footer) aunque se vea fija abajo.
+    <div
+      role="region"
+      aria-label="Comparador"
+      className="barra-comparar fixed inset-x-0 bottom-0 z-40 px-3 pb-3 lg:bottom-6 lg:px-0"
+    >
+      {/* flex-wrap: en móvil miniaturas + texto + Limpiar + Comparar no
+          entran en una fila (con 3 productos Comparar se salía de la pantalla
+          y el texto quedaba en 0px de ancho, encimado sobre Limpiar). Los
+          botones bajan juntos a una segunda fila; desde ~640px es una sola. */}
+      <div className="mx-auto flex max-w-2xl flex-wrap items-center gap-3 rounded-2xl border border-borde2 bg-superficie p-3 shadow-2xl">
         <div className="flex gap-2">
           {seleccion.map((p) => (
             <div key={p.id} className="relative h-12 w-12 shrink-0">
@@ -38,9 +49,9 @@ export function BarraComparar() {
                 type="button"
                 onClick={() => quitar(p.id)}
                 aria-label={`Quitar ${p.name}`}
-                className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-superficie2 text-xs text-suave ring-1 ring-borde2 transition after:absolute after:-inset-3 after:content-[''] hover:text-texto"
+                className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-superficie2 text-suave ring-1 ring-borde2 transition after:absolute after:-inset-3 after:content-[''] hover:text-texto"
               >
-                ×
+                <IconoCerrar className="h-3 w-3" />
               </button>
             </div>
           ))}
@@ -51,7 +62,8 @@ export function BarraComparar() {
           )}
         </div>
 
-        <p className="min-w-0 flex-1 text-xs leading-snug text-suave">
+        {/* aria-live: al pasar de 1 a 2 productos se anuncia "2 de 3". */}
+        <p aria-live="polite" className="min-w-[7rem] flex-1 text-xs leading-snug text-suave">
           {faltaUno
             ? "Elegí otro producto para comparar"
             : `${seleccion.length} de ${MAX_COMPARAR} seleccionados`}
@@ -62,22 +74,24 @@ export function BarraComparar() {
             -3 completo de cada lado se hubiera solapado con el vecino
             (Limpiar es destructivo, Comparar no; una zona de toque
             ambigua entre ambos sería peor que el problema que arregla). */}
-        <button
-          type="button"
-          onClick={limpiar}
-          className="relative shrink-0 rounded-lg px-2 py-2 text-xs font-medium text-tenue transition after:absolute after:-inset-1.5 after:content-[''] hover:text-texto"
-        >
-          Limpiar
-        </button>
+        <div className="ml-auto flex shrink-0 items-center gap-3">
+          <button
+            type="button"
+            onClick={limpiar}
+            className="relative shrink-0 rounded-lg px-2 py-2 text-xs font-medium text-tenue transition after:absolute after:-inset-1.5 after:content-[''] hover:text-texto"
+          >
+            Limpiar
+          </button>
 
-        <button
-          type="button"
-          onClick={abrir}
-          disabled={faltaUno}
-          className="btn-primary relative shrink-0 px-5 py-2.5 text-sm after:absolute after:-inset-1.5 after:content-[''] disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          Comparar
-        </button>
+          <button
+            type="button"
+            onClick={abrir}
+            disabled={faltaUno}
+            className="btn-primary relative shrink-0 px-5 py-2.5 text-sm after:absolute after:-inset-1.5 after:content-[''] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Comparar
+          </button>
+        </div>
       </div>
     </div>
   );
