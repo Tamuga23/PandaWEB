@@ -104,11 +104,13 @@ export function ModalComparar() {
     return valores.every((v) => v === valores[0]);
   };
 
+  // `modal-comparar` no tiene estilos propios: globals.css lo usa para
+  // mantener la reserva de las barras fijas mientras el modal está abierto.
   return (
     <div
       ref={dialogRef}
       tabIndex={-1}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm outline-none sm:items-center sm:p-4"
+      className="modal-comparar fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm outline-none sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-label="Comparación de productos"
