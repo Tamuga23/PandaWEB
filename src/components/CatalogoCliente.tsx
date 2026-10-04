@@ -165,7 +165,10 @@ export function CatalogoCliente({
               <h2 className="mb-4 text-sm font-semibold text-tenue">
                 Agotados ({agotados.length})
               </h2>
-              <div className="grid grid-cols-2 gap-4 opacity-70 lg:grid-cols-3 xl:grid-cols-4">
+              {/* Sin opacity en la grilla: atenuaba también el texto, y el
+                  precio del agotado (ya en text-tenue) quedaba en ~2.4:1 de
+                  contraste. La tarjeta atenúa solo la foto (ProductCard). */}
+              <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
                 {agotados.map((p) => (
                   <ProductCard key={p.id} producto={p} tasa={tasa} />
                 ))}

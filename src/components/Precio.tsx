@@ -119,8 +119,10 @@ export function PrecioTarjeta({
   return (
     // En móvil la tarjeta mide ~124px por dentro: la cuota con el sello 0%
     // ocupa dos renglones y sin él uno. El alto mínimo reserva siempre los
-    // dos, así los precios de una misma fila quedan a la misma altura.
-    <div className={disponible ? "max-sm:min-h-[3.875rem]" : undefined}>
+    // dos, así los precios de una misma fila quedan a la misma altura. Vale
+    // también para los agotados (no muestran cuota): en "También te puede
+    // servir" comparten fila con los disponibles.
+    <div className="max-sm:min-h-[3.875rem]">
       <div className="flex flex-wrap items-baseline gap-x-2">
         <span className={`text-lg font-bold ${disponible ? "text-precio" : "text-tenue"}`}>
           {cordobas(actual, tasa)}

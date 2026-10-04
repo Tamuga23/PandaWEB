@@ -41,12 +41,15 @@ export function ProductCard({
       />
 
       <div className="relative aspect-square overflow-hidden bg-fondo/40 p-4">
+        {/* Un agotado se atenúa solo en la foto, no en toda la tarjeta: el
+            texto (el precio en text-tenue incluido) necesita su contraste
+            entero, y la pastilla "Agotado" vive fuera de la imagen. */}
         <ProductImage
           src={producto.media.heroImage}
           alt={producto.name}
           priority={priority}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="transition duration-300 group-hover:scale-105"
+          className={`transition duration-300 group-hover:scale-105 ${producto.disponible ? "" : "opacity-70"}`}
         />
 
         {descuento != null && (
