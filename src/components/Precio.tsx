@@ -80,17 +80,22 @@ export function PrecioFicha({
                 {/* El recargo ya está calculado (financiamiento.ts): mostrarlo
                     es la diferencia entre que el cliente lo descubra acá o se
                     lo tenga que explicar el asesor por WhatsApp. */}
-                {/* Dos renglones fijos: en una sola línea, cada casilla de
+                {/* Renglones fijos: en una sola línea, cada casilla de
                     móvil (~141px) la partía distinto ("·" colgando,
                     "contado" huérfano) y las dos casillas se veían
-                    desparejas. */}
+                    desparejas. En móvil son tres ("Total C$X" / "+C$Y" /
+                    "vs. contado"): "+C$Y vs. contado" en un renglón cabe o
+                    no según la cifra (a 360 entra con 1px de sobra en una
+                    casilla y en la otra se parte), así que el corte va a
+                    propósito. Desde sm la casilla es ancha y son dos. */}
                 {p.recargoPct > 0 && (
                   <p className="mt-1 text-xs text-tenue">
                     <span className="block">
                       Total C${p.totalNio.toLocaleString("es-NI")}
                     </span>
                     <span className="block">
-                      +C${p.sobrePrecioNio.toLocaleString("es-NI")} vs. contado
+                      +C${p.sobrePrecioNio.toLocaleString("es-NI")}
+                      <span className="block sm:inline"> vs. contado</span>
                     </span>
                   </p>
                 )}
