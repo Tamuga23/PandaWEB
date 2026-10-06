@@ -61,8 +61,13 @@ npm run backfill
 
 | Valor | Qué hace | Cuándo |
 |---|---|---|
-| `anon` | pide un token anónimo antes de leer | **default actual** — sigue funcionando con las reglas nuevas |
-| `public` | lee sin token | disponible desde que se cerró la Fase 0; opcional, no seteado todavía |
+| `anon` | pide un token anónimo antes de leer | **default, y el único que funciona hoy** |
+| `public` | lee sin token | **no usar**: desde oct-2026 Firestore lo rechaza con 403 y la web muestra "No pudimos cargar el catálogo" |
+
+En oct-2026 se ajustaron las reglas desde el POS: leer exige sesión, porque
+esa app maneja costos, márgenes y compras. La sesión anónima de PandaWEB
+alcanza para leer el catálogo público, así que no hace falta nada más. Para
+correr un build local, `npm run build` sin `CATALOG_ACCESS` (o con `anon`).
 
 ---
 
@@ -143,9 +148,10 @@ público desde entonces. Quedan dos ítems de contenido, no bloqueantes:
       leer costos ni ventas.
 - [x] **Rotar la llave de service account** que estaba en la raíz del repo del POS.
 - [x] Abrir lectura pública de `catalogo_publico`, `config` y el `get()` puntual
-      de `company/shared_store`. `CATALOG_ACCESS` se dejó en `anon`: sigue
-      funcionando con las reglas nuevas, y pasar a `public` (saltarse el login
-      anónimo del todo) queda como optimización opcional, no como requisito.
+      de `company/shared_store`. `CATALOG_ACCESS` se dejó en `anon`.
+      *Actualización oct-2026:* la lectura sin sesión se volvió a cerrar desde
+      el POS; con la sesión anónima la web sigue leyendo igual (ver "Dos modos
+      de acceso").
 - [x] Poner `EN_CONSTRUCCION = false` en `src/app/robots.ts` **y** `index: true`
       en `src/app/layout.tsx` — mergeado y verificado en producción.
 - [x] `NEXT_PUBLIC_SITE_URL` con el dominio definitivo (`panda-web-nine.vercel.app`).

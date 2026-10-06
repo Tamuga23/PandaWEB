@@ -10,7 +10,7 @@
 //
 // Soporta los dos modos de acceso (ver config/firebase.ts):
 //   - "anon"   → pide un idToken anónimo y lo manda como Bearer.
-//   - "public" → no manda token.
+//   - "public" → no manda token (hoy las reglas lo rechazan con 403).
 
 import { CATALOG_ACCESS, FIREBASE } from "@/config/firebase";
 import { decodeDocument, type RestDocument } from "./firestore-decode";

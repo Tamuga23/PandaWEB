@@ -17,10 +17,13 @@ export const FIREBASE = {
 
 // Modo de acceso al catálogo:
 //
-//   "anon"   → inicia sesión anónima antes de leer. Funciona HOY con las reglas
-//              actuales (catalogo_publico exige isSignedIn()).
-//   "public" → lee sin token. Activar cuando se ejecute la Fase 0 y las reglas
-//              abran la lectura pública del espejo.
+//   "anon"   → inicia sesión anónima antes de leer. Es el que se usa, y el
+//              único que funciona con las reglas actuales.
+//   "public" → lee sin token. Las reglas lo permitieron un tiempo, pero en
+//              oct-2026 se cerró de nuevo desde el POS (esa app maneja costos,
+//              márgenes y compras): leer exige sesión y sin token Firestore
+//              responde 403. Se deja el camino por si las reglas vuelven a
+//              abrir la lectura del espejo.
 //
 // Cambiar de uno a otro es solo esta variable de entorno: la capa de datos ya
 // contempla ambos caminos.
