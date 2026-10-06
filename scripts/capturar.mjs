@@ -33,6 +33,7 @@
 //   eval: imprime lo que devuelve (medir el DOM, contar elementos…).
 import { spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 const [salidaArg, base, planRuta, puertoArg, cssArg, jsArg] = process.argv.slice(2);
@@ -57,7 +58,10 @@ const navegador = spawn(
     "--disable-gpu",
     "--hide-scrollbars",
     `--remote-debugging-port=${PUERTO}`,
-    `--user-data-dir=${join(salida, `perfil-cdp-${PUERTO}`)}`,
+    // El perfil va a la carpeta temporal del sistema y no a la de salida:
+    // son ~1500 archivos (incluidos .js) que ensuciaban .capturas y que
+    // `npm run lint` intentaba revisar.
+    `--user-data-dir=${join(tmpdir(), `pandaweb-capturas-${PUERTO}`)}`,
     "about:blank",
   ],
   { stdio: "ignore" },
