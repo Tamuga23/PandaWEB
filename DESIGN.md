@@ -166,15 +166,22 @@ Grillas responsive por breakpoint: el catálogo pasa de 2 columnas en móvil a 3
 
 ## Elevation & Depth
 
-El sistema es plano por defecto: la separación entre superficies se resuelve con `border-borde` y el salto de `bg-fondo` a `bg-superficie`, no con sombra. La única sombra reutilizada es `shadow-md`, y aparece en apenas tres lugares: la píldora de categoría activa, el badge de oferta sobre la imagen de producto, y accesorios flotantes puntuales — siempre como refuerzo de "esto está por encima/activo ahora mismo", nunca como decoración ambiental.
+El sistema es plano en reposo: la separación entre superficies se resuelve con `border-borde` y el salto de `bg-fondo` a `bg-superficie`, no con sombra. La profundidad aparece cuando algo pasa — una tarjeta bajo el mouse, una barra que flota sobre el contenido, un modal — y vive en tres tokens de elevación (`shadow-elevada`, `shadow-flotante`, `shadow-modal`), definidos por tema en `globals.css` igual que los colores. **Implementado en oct-2026 (Fase 2 de `docs/plan-mejora-visual.md`).**
 
-**Dirección confirmada, no implementada todavía:** el objetivo es explorar más profundidad de la que hay hoy — capas, elevación real en modales/tarjetas al interactuar — sin que la base plana deje de ser la regla. Cualquier trabajo de `bolder`/`polish`/`animate` sobre elevación tiene license para proponer esto; no es una preferencia por dejar el sitio como está.
+En oscuro, cada token lleva un brillo de 1px en el borde superior (`inset 0 1px 0 rgb(255 255 255 / 0.06)`): una sombra negra sola no se ve sobre `#09090b`, y ese canto iluminado es lo que se lee como "está arriba". En claro no hay brillo, solo sombra teñida con slate-900 (no negro puro, que se ve sucio sobre slate-50).
 
 ### Shadow Vocabulary
-- **Acento flotante** (`box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)` — Tailwind `shadow-md`): píldora activa, badge de oferta. Señala "por encima del resto", no ambiente general.
+- **Elevada** (`shadow-elevada`): tarjeta de producto y tarjeta de categoría, solo en hover. Va junto con subir 2px (`motion-safe:-translate-y-0.5`) y el borde a `acento/50`. Nunca en reposo.
+- **Flotante** (`shadow-flotante`): lo que flota sobre el contenido sin estar anclado a un borde — la barra del comparador y su toast.
+- **Modal** (`shadow-modal`): el panel del modal del comparador. Casi no se ve porque el velo `bg-black/70` ya hace el trabajo; está para que el panel no quede pegado al velo en claro.
+- **Acento flotante** (Tailwind `shadow-md`): píldora activa y badge de oferta. Se queda en `shadow-md`: en algo de 20px de alto, una sombra difusa grande se vería pesada.
+- La barra de compra fija de la ficha (móvil) no lleva sombra: está anclada al borde de la pantalla y su `border-t` alcanza.
+
+### Patrón: hover sin temblor
+El elemento que detecta el hover no se mueve: es un envoltorio `group` (en `ProductCard`) o el propio `<Link>` (tarjeta de categoría), y la tarjeta de adentro es la que sube con `group-hover:`. Si subiera el mismo elemento que detecta el hover, con el cursor en los 2px de abajo la tarjeta se iría de debajo del cursor, bajaría y volvería a subir.
 
 ### Named Rules
-**La Regla de la Sombra con Motivo.** Ninguna sombra existe sin una razón puntual (activo, flotante, destacado). Si un elemento no tiene un estado especial que justificarla, va sin sombra.
+**La Regla de la Sombra con Motivo.** Ninguna sombra existe sin una razón puntual (hover, flotante, modal, activo). Si un elemento no tiene un estado especial que la justifique, va sin sombra. Y si la tiene, usa uno de los tres tokens: nada de `shadow-xl`/`shadow-2xl` sueltos, que no cambian con el tema.
 
 ## Shapes
 
@@ -204,7 +211,7 @@ Sin bordes duros en ningún componente interactivo. Las únicas esquinas a 0px s
 ### Cards / Containers
 - **Corner Style:** `rounded-2xl`.
 - **Background:** `bg-superficie` sobre `bg-fondo`.
-- **Shadow Strategy:** ninguna en reposo (ver Elevation). Solo el borde cambia en hover (`hover:border-acento/50`).
+- **Shadow Strategy:** ninguna en reposo (ver Elevation). En hover: `shadow-elevada`, sube 2px y el borde pasa a `acento/50`, con el patrón de hover sin temblor.
 - **Border:** `border border-borde` siempre presente, incluso sin hover.
 - **Internal Padding:** `p-4` a `p-5`; el panel de financiamiento sube a `p-8`/`p-12` en desktop por ser una sección hero-like.
 
