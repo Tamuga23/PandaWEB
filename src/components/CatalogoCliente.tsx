@@ -1,7 +1,8 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { CATEGORIAS, CONTACTO } from "@/config/site";
 import { linkWhatsApp } from "@/lib/format";
 import type { Producto } from "@/lib/types";
@@ -10,6 +11,15 @@ import { IconoBuscar, IconoWhatsApp } from "./iconos";
 import { ProductCard } from "./ProductCard";
 
 type Orden = "relevancia" | "precio-asc" | "precio-desc" | "nombre";
+
+const NOMBRE_CATEGORIA: Record<string, string> = Object.fromEntries(
+  CATEGORIAS.map((c) => [c.slug, c.nombre]),
+);
+
+/** Minúsculas y sin tildes: en el celular casi nadie escribe "cámara". */
+function normalizar(texto: string) {
+  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+}
 
 /**
  * Filtros y grid del catálogo.
@@ -33,6 +43,8 @@ export function CatalogoCliente({
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState<string | null>(categoriaInicial ?? null);
   const [orden, setOrden] = useState<Orden>("relevancia");
+  const refBusqueda = useRef<HTMLInputElement>(null);
+  const refConteo = useRef<HTMLParagraphElement>(null);
 
   // El estado sigue siendo la fuente de verdad del render; la URL es un
   // espejo para que la vista filtrada se pueda compartir, guardar en
@@ -57,17 +69,26 @@ export function CatalogoCliente({
 
   // Los agotados se muestran aparte, al final: nunca mezclados con lo disponible.
   const { disponibles, agotados } = useMemo(() => {
-    const q = busqueda.trim().toLowerCase();
+    const q = normalizar(busqueda.trim());
     let out = productos;
 
     if (categoria) out = out.filter((p) => p.categorySlug === categoria);
 
     if (q) {
       out = out.filter((p) => {
-        const heno = [p.name, p.sku, p.beneficio, p.description]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
+        // El nombre de la categoría también cuenta: "proyectores" (el texto
+        // de la píldora) o "smartwatch" tienen que traer toda la categoría.
+        const heno = normalizar(
+          [
+            p.name,
+            p.sku,
+            p.beneficio,
+            p.description,
+            p.categorySlug && NOMBRE_CATEGORIA[p.categorySlug],
+          ]
+            .filter(Boolean)
+            .join(" "),
+        );
         // Todas las palabras deben aparecer: "proyector 4k" no trae todo lo 4k.
         return q.split(/\s+/).every((palabra) => heno.includes(palabra));
       });
@@ -97,6 +118,22 @@ export function CatalogoCliente({
 
   const total = disponibles.length + agotados.length;
 
+  // El botón del estado vacío desaparece apenas hay resultados y el foco
+  // caería a <body>: un lector de pantalla puede perder el lugar. flushSync
+  // aplica el cambio antes de mover el foco, para que lo que se lea ya sea
+  // lo nuevo y no "Ningún producto coincide" ni la búsqueda vieja.
+  const verTodo = () => {
+    flushSync(() => setCategoria(null));
+    // Si lo buscado no está en ningún lado, el mismo botón sigue ahí (ahora
+    // dice "Borrar búsqueda") con el foco puesto: no hay que moverlo.
+    if (document.activeElement === document.body) refConteo.current?.focus();
+  };
+  // Al borrar, el foco va al buscador: queda listo para escribir otra cosa.
+  const borrarBusqueda = () => {
+    flushSync(() => setBusqueda(""));
+    refBusqueda.current?.focus();
+  };
+
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -104,6 +141,7 @@ export function CatalogoCliente({
           <div className="relative flex-1">
             <IconoBuscar className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-tenue" />
             <input
+              ref={refBusqueda}
               type="search"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
@@ -126,7 +164,13 @@ export function CatalogoCliente({
           </select>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {/* -mx-1 -mt-1 p-1: el overflow-x-auto recorta también en vertical,
+            y sin ese aire el anillo de foco de las píldoras se cortaba arriba. */}
+        <div
+          role="group"
+          aria-label="Filtrar por categoría"
+          className="-mx-1 -mt-1 flex gap-2 overflow-x-auto p-1 scrollbar-none"
+        >
           <Pill activo={categoria === null} onClick={() => setCategoria(null)}>
             Todo ({productos.length})
           </Pill>
@@ -142,22 +186,45 @@ export function CatalogoCliente({
         </div>
       </div>
 
-      <p className="mt-6 text-sm text-tenue">
+      {/* role="status": quien usa lector de pantalla se entera de cuántos
+          resultados quedan al buscar o filtrar. tabIndex={-1}: es adonde
+          vuelve el foco después de "Buscar en todo el catálogo" o "Ver todo
+          el catálogo" (ver verTodo); w-fit para que el anillo de foco abrace
+          el texto y no todo el ancho. scroll-mt-36: en el celular el conteo
+          puede quedar detrás del header sticky (118px de alto) y focus() no
+          lo mueve porque cree que ya se ve; con el margen lo baja hasta
+          dejarlo debajo del header, con el anillo a la vista. */}
+      <p
+        ref={refConteo}
+        tabIndex={-1}
+        className="mt-6 w-fit scroll-mt-36 text-sm text-tenue"
+        role="status"
+      >
         {total === 0
           ? "Ningún producto coincide"
           : `${total} ${total === 1 ? "producto" : "productos"}`}
       </p>
 
       {total === 0 ? (
-        <SinResultados busqueda={busqueda} />
+        <SinResultados
+          busqueda={busqueda.trim()}
+          categoria={categoria ? (NOMBRE_CATEGORIA[categoria] ?? categoria) : null}
+          onVerTodo={verTodo}
+          onBorrarBusqueda={borrarBusqueda}
+        />
       ) : (
         <>
           {disponibles.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
-              {disponibles.map((p, i) => (
-                <ProductCard key={p.id} producto={p} tasa={tasa} priority={i < 4} />
-              ))}
-            </div>
+            <>
+              {/* Sin este h2 el catálogo saltaba de h1 a los h3 de las
+                  tarjetas; "Agotados" ya tiene el suyo visible. */}
+              <h2 className="sr-only">Disponibles</h2>
+              <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+                {disponibles.map((p, i) => (
+                  <ProductCard key={p.id} producto={p} tasa={tasa} priority={i < 4} />
+                ))}
+              </div>
+            </>
           )}
 
           {agotados.length > 0 && (
@@ -213,24 +280,49 @@ function Pill({
   );
 }
 
-function SinResultados({ busqueda }: { busqueda: string }) {
+function SinResultados({
+  busqueda,
+  categoria,
+  onVerTodo,
+  onBorrarBusqueda,
+}: {
+  busqueda: string;
+  categoria: string | null;
+  onVerTodo: () => void;
+  onBorrarBusqueda: () => void;
+}) {
+  // Con una categoría activa, lo buscado puede estar en otra (llegar desde
+  // "Proyectores" de la home y buscar "amazfit"): la salida útil es soltar el
+  // filtro, no solo mandar a WhatsApp diciendo que quizá no está publicado.
+  const [mensaje, accion, alHacerClic]: [string, string, () => void] =
+    busqueda && categoria
+      ? [`No encontramos “${busqueda}” en ${categoria}.`, "Buscar en todo el catálogo", onVerTodo]
+      : busqueda
+        ? [`No encontramos nada para “${busqueda}”.`, "Borrar búsqueda", onBorrarBusqueda]
+        : ["No hay productos en esta categoría todavía.", "Ver todo el catálogo", onVerTodo];
+
   return (
     <div className="mt-4 rounded-2xl border border-dashed border-borde2 px-6 py-14 text-center">
-      <p className="text-texto">
-        {busqueda
-          ? `No encontramos nada para “${busqueda}”.`
-          : "No hay productos en esta categoría todavía."}
-      </p>
+      <p className="text-texto">{mensaje}</p>
       <p className="mt-1 text-sm text-suave">
         Puede que lo tengamos sin publicar. Preguntanos y te confirmamos.
       </p>
-      <EnlaceWhatsApp
-        href={linkWhatsApp(CONTACTO.whatsapp)}
-        className="btn-primary mt-5 inline-flex items-center gap-2 px-5 py-2.5 text-sm"
-      >
-        <IconoWhatsApp className="h-4 w-4" />
-        Consultar por WhatsApp
-      </EnlaceWhatsApp>
+      <div className="mt-5 flex flex-wrap justify-center gap-3">
+        <EnlaceWhatsApp
+          href={linkWhatsApp(CONTACTO.whatsapp)}
+          className="btn-primary inline-flex items-center gap-2 px-5 py-3 text-sm"
+        >
+          <IconoWhatsApp className="h-4 w-4" />
+          Consultar por WhatsApp
+        </EnlaceWhatsApp>
+        <button
+          type="button"
+          onClick={alHacerClic}
+          className="inline-flex items-center rounded-full border border-borde2 px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
+        >
+          {accion}
+        </button>
+      </div>
     </div>
   );
 }
