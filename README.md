@@ -33,6 +33,23 @@ CATALOG_SOURCE=fixture npm run dev     # macOS/Linux/Git Bash
 $env:CATALOG_SOURCE="fixture"; npm run dev   # PowerShell
 ```
 
+**Capturas para revisar un cambio visual** (`scripts/capturar.mjs`): con el
+servidor de arriba corriendo, saca capturas en anchos reales de teléfono (360
+y 390px), en los dos temas, y puede pasar el mouse, hacer clic, medir el DOM o
+inyectar CSS/JS para previsualizar una idea sin tocar el código (la
+documentación está al principio del script). `scripts/capturas-base.json` son
+16 tomas de portada, catálogo, agotados, ficha, ficha sin foto y comparador:
+
+```bash
+node scripts/capturar.mjs .capturas/antes  http://localhost:3000 scripts/capturas-base.json
+# …cambiar el código…
+node scripts/capturar.mjs .capturas/despues http://localhost:3000 scripts/capturas-base.json
+```
+
+Nunca contra producción ni contra un dev que lea Firestore. Usa Edge; para otro
+navegador, `NAVEGADOR=<ruta del ejecutable>`. Las capturas quedan en
+`.capturas/`, que no se versiona.
+
 ```bash
 npm run build        # build de producción
 npm run typecheck    # solo tipos

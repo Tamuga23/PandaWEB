@@ -14,8 +14,8 @@ paso que funcione. Fusionar a `main` solo con permiso explícito.
 | 1 | Datos de prueba locales (`CATALOG_SOURCE=fixture`) | Hecha y en producción (2026-10-05) — PR #46 |
 | 2 | Profundidad: tokens de elevación | Hecha y en producción (2026-10-05) — PR #47 |
 | 3 | Portada con producto real (vitrina en el hero + categorías con íconos) | Hecha y en producción (2026-10-05) — PR #48 |
-| 4 | Catálogo: tratamiento de fotos (bandeja de foto) | Hecha (2026-10-06) — rama `mejora-visual-fase-4`, PR pendiente de fusionar |
-| 5 | Cierre: limpiar `bg-marca-hover`, actualizar DESIGN.md | Pendiente |
+| 4 | Catálogo: tratamiento de fotos (bandeja de foto) | Hecha y en producción (2026-10-06) — PR #49 |
+| 5 | Cierre: limpiar `bg-marca-hover`, repaso contra DESIGN.md, antes y después | Hecha y en producción (2026-10-06) — PR #50. **Plan completo.** |
 
 ## Fase 0 — lo que se vio (capturas de producción, tema oscuro)
 
@@ -123,7 +123,7 @@ sin desborde horizontal; a 360×740 la vitrina asoma en la primera pantalla
 cargada (sus 2 productos están agotados y sin imágenes), y la foto que
 representa "Smart home" es un parlante Anker cargado en esa categoría.
 
-## Fase 4 — fotos del catálogo (en curso)
+## Fase 4 — fotos del catálogo
 
 **Problema confirmado en capturas** (fixture, 390 y 1280px, dos temas):
 - En oscuro cada foto (estudio, fondo blanco, viene del POS) es un cuadrado
@@ -260,10 +260,46 @@ entre una corrida y otra: por eso el intercalado. Esta vez la máquina estaba
 más cargada que en la Fase 3, así que los números absolutos no se comparan con
 los de esa tabla.
 
-## Fase 5 (resumen)
+## Fase 5 — cierre
 
-- **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
-  la situación inicial.
+- **Código muerto:** sale `bg-marca-hover` (solo existía su definición).
+- **Repaso contra DESIGN.md** (barrido de `src/`): sin clases de paleta sueltas
+  salvo `text-white`/el punto `bg-white` sobre `bg-marca` (permitidos) y el
+  velo `bg-black/70` del modal (ya existía); sin sombras fuera de `shadow-md` y
+  los tres tokens; sin degradados fuera de `bg-marca`/`text-marca`; sin
+  `rounded-md`/`sm`/`none`; `text-marca` solo en el logotipo; hex solo en el
+  `theme-color` de `layout.tsx` y el respaldo de `IconoCategoria`.
+- **DESIGN.md al día:** `bandeja` en el frontmatter, la Regla de la Bandeja y
+  los íconos de categoría en Do's, y dos Don'ts (sombras solo con token; fotos
+  solo con `ProductImage`, sin `mix-blend`/`filter`).
+- **Herramienta de capturas al repo:** `scripts/capturar.mjs` y
+  `scripts/capturas-base.json` (16 tomas), documentadas en el README. Vivían en
+  una carpeta temporal. Las capturas van a `.capturas/` (no se versiona) y el
+  perfil del navegador a la carpeta temporal del sistema.
+
+**Antes y después** (Fase 0, producción, contra el cierre, fixture):
+- **Portada en el celular:** antes, ningún producto en las dos primeras
+  pantallas (hero de solo texto, 4 ventajas apiladas, 7 categorías de solo
+  texto a una columna). Ahora la vitrina con precio asoma en la primera
+  pantalla, las ventajas y las categorías van a dos columnas, y las categorías
+  llevan su ícono en el degradado de marca.
+- **Portada en escritorio:** antes, texto centrado sobre un resplandor cyan y
+  mucho espacio vacío. Ahora el texto convive con un mosaico de 3 productos.
+- **Catálogo y ficha en oscuro:** antes, cada foto era un cuadrado blanco de
+  borde a borde, lo más brillante de la pantalla; los sin foto, una caja gris
+  dentro de otra. Ahora todas van sobre la bandeja velada con marco y aire,
+  los agotados en tres niveles y los sin foto con el ícono de su categoría.
+- **Interacción:** las tarjetas suben 2px con su sombra al pasar el mouse; la
+  barra del comparador, el toast y el modal usan los tokens de elevación.
+
+**Verificado:** typecheck, 68/68 pruebas, `CATALOG_SOURCE=fixture npm run build`
+39/39, y `npm run lint` con 1 solo problema: el `set-state-in-effect` de
+`TemaProvider.tsx`, que ya estaba antes de este plan.
+
+**Pendientes que no son de código (POS):** volver a cargar con margen blanco
+las fotos con la sombra cortada (MagCubic HY450MAX y HY450GT, Amazfit Active 2,
+ANKER SoundCore 2); cargar fotos a los 12 agotados que no tienen ninguna;
+revisar el parlante ANKER cargado en la categoría Smart home.
 
 ## Validación por fase
 
