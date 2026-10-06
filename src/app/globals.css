@@ -90,13 +90,25 @@
   --marca-fin: #0284c7;
 }
 
+/* El degradado real (--marca-inicio/medio/fin, documentado en DESIGN.md) no
+   cambia acá — sigue siendo exactamente el mismo esmeralda→cian→azul en
+   todos lados. Lo que se agrega es un velo negro semitransparente ENCIMA
+   (el primer gradient de la lista pinta más arriba): el texto/ícono blanco
+   que va sobre bg-marca (botones, badges, píldora activa) fallaba contraste
+   AA en el tramo verde/cian del degradado (hasta 2.43:1, calculado a mano;
+   se necesita 4.5:1) — ni los tonos más oscuros de bg-marca-hover alcanzan.
+   35% de negro encima resuelve el peor punto sin tocar el color de marca en
+   sí; queda igual como fondo puro (logo, decoración), solo más "profundo"
+   donde hay texto encima. */
 @utility bg-marca {
-  background-image: linear-gradient(
-    135deg,
-    var(--marca-inicio) 0%,
-    var(--marca-medio) 50%,
-    var(--marca-fin) 100%
-  );
+  background-image:
+    linear-gradient(rgb(0 0 0 / 0.35), rgb(0 0 0 / 0.35)),
+    linear-gradient(
+      135deg,
+      var(--marca-inicio) 0%,
+      var(--marca-medio) 50%,
+      var(--marca-fin) 100%
+    );
 }
 
 @utility bg-marca-hover {
