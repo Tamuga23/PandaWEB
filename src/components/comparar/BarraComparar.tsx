@@ -36,8 +36,17 @@ export function BarraComparar() {
         <div className="flex gap-2">
           {seleccion.map((p) => (
             <div key={p.id} className="relative h-12 w-12 shrink-0">
-              <div className="h-full w-full overflow-hidden rounded-lg border border-borde bg-fondo p-1">
-                <ProductImage src={p.media.heroImage} alt={p.name} sizes="48px" />
+              {/* La bandeja de ProductImage llena la caja (rounded-xl, como
+                  las miniaturas de la galería). Antes este div no estaba
+                  posicionado y la foto se ubicaba contra el de afuera, por
+                  encima del borde y del radio. */}
+              <div className="h-full w-full overflow-hidden rounded-xl border border-borde">
+                <ProductImage
+                  src={p.media.heroImage}
+                  alt={p.name}
+                  sizes="48px"
+                  categoria={p.categorySlug}
+                />
               </div>
               {/* El glifo visual se queda chico (mismo círculo de 20px de
                   siempre): lo que crece es el área de toque real, con un
@@ -57,7 +66,7 @@ export function BarraComparar() {
             </div>
           ))}
           {faltaUno && (
-            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-lg border border-dashed border-borde2 text-tenue">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-dashed border-borde2 text-tenue">
               <IconoComparar className="h-4 w-4" />
             </div>
           )}

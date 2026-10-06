@@ -147,6 +147,7 @@ export default async function ProductoPage({
             media={producto.media}
             nombre={producto.name}
             descuentoPct={descuentoPct}
+            categoria={producto.categorySlug}
           />
         </div>
 

@@ -203,9 +203,17 @@ export function ModalComparar() {
                       // ocupaba ~45% del área visible).
                       className="sticky top-0 z-10 min-w-[7rem] border-l border-borde bg-superficie p-3 align-top sm:min-w-[11rem]"
                     >
-                      <div className="relative mx-auto aspect-square w-full max-w-[5rem] overflow-hidden rounded-xl bg-fondo p-2 sm:max-w-[8rem]">
+                      {/* La bandeja de ProductImage llena la caja; el borde le
+                          da contorno en claro, donde la bandeja casi blanca se
+                          perdía contra el panel blanco del modal. */}
+                      <div className="relative mx-auto aspect-square w-full max-w-[5rem] overflow-hidden rounded-xl border border-borde sm:max-w-[8rem]">
                         {/* alt vacío: el nombre ya está en el link de abajo. */}
-                        <ProductImage src={p.media.heroImage} alt="" sizes="140px" />
+                        <ProductImage
+                          src={p.media.heroImage}
+                          alt=""
+                          sizes="140px"
+                          categoria={p.categorySlug}
+                        />
                         {desc != null && (
                           <span className="absolute left-1 top-1 rounded-lg bg-marca px-1.5 py-0.5 text-micro font-black text-white">
                             −{desc}%

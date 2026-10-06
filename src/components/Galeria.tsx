@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { youTubeId } from "@/lib/format";
 import type { Media } from "@/lib/types";
+import { IconoCategoria } from "./IconoCategoria";
 import { IconoPlay } from "./iconos";
 import { ProductImage } from "./ProductImage";
 
@@ -18,11 +19,14 @@ export function Galeria({
   media,
   nombre,
   descuentoPct,
+  categoria,
 }: {
   media: Media;
   nombre: string;
   /** Porcentaje de descuento, si el producto tiene precio de lista. */
   descuentoPct?: number | null;
+  /** Slug de la categoría: sin fotos, la banda muestra su ícono. */
+  categoria?: string;
 }) {
   const fotos = media.gallery ?? [];
   const videoId = youTubeId(media.videoUrl);
@@ -30,17 +34,20 @@ export function Galeria({
 
   const [indice, setIndice] = useState(0);
   const esVideo = videoId != null && indice === fotos.length;
-  // Sin fotos ni video, el p-6 solo le pegaba al placeholder (next/image con
-  // `fill` lo ignora): quedaba una caja de esquinas duras dentro de otra
-  // redondeada, y el cuadrado era el bloque más grande de la pantalla sin
-  // decir nada. Sin padding, el placeholder llena el marco; 4:3 lo achica.
+  // Sin fotos ni video, la galería es una banda baja: 3:1 en el celular, para
+  // que estado, nombre y precio entren en la primera pantalla (antes era un
+  // 4:3 y el bloque más grande de la pantalla sin decir nada), y 2:1 en lg,
+  // donde la columna derecha marca la altura.
   const sinMedia = total === 0;
+  const foto = fotos[indice];
 
   return (
     <div>
+      {/* p-1: el mismo marco de 4px que la tarjeta del catálogo, con la
+          bandeja rounded-xl adentro (16 − 4 = 12, concéntricas). */}
       <div
-        className={`relative overflow-hidden rounded-2xl border border-borde bg-superficie ${
-          sinMedia ? "aspect-[4/3]" : "aspect-square p-6"
+        className={`relative overflow-hidden rounded-2xl border border-borde bg-superficie p-1 ${
+          sinMedia ? "aspect-[3/1] lg:aspect-[2/1]" : "aspect-square"
         }`}
       >
         {/* Mismo patrón que la tarjeta del catálogo (ProductCard): el badge
@@ -53,7 +60,22 @@ export function Galeria({
             −{descuentoPct}% Oferta
           </span>
         )}
-        {esVideo ? (
+        {sinMedia ? (
+          // Sin foto no hay blanco de estudio que fundir: va sobre la
+          // superficie, con el ícono de la categoría. La leyenda solo existe
+          // acá: con poca señal, una banda gris con un ícono puede leerse
+          // como una foto que todavía está cargando. text-texto y no
+          // text-suave: en claro, suave sobre superficie2 no llega a AA.
+          <span
+            aria-hidden="true"
+            className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-superficie2 text-tenue"
+          >
+            <IconoCategoria slug={categoria} grosor={1.25} className="h-11 w-11 lg:h-14 lg:w-14" />
+            <span className="text-label font-semibold uppercase tracking-wide text-texto">
+              Sin foto
+            </span>
+          </span>
+        ) : esVideo ? (
           <iframe
             src={`https://www.youtube.com/embed/${videoId}`}
             title={`Video de ${nombre}`}
@@ -63,15 +85,24 @@ export function Galeria({
           />
         ) : (
           <>
+            {/* key por URL: ProductImage guarda en su estado si la foto
+                falló, y al cambiar de miniatura la misma instancia seguía
+                con el marcador aunque la foto nueva cargara bien. Las fotos
+                con etiqueta del POS ("Con Luz", "A Oscuras", "Funciones"…)
+                son de escena: van sobre la superficie, no sobre blanco. */}
             <ProductImage
-              src={fotos[indice]?.url}
-              alt={`${nombre}${fotos[indice]?.label ? ` — ${fotos[indice].label}` : ""}`}
+              key={foto?.url}
+              src={foto?.url}
+              alt={`${nombre}${foto?.label ? ` — ${foto.label}` : ""}`}
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
+              bandeja="rounded-xl"
+              categoria={categoria}
+              escena={!!foto?.label}
             />
-            {fotos[indice]?.label && (
+            {foto?.label && (
               <span className="absolute bottom-4 left-4 rounded-full bg-fondo/85 px-3 py-1.5 text-xs font-medium text-texto ring-1 ring-borde2">
-                {fotos[indice].label}
+                {foto.label}
               </span>
             )}
           </>
@@ -97,13 +128,21 @@ export function Galeria({
               aria-current={indice === i && !esVideo ? "true" : undefined}
               aria-label={`Foto ${i + 1}${f.label ? `: ${f.label}` : ""}`}
               onClick={() => setIndice(i)}
-              className={`relative aspect-square h-16 w-16 shrink-0 overflow-hidden rounded-xl border bg-superficie p-1.5 transition ${
+              // Sin padding: la bandeja llena el botón (que ya recorta con su
+              // radio). Con marco además del borde quedaba caja dentro de caja.
+              className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border transition ${
                 indice === i && !esVideo
                   ? "border-acento"
                   : "border-borde hover:border-borde2"
               }`}
             >
-              <ProductImage src={f.url} alt="" sizes="64px" />
+              <ProductImage
+                src={f.url}
+                alt=""
+                sizes="64px"
+                categoria={categoria}
+                escena={!!f.label}
+              />
             </button>
           ))}
 

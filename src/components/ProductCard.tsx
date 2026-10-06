@@ -45,16 +45,25 @@ export function ProductCard({
           className="absolute inset-0 z-10 rounded-2xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-acento"
         />
 
-        <div className="relative aspect-square overflow-hidden bg-fondo/40 p-4">
-          {/* Un agotado se atenúa solo en la foto, no en toda la tarjeta: el
-              texto (el precio en text-tenue incluido) necesita su contraste
-              entero, y la pastilla "Agotado" vive fuera de la imagen. */}
+        {/* p-1: 4px de marco oscuro alrededor de la bandeja. Sin él, la foto
+            iba de borde a borde y en oscuro la mitad de arriba de cada
+            tarjeta era un cuadrado claro; con él, la tarjeta vuelve a
+            contener la foto. 16px de radio de la tarjeta − 4 de marco = los
+            12px (rounded-xl) de la bandeja: esquinas concéntricas. */}
+        <div className="relative aspect-square p-1">
+          {/* Un agotado se apaga solo en la bandeja, no en toda la tarjeta:
+              el texto (el precio en text-tenue incluido) necesita su
+              contraste entero, y la pastilla "Agotado" vive fuera de la
+              bandeja. */}
           <ProductImage
             src={producto.media.heroImage}
             alt={producto.name}
             priority={priority}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className={`transition duration-300 group-hover:scale-105 ${producto.disponible ? "" : "opacity-70"}`}
+            bandeja="rounded-xl"
+            categoria={producto.categorySlug}
+            apagada={!producto.disponible}
+            className="transition duration-300 motion-safe:group-hover:scale-105"
           />
 
           {descuento != null && (
@@ -63,8 +72,10 @@ export function ProductCard({
             </span>
           )}
 
+          {/* bg-superficie/95 y no bg-fondo/90: en claro, sobre la bandeja,
+              el rosa quedaba en ~4.48:1 (justo debajo de AA). */}
           {!producto.disponible && (
-            <span className="absolute left-3 top-3 rounded-full bg-fondo/90 px-2.5 py-1 text-label font-semibold text-agotado ring-1 ring-agotado/30">
+            <span className="absolute left-3 top-3 rounded-full bg-superficie/95 px-2.5 py-1 text-label font-semibold text-agotado ring-1 ring-agotado/30">
               Agotado
             </span>
           )}

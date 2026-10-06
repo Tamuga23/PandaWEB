@@ -212,18 +212,19 @@ function TarjetaVitrina({
     // Mismo patrón de hover sin temblor que ProductCard (ver DESIGN.md).
     <Link href={`/producto/${producto.id}`} className="group block h-full rounded-2xl">
       <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition duration-200 group-hover:border-acento/50 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5">
-        {/* Bandeja blanca en los dos temas: las fotos del catálogo son de
-            estudio con fondo blanco, y así la foto se funde con su bandeja en
-            vez de verse como un recuadro pegado sobre la tarjeta. */}
+        {/* La misma pieza que la tarjeta del catálogo: marco de 4px y la
+            bandeja de foto que pone ProductImage (ver ProductCard). */}
         <div
-          className={`relative overflow-hidden bg-white p-3 ${ancha ? "aspect-square lg:aspect-[2/1]" : "aspect-square"}`}
+          className={`relative p-1 ${ancha ? "aspect-square lg:aspect-[2/1]" : "aspect-square"}`}
         >
           <ProductImage
             src={producto.media.heroImage}
             alt={producto.name}
             priority={prioridad}
             sizes={ancha ? "(min-width: 1024px) 540px, 160px" : "(min-width: 1024px) 260px, 160px"}
-            className="transition duration-300 group-hover:scale-105"
+            bandeja="rounded-xl"
+            categoria={producto.categorySlug}
+            className="transition duration-300 motion-safe:group-hover:scale-105"
           />
         </div>
         <div className="px-3 py-2.5">
