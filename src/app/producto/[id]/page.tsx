@@ -200,7 +200,7 @@ export default async function ProductoPage({
 
           {producto.bullets.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-suave">
+              <h2 className="text-base font-semibold leading-snug text-texto">
                 Por qué te sirve
               </h2>
               <ul className="mt-3 space-y-2.5">
@@ -223,7 +223,7 @@ export default async function ProductoPage({
 
           {producto.description && (
             <section className="mt-8">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-suave">
+              <h2 className="text-base font-semibold leading-snug text-texto">
                 Descripción
               </h2>
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-texto">
@@ -238,7 +238,7 @@ export default async function ProductoPage({
               reales para no mostrar un título sobre una tabla en blanco. */}
           {filasParaTabla.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-suave">
+              <h2 className="text-base font-semibold leading-snug text-texto">
                 Especificaciones
               </h2>
               <div className="mt-3">

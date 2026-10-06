@@ -86,7 +86,12 @@ export function TablaSpecs({
       {resto.length > 0 && (
         <details className="group border-t border-borde">
           <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium text-acento transition hover:bg-superficie2">
-            Ver las {filas.length} especificaciones completas
+            {/* El texto sigue al estado: abierto, ya no promete "ver" lo
+                que está a la vista y dice cómo volver a cerrarlo. */}
+            <span className="group-open:hidden">
+              Ver las {filas.length} especificaciones completas
+            </span>
+            <span className="hidden group-open:inline">Ver menos</span>
             <IconoChevron className="h-4 w-4 transition group-open:rotate-180" />
           </summary>
           <dl className="divide-y divide-borde border-t border-borde">
