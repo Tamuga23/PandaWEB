@@ -24,7 +24,6 @@ export function BotonComparar({
       <button
         type="button"
         onClick={alHacerClic}
-        aria-pressed={activo}
         className={`inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold transition ${
           activo
             ? "border-acento/40 bg-acento/10 text-acento"
@@ -37,14 +36,18 @@ export function BotonComparar({
     );
   }
 
+  // Mismo patrón de área táctil que el resto del comparador: el botón
+  // visual se queda en 34px, el ::after invisible lo lleva a ~44px.
+  // Seguro expandir en las 4 direcciones acá: a la izquierda solo hay
+  // PrecioTarjeta (sin nada clicable), y el resto de la tarjeta ya es el
+  // propio link estirado (z-20 le gana igual).
   return (
     <button
       type="button"
       onClick={alHacerClic}
-      aria-pressed={activo}
       aria-label={activo ? `Quitar ${producto.name} de comparación` : `Comparar ${producto.name}`}
       title={activo ? "Quitar de comparación" : "Comparar"}
-      className={`relative z-20 inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition ${
+      className={`relative z-20 inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition after:absolute after:-inset-3 after:content-[''] ${
         activo
           ? "border-acento/40 bg-acento/15 text-acento"
           : "border-borde bg-superficie2 text-tenue hover:border-borde2 hover:text-texto"

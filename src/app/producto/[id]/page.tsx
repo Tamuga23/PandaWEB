@@ -124,7 +124,7 @@ export default async function ProductoPage({
     // (globals.css, --reserva-barras): acá dejaba el hueco antes del footer
     // y la barra seguía tapando el final de la página.
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <nav className="mb-6 flex items-center gap-1.5 text-sm text-tenue">
+      <nav aria-label="Ruta de navegación" className="mb-6 flex items-center gap-1.5 text-sm text-tenue">
         <Link href="/catalogo" className="transition hover:text-acento">
           Catálogo
         </Link>
@@ -177,7 +177,7 @@ export default async function ProductoPage({
           </div>
 
           {/* CTA de escritorio. En móvil se usa la barra fija de abajo. */}
-          <div className="mt-7 hidden gap-3 lg:flex">
+          <div className="mt-7 hidden flex-wrap gap-3 lg:flex">
             <CtaWhatsApp href={wa} disponible={producto.disponible} />
             <BotonComparar producto={producto} tasa={tasa} variante="completo" />
           </div>
@@ -308,7 +308,7 @@ function Disponibilidad({ disponible }: { disponible: boolean }) {
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
         disponible
-          ? "bg-marca/10 text-precio"
+          ? "bg-precio/10 text-precio"
           : "bg-agotado/10 text-agotado"
       }`}
     >
@@ -333,8 +333,17 @@ function CtaWhatsApp({
   return (
     <EnlaceWhatsApp
       href={href}
-      className={`btn-primary flex shrink-0 items-center justify-center gap-2 ${
-        compacto ? "px-5 py-3 text-sm" : "w-full px-6 py-4 text-base"
+      className={`btn-primary flex items-center justify-center gap-2 ${
+        // En escritorio comparte fila con "Comparar": flex-1 toma el espacio
+        // que sobra. Con w-full + shrink-0 se quedaba con el 100% de la fila
+        // y empujaba "Comparar" fuera de la columna (scroll horizontal en
+        // toda la ficha). whitespace-nowrap + el flex-wrap de la fila hacen
+        // que, si "Avisarme cuando llegue" y "Quitar de comparación" no caben
+        // juntos (~1024px), "Comparar" baje a su propia línea en vez de partir
+        // el CTA en dos renglones. shrink-0 solo hace falta en la barra móvil.
+        compacto
+          ? "shrink-0 px-5 py-3 text-sm"
+          : "flex-1 whitespace-nowrap px-6 py-4 text-base"
       }`}
     >
       <IconoWhatsApp className="h-5 w-5" />

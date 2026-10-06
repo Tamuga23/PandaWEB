@@ -1,5 +1,6 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { USD_TO_NIO_FALLBACK } from "@/config/site";
 import {
@@ -72,10 +73,23 @@ function ordenarPorDefecto(a: Producto, b: Producto): number {
 }
 
 /**
- * `cache` de React deduplica la llamada dentro de un mismo render: la portada
- * pide el catálogo una vez aunque lo consulten varios componentes.
+ * Lectura del catálogo, guardada en la Data Cache de Next (compartida entre
+ * visitas y entre despliegues) y revalidada cada REVALIDATE segundos.
+ *
+ * Por qué hace falta, además del ISR de las páginas:
+ *   - /catalogo lee `?cat=`, así que se renderiza en cada visita. Sin esta
+ *     caché, cada visita leía la colección entera (~45 lecturas): con el
+ *     tráfico de los anuncios, era lo que más cuota gastaba.
+ *   - Si una revalidación falla (Firestore caído, cuota agotada), Next sigue
+ *     sirviendo el último catálogo bueno y reintenta en la próxima visita.
+ *     Antes las páginas atrapaban el error y mostraban ErrorDatos, y el ISR
+ *     guardaba esa pantalla como la versión nueva de cada ficha: el 4-oct-2026
+ *     una cuota agotada dejó el catálogo y todas las fichas caídos por horas.
+ *
+ * Solo tira error si nunca hubo una lectura buena (caché vacía). La tasa y las
+ * reglas de financiamiento ya tienen su propio respaldo y nunca la hacen fallar.
  */
-export const getCatalogo = cache(async (): Promise<CatalogoData> => {
+const leerCatalogo = unstable_cache(async (): Promise<CatalogoData> => {
   const [docs, tasa, configFinanciamiento] = await Promise.all([
     listCollection("catalogo_publico", { revalidate: REVALIDATE }),
     getTasa(),
@@ -100,7 +114,13 @@ export const getCatalogo = cache(async (): Promise<CatalogoData> => {
     .sort(ordenarPorDefecto);
 
   return { productos, tasa, configFinanciamiento, leidoEn: Date.now() };
-});
+}, ["catalogo"], { revalidate: REVALIDATE, tags: ["catalogo"] });
+
+/**
+ * `cache` de React deduplica la llamada dentro de un mismo render: la portada
+ * pide el catálogo una vez aunque lo consulten varios componentes.
+ */
+export const getCatalogo = cache((): Promise<CatalogoData> => leerCatalogo());
 
 export async function getProducto(
   id: string,

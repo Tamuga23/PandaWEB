@@ -187,12 +187,16 @@ function Pill({
   onClick: () => void;
   children: React.ReactNode;
 }) {
+  // -inset-1 (no -inset-3 como el resto): las píldoras están a solo 8px
+  // una de otra (gap-2 en el contenedor) — el área ya mide ~40px, así que
+  // 4px de cada lado alcanza para pasar los 44px sin que el área táctil
+  // de una píldora se meta en la de al lado.
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={activo}
-      className={`flex shrink-0 items-center gap-2 rounded-full px-5 py-2.5 text-sm transition ${
+      className={`relative flex shrink-0 items-center gap-2 rounded-full px-5 py-2.5 text-sm transition after:absolute after:-inset-1 after:content-[''] ${
         activo
           ? "bg-marca font-bold text-white shadow-md"
           : "border border-borde bg-superficie font-medium text-suave hover:border-borde2 hover:text-texto"
