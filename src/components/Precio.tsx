@@ -44,6 +44,7 @@ export function PrecioFicha({
         </span>
         {lista != null && (
           <span className="text-lg text-tenue line-through">
+            <span className="sr-only">Antes: </span>
             {cordobas(lista, tasa)}
           </span>
         )}
@@ -109,15 +110,26 @@ export function PrecioTarjeta({
   tasa: number;
 }) {
   const { lista, actual } = producto.precio;
-  const cuota = planMasBajo(producto.planes);
+  const { disponible } = producto;
+  // Mismo criterio que PrecioFicha: un agotado no anuncia una cuota mensual
+  // de una compra que hoy no se puede hacer.
+  const cuota = disponible ? planMasBajo(producto.planes) : null;
   const sinInteres = todosSinInteres(producto.planes);
 
   return (
-    <div className="min-w-0">
+    // En móvil la tarjeta mide ~124px por dentro: la cuota con el sello 0%
+    // ocupa dos renglones y sin él uno. El alto mínimo reserva siempre los
+    // dos, así los precios de una misma fila quedan a la misma altura. Vale
+    // también para los agotados (no muestran cuota): en "También te puede
+    // servir" comparten fila con los disponibles.
+    <div className="max-sm:min-h-[3.875rem]">
       <div className="flex flex-wrap items-baseline gap-x-2">
-        <span className="text-lg font-bold text-precio">{cordobas(actual, tasa)}</span>
+        <span className={`text-lg font-bold ${disponible ? "text-precio" : "text-tenue"}`}>
+          {cordobas(actual, tasa)}
+        </span>
         {lista != null && (
           <span className="text-xs text-tenue line-through">
+            <span className="sr-only">Antes: </span>
             {cordobas(lista, tasa)}
           </span>
         )}
@@ -129,7 +141,16 @@ export function PrecioTarjeta({
             C${cuota.cuotaNio.toLocaleString("es-NI")}
           </span>{" "}
           / mes
-          {sinInteres && <span className="font-semibold text-precio"> · 0%</span>}
+          {/* Sello, no texto suelto: cuando no entra en el renglón baja
+              entero como píldora en vez de quedar "· 0%" colgando solo. */}
+          {sinInteres && (
+            <>
+              {" "}
+              <span className="whitespace-nowrap rounded-full bg-precio/15 px-1.5 py-0.5 text-micro font-black uppercase tracking-wider text-precio">
+                0%<span className="sr-only"> de interés</span>
+              </span>
+            </>
+          )}
         </p>
       )}
     </div>

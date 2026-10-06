@@ -30,20 +30,26 @@ export function ProductCard({
           link "estirado" cubre la tarjeta entera por detrás (z-10, encima
           de la imagen y el badge, que no tienen z-index propio);
           BotonComparar se para más arriba todavía (z-20) para seguir
-          siendo su propio elemento clicable en vez de quedar tapado. */}
+          siendo su propio elemento clicable en vez de quedar tapado.
+          El outline de foco global cae afuera del link y el overflow-hidden
+          de la tarjeta lo recortaba entero: sin el ring inset, una tarjeta
+          enfocada con teclado se veía igual a las demás. */}
       <Link
         href={`/producto/${producto.id}`}
         aria-label={`Ver ${producto.name}`}
-        className="absolute inset-0 z-10"
+        className="absolute inset-0 z-10 rounded-2xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-acento"
       />
 
       <div className="relative aspect-square overflow-hidden bg-fondo/40 p-4">
+        {/* Un agotado se atenúa solo en la foto, no en toda la tarjeta: el
+            texto (el precio en text-tenue incluido) necesita su contraste
+            entero, y la pastilla "Agotado" vive fuera de la imagen. */}
         <ProductImage
           src={producto.media.heroImage}
           alt={producto.name}
           priority={priority}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="transition duration-300 group-hover:scale-105"
+          className={`transition duration-300 group-hover:scale-105 ${producto.disponible ? "" : "opacity-70"}`}
         />
 
         {descuento != null && (
@@ -74,7 +80,10 @@ export function ProductCard({
           </p>
         )}
 
-        <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+        {/* Precio arriba, Comparar abajo. En la misma fila, el botón (103px
+            con su etiqueta visible) le dejaba al precio ~11px en móvil: la
+            cuota se partía palabra por palabra y quedaba tapada por el botón. */}
+        <div className="mt-auto flex flex-col items-start gap-2 pt-3">
           <PrecioTarjeta producto={producto} tasa={tasa} />
           <BotonComparar producto={producto} tasa={tasa} />
         </div>
