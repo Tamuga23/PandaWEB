@@ -164,6 +164,8 @@ Grillas responsive por breakpoint: el catálogo pasa de 2 columnas en móvil a 3
 
 **Mobile-first real, no solo responsive:** la ficha de producto tiene una barra de compra fija en la parte inferior en móvil (`barra-producto`) que desaparece en desktop a favor de un CTA inline — no es el mismo componente reescalado, es una composición distinta a propósito.
 
+**Portada (oct-2026):** el hero es texto a la izquierda y vitrina de productos a la derecha en `lg`; en móvil el texto va arriba (alineado a la izquierda, ya no centrado) y la vitrina es una tira horizontal debajo de los botones, para que la primera pantalla del teléfono ya muestre productos con precio. "Qué estás buscando" va a 2 columnas desde móvil y 3 en `lg`; las ventajas, a 2 columnas en móvil y 4 en `lg`. La profundidad del hero la dan los productos: el resplandor cyan difuminado que había detrás del título se sacó (contradecía "nada de gradientes de fondo decorativos").
+
 ## Elevation & Depth
 
 El sistema es plano en reposo: la separación entre superficies se resuelve con `border-borde` y el salto de `bg-fondo` a `bg-superficie`, no con sombra. La profundidad aparece cuando algo pasa — una tarjeta bajo el mouse, una barra que flota sobre el contenido, un modal — y vive en tres tokens de elevación (`shadow-elevada`, `shadow-flotante`, `shadow-modal`), definidos por tema en `globals.css` igual que los colores. **Implementado en oct-2026 (Fase 2 de `docs/plan-mejora-visual.md`).**
@@ -214,6 +216,12 @@ Sin bordes duros en ningún componente interactivo. Las únicas esquinas a 0px s
 - **Shadow Strategy:** ninguna en reposo (ver Elevation). En hover: `shadow-elevada`, sube 2px y el borde pasa a `acento/50`, con el patrón de hover sin temblor.
 - **Border:** `border border-borde` siempre presente, incluso sin hover.
 - **Internal Padding:** `p-4` a `p-5`; el panel de financiamiento sube a `p-8`/`p-12` en desktop por ser una sección hero-like.
+
+### Vitrina del hero y tarjeta de categoría
+- **Vitrina** (`Vitrina`/`TarjetaVitrina` en `app/page.tsx`): hasta 4 productos, uno por categoría antes de repetir (`elegirHero` en `lib/portada.ts`), siempre con foto. Tarjeta = bandeja de foto + nombre (una línea) + precio en `text-precio`. En `lg` es un mosaico: el primero ancho (`aspect-[2/1]`) arriba y dos cuadrados abajo; el cuarto solo existe en la tira móvil. Es el mismo marcado en los dos tamaños para que cada foto se descargue una vez.
+- **Tarjeta de categoría:** bandeja de foto `aspect-[4/3]` (`16/10` en `lg`) + nombre + pastilla con el conteo; la descripción solo desde `sm`. La foto sale de un producto que no esté en la vitrina (`fotoPorCategoria`), para no repetir imágenes en dos secciones seguidas. No cambia de fondo en hover (la pastilla del conteo es `bg-superficie2` y desaparecía).
+- **Bandeja de foto blanca** (`bg-white`, en los dos temas): la única excepción a "solo tokens". Las fotos del catálogo son de estudio con fondo blanco; sobre una bandeja de otro color se ven como un recuadro pegado. Si una categoría no tiene ninguna foto, la bandeja va `bg-superficie2` con el ícono de imagen en `text-tenue` (igual al "Sin foto" de `ProductImage`), nunca blanca vacía.
+- El hero no repite productos en "Lo más pedido".
 
 ### Inputs / Fields
 - **Style:** `rounded-xl`, `border border-borde`, fondo `bg-superficie`, texto `text-sm`.
