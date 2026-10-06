@@ -14,7 +14,7 @@ paso que funcione. Fusionar a `main` solo con permiso explícito.
 | 1 | Datos de prueba locales (`CATALOG_SOURCE=fixture`) | Hecha y en producción (2026-10-05) — PR #46 |
 | 2 | Profundidad: tokens de elevación | Hecha y en producción (2026-10-05) — PR #47 |
 | 3 | Portada con producto real (vitrina en el hero + categorías con íconos) | Hecha y en producción (2026-10-05) — PR #48 |
-| 4 | Catálogo: tratamiento de fotos | En curso — rama `mejora-visual-fase-4` |
+| 4 | Catálogo: tratamiento de fotos (bandeja de foto) | Hecha (2026-10-06) — rama `mejora-visual-fase-4`, PR pendiente de fusionar |
 | 5 | Cierre: limpiar `bg-marca-hover`, actualizar DESIGN.md | Pendiente |
 
 ## Fase 0 — lo que se vio (capturas de producción, tema oscuro)
@@ -229,6 +229,19 @@ foto: banda 358×119 a 390px (precio a 514px, dentro de la primera pantalla) y
 Sin desborde horizontal a 390. 63/63 pruebas (3 nuevas del ícono), typecheck,
 lint, `CATALOG_SOURCE=fixture npm run build` 39/39; el CSS del build sale plano
 (`.bandeja-foto:after{…}`, sin anidado).
+
+**Revisión adversarial** (2 revisores, código y visual, y un verificador que
+intentó refutar cada hallazgo): la implementación coincide píxel a píxel con la
+previsualización aprobada. Confirmó 4 hallazgos medios, ya arreglados:
+- con Imgur caído, la foto grande de la ficha volvía a ser un cuadrado claro
+  sin leyenda (regresión frente a `main`) → `leyenda` en la galería;
+- en el comparador, el agotado sin foto salía en la bandeja clara → sin foto
+  en el POS va siempre a `superficie2`;
+- la infografía "Funciones" se pintaba #fff puro en oscuro → el velo pasa a su
+  propia utilidad (`velo-foto`) y también lo llevan las fotos de escena;
+- (bajo) la capa de agotado tapaba el ícono del sin foto → solo sobre fotos.
+Se aceptó y quedó escrito en DESIGN.md que en claro los agotados se lavan hacia
+el blanco sin escalón de bandeja. Suma 5 pruebas de `ProductImage` (68/68).
 
 ## Fase 5 (resumen)
 
