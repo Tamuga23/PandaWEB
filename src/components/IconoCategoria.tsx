@@ -85,36 +85,47 @@ export function IconoCategoria({
   slug,
   desde,
   hasta,
+  grosor = 1.75,
   className = "h-6 w-6",
 }: {
-  slug: string;
-  /** Colores CSS de los extremos del tramo (ver colorDeMarca). */
-  desde: string;
-  hasta: string;
+  slug?: string;
+  /**
+   * Colores CSS de los extremos del tramo (ver colorDeMarca). Sin ellos el
+   * ícono es monocromo (currentColor): es la variante del marcador "sin
+   * foto", que no es accionable y por eso no lleva el degradado de marca.
+   */
+  desde?: string;
+  hasta?: string;
+  grosor?: number;
   className?: string;
 }) {
-  const id = `degradado-categoria-${slug}`;
+  const conDegradado = desde != null && hasta != null;
+  const id = `degradado-categoria-${slug ?? "generico"}`;
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <defs>
-        {/* userSpaceOnUse: con el modo por defecto (objectBoundingBox), un
-            trazo recto horizontal o vertical tiene caja de alto o ancho 0 y
-            el degradado no se pinta. El stopColor del atributo es el
-            respaldo si el navegador no entiende color-mix: cian de marca, en
-            vez del negro por defecto (invisible sobre el tema oscuro). */}
-        <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22">
-          <stop offset="0" stopColor="#06b6d4" style={{ stopColor: desde }} />
-          <stop offset="1" stopColor="#06b6d4" style={{ stopColor: hasta }} />
-        </linearGradient>
-      </defs>
+      {/* Solo con degradado hay <defs>: el monocromo se repite en la grilla
+          (doce agotados sin foto) y no puede dejar ids duplicados. */}
+      {conDegradado && (
+        <defs>
+          {/* userSpaceOnUse: con el modo por defecto (objectBoundingBox), un
+              trazo recto horizontal o vertical tiene caja de alto o ancho 0 y
+              el degradado no se pinta. El stopColor del atributo es el
+              respaldo si el navegador no entiende color-mix: cian de marca,
+              en vez del negro por defecto (invisible sobre el tema oscuro). */}
+          <linearGradient id={id} gradientUnits="userSpaceOnUse" x1="2" y1="2" x2="22" y2="22">
+            <stop offset="0" stopColor="#06b6d4" style={{ stopColor: desde }} />
+            <stop offset="1" stopColor="#06b6d4" style={{ stopColor: hasta }} />
+          </linearGradient>
+        </defs>
+      )}
       <g
-        stroke={`url(#${id})`}
+        stroke={conDegradado ? `url(#${id})` : "currentColor"}
         fill="none"
-        strokeWidth="1.75"
+        strokeWidth={grosor}
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        {TRAZOS[slug] ?? TRAZO_GENERICO}
+        {(slug ? TRAZOS[slug] : undefined) ?? TRAZO_GENERICO}
       </g>
     </svg>
   );

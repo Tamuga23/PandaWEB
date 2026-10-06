@@ -29,8 +29,10 @@ import {
   youTubeId,
 } from "../src/lib/format";
 import { canonizarSlug, normalizarProducto } from "../src/lib/normalize";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { elegirHero } from "../src/lib/portada";
-import { colorDeMarca } from "../src/components/IconoCategoria";
+import { IconoCategoria, colorDeMarca } from "../src/components/IconoCategoria";
 import type { Producto } from "../src/lib/types";
 
 const TASA = 36.6243;
@@ -558,5 +560,31 @@ describe("vitrina y categorías de la portada", () => {
     // Fuera de rango no inventa colores: se queda en los extremos.
     assert.equal(colorDeMarca(-1), colorDeMarca(0));
     assert.equal(colorDeMarca(2), colorDeMarca(1));
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("ícono de categoría", () => {
+  const html = (props: Parameters<typeof IconoCategoria>[0]) =>
+    renderToStaticMarkup(createElement(IconoCategoria, props));
+
+  it("con colores (portada) se pinta con su tramo del degradado", () => {
+    const svg = html({ slug: "proyector", desde: "red", hasta: "blue" });
+    assert.match(svg, /<linearGradient id="degradado-categoria-proyector"/);
+    assert.match(svg, /stroke="url\(#degradado-categoria-proyector\)"/);
+  });
+
+  it("sin colores (marcador sin foto) es monocromo y no deja ids", () => {
+    // Se repite en la grilla de agotados: un id por ícono serían doce
+    // "degradado-categoria-smartwatch" en la misma página.
+    const svg = html({ slug: "smartwatch" });
+    assert.doesNotMatch(svg, /<defs|\sid=|url\(#/);
+    assert.match(svg, /stroke="currentColor"/);
+  });
+
+  it("un slug sin dibujo, o ninguno, dibuja la caja genérica en vez de un hueco", () => {
+    const desconocido = html({ slug: "categoria-nueva" });
+    assert.match(desconocido, /<rect/);
+    assert.equal(desconocido, html({}));
   });
 });
