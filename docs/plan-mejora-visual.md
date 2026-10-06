@@ -123,7 +123,45 @@ sin desborde horizontal; a 360×740 la vitrina asoma en la primera pantalla
 cargada (sus 2 productos están agotados y sin imágenes), y la foto que
 representa "Smart home" es un parlante Anker cargado en esa categoría.
 
-## Fases 4–5 (resumen)
+## Fase 4 — fotos del catálogo (en curso)
+
+**Problema confirmado en capturas** (fixture, 390 y 1280px, dos temas):
+- En oscuro cada foto (estudio, fondo blanco, viene del POS) es un cuadrado
+  blanco de borde a borde: lo más brillante de la pantalla, por encima del
+  precio. En la ficha, un cuadrado blanco enorme.
+- `next/image` con `fill` es `absolute inset-0`: ignora el `p-4`/`p-6`/`p-3`
+  del contenedor, así que el producto toca los bordes, sin aire.
+- "Sin foto" (12 de los 19 agotados): el marcador sí respeta el padding y
+  queda como caja dentro de caja; en la ficha es la caja gris más grande de la
+  pantalla.
+- Los 6 lugares que usan `ProductImage` tienen 6 fondos distintos.
+
+**Panel de diseño** (workflow: diseñadores que previsualizan inyectando CSS en
+el sitio real → jueces → síntesis). Terminaron 3 propuestas antes de que la
+sesión llegara a su límite de uso; el diseñador "audaz", los jueces y la
+síntesis quedaron por correr.
+
+| Propuesta | Brillo en oscuro | Marco | Agotado | Sin foto |
+|---|---|---|---|---|
+| Sistema — "Bandeja de estudio velada" | blanco velado con `color-mix` (≈ #dadada) + `mix-blend-multiply` | de borde a borde | `opacity-70` solo en la foto | ícono de categoría gris sobre `bg-fondo`; en la ficha 2:1 con leyenda |
+| Conversión — "Bandeja de mostrador" | gris neutro #e5e5e5 + `mix-blend-multiply` | 4px, radio concéntrico | `opacity-70` en toda la bandeja | ícono gris; ficha 3:1 en el celular, 4:3 en `lg` |
+| Accesibilidad/rendimiento — "Bandeja con velo" | bandeja blanca + velo de color con alfa (≈ #dcdcdd), sin blend ni filter | 4px, radio concéntrico | velo más fuerte | ícono gris en `bg-superficie2`; ficha 2:1 |
+
+Coinciden en: una sola bandeja que dibuja `ProductImage`, aire con un
+contenedor `absolute inset-[5–8%]`, e `IconoCategoria` monocromo para el
+marcador (evita además `id` de degradado repetidos).
+
+**Bugs que ya existían, encontrados por el panel:**
+- `Galeria`: si una foto falla, el estado `fallo` de `ProductImage` queda
+  pegado al cambiar de miniatura (falta `key` por URL).
+- `BarraComparar`: el `div` interno no está posicionado, así que la imagen
+  `fill` se ubica contra el de afuera y pisa el borde y el radio.
+
+**A verificar:** 4 fotos de héroe tendrían borde no blanco (MagCubic HY450MAX
+con la sombra de piso cortada a la derecha, Amazfit Active 2, ANKER
+SoundCore 2, otro MagCubic): con aire, el corte queda a la vista.
+
+## Fase 5 (resumen)
 
 - **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
   la situación inicial.
