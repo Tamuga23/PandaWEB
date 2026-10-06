@@ -182,6 +182,8 @@ piso cortada contra su borde derecho; con el aire nuevo el corte se ve en la
 vitrina, la primera tarjeta y la ficha, en las tres propuestas. Lo mismo, más
 leve, en el HY450GT, la Amazfit Active 2 y el ANKER SoundCore 2. Arreglo:
 volver a cargar esas fotos con margen blanco desde el POS.
+**Decisión de Carlos (2026-10-06): se acepta el corte por ahora** y la fase
+sigue; recargar esas fotos queda como pendiente del POS, no bloquea la fusión.
 
 ## Fase 5 (resumen)
 
