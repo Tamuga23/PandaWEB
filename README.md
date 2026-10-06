@@ -166,7 +166,11 @@ público desde entonces. Quedan dos ítems de contenido, no bloqueantes:
 - [x] Poner `EN_CONSTRUCCION = false` en `src/app/robots.ts` **y** `index: true`
       en `src/app/layout.tsx` — mergeado y verificado en producción.
 - [x] `NEXT_PUBLIC_SITE_URL` con el dominio definitivo (`panda-web-nine.vercel.app`).
-- [ ] Cargar fotos: hoy los productos sin imagen muestran un marcador "Sin foto".
+- [ ] Cargar fotos: hoy los productos sin imagen muestran el ícono de su categoría
+      (12 agotados no tienen ninguna). Y volver a cargar con margen blanco las que
+      tienen la sombra cortada contra el borde (MagCubic HY450MAX y HY450GT,
+      Amazfit Active 2, ANKER SoundCore 2): con el aire nuevo de la bandeja de
+      foto, el corte se ve.
 - [ ] Logo real de Panda Store (el PNG que existe es de PandaLink).
 
 ---

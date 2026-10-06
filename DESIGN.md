@@ -129,6 +129,7 @@ Paleta acotada y semántica: cada color dice algo funcional, ninguno es decorati
 - **Superficie 2** (`#27272a`, zinc-800): un paso más arriba — hover de superficie, chips inactivos.
 - **Borde** (`#27272a`) / **Borde 2** (`#3f3f46`): separación de tarjetas (borde) y contornos más marcados como botones secundarios (borde2).
 - **Texto** (`#fafafa`), **Suave** (`#a1a1aa`), **Tenue** (`#86868f` oscuro / `#64748b` claro): jerarquía de tres niveles — título/cuerpo, texto secundario, metadatos y placeholders. **Actualizado (audit técnico):** el tono original (`#71717a` oscuro, `#94a3b8` claro) fallaba contraste AA (4.5:1) contra los fondos donde de verdad se usa. En claro, el mínimo que pasa AA contra `bg-fondo` coincide con el de Suave — no queda margen para un tercer nivel distinto ahí.
+- **Bandeja de foto** (`--bandeja` #fff con `--velo-foto` encima: ≈ #dcdcdd en oscuro, ≈ #f6f6f7 en claro): la superficie de toda foto de producto. Es la única excepción a "solo tokens" (el blanco de estudio de las fotos) y vive en un token. Ver "Foto de producto".
 
 ### Degradado de marca
 - **Esmeralda → Cian → Azul Cielo** (`#10b981` → `#06b6d4` → `#0284c7`, 135deg): el único gradiente del sistema. Vive en `bg-marca`/`text-marca`, y se usa para: el CTA principal de cada sección, la píldora de categoría activa, el badge de oferta, el logo, y los íconos de categoría de la portada (cada tarjeta toma un tramo según su posición, con `colorDeMarca()` en `components/IconoCategoria.tsx`, así la grilla completa recorre el degradado; pedido de Carlos, oct-2026). Nunca se aplica a texto de párrafo ni a fondos grandes de sección.
@@ -190,7 +191,7 @@ El elemento que detecta el hover no se mueve: es un envoltorio `group` (en `Prod
 Radios generosos y consistentes, con una jerarquía clara por tamaño de elemento:
 - **Pastilla completa** (`rounded-full`, 9999px): todo lo accionable — botones primarios y secundarios, píldoras de filtro, badges de estado (Disponible/Agotado), el ícono de WhatsApp.
 - **Grande** (`rounded-2xl`/`rounded-3xl`, 16–24px): contenedores — tarjetas de producto, tarjetas de categoría, el panel de financiamiento, modales.
-- **Medio** (`rounded-xl`, 12px): elementos secundarios dentro de un contenedor — botones de ícono, casillas de cuota individual, campo de búsqueda.
+- **Medio** (`rounded-xl`, 12px): elementos secundarios dentro de un contenedor — botones de ícono, casillas de cuota individual, campo de búsqueda, la bandeja de foto y las miniaturas de foto (galería y barra del comparador).
 - **Chico** (`rounded-lg`, 8px): badges de oferta sobre imagen — la única forma no-pastilla que aparece flotando sobre contenido.
 
 Sin bordes duros en ningún componente interactivo. Las únicas esquinas a 0px son estructurales (la barra de compra fija en móvil, que se ancla al borde de la pantalla).
@@ -205,7 +206,7 @@ Sin bordes duros en ningún componente interactivo. Las únicas esquinas a 0px s
 
 ### Badges / Chips
 - **Oferta:** `rounded-lg`, fondo `bg-marca`, texto blanco `font-black uppercase` con tracking amplio. Siempre sobre imagen, nunca en línea de texto.
-- **Agotado (sobre imagen, en tarjeta):** `rounded-full`, fondo `bg-fondo/90` con `ring-1 ring-agotado/30`, texto rosa. Flota sobre la imagen, opuesto al badge de oferta.
+- **Agotado (sobre imagen, en tarjeta):** `rounded-full`, fondo `bg-superficie/95` con `ring-1 ring-agotado/30`, texto rosa. Flota sobre la imagen, opuesto al badge de oferta. (Era `bg-fondo/90`: en claro, sobre la bandeja de foto, el rosa quedaba en ~4.48:1.)
 - **0% interés:** `rounded-full`, fondo `bg-precio/15`, texto verde `font-black uppercase`. Solo aparece cuando el producto de verdad no lleva recargo — nunca decorativo.
 - **Píldora de filtro (categoría):** `rounded-full`. Inactiva: borde + `bg-superficie`. Activa: `bg-marca`, texto blanco, `font-bold`, `shadow-md` y un punto blanco a la izquierda.
 - **Disponible / Agotado (inline, en ficha):** `rounded-full`, con un punto (`h-1.5 w-1.5 rounded-full`) a la izquierda del texto. Disponible: `bg-precio/10 text-precio`. Agotado: `bg-agotado/10 text-agotado`. **Corregido (audit técnico):** documentaba `bg-marca/10`, pero `bg-marca` es un `@utility` con `background-image` (no un color de `@theme`), así que Tailwind nunca generó el modificador `/10` — la píldora "Disponible" no tenía fondo en absoluto en producción. `bg-precio/10` además hace que el patrón calce exacto con "Agotado" (mismo token para el punto, el fondo y el texto). Es un patrón propio, distinto del badge "Agotado" que flota sobre la imagen en la tarjeta — viven en contextos distintos (inline junto al nombre vs. flotando sobre una foto), no hace falta unificarlos.
@@ -220,8 +221,21 @@ Sin bordes duros en ningún componente interactivo. Las únicas esquinas a 0px s
 ### Vitrina del hero y tarjeta de categoría
 - **Vitrina** (`Vitrina`/`TarjetaVitrina` en `app/page.tsx`): hasta 4 productos, uno por categoría antes de repetir (`elegirHero` en `lib/portada.ts`), siempre con foto. Tarjeta = bandeja de foto + nombre (una línea) + precio en `text-precio`. En `lg` es un mosaico: el primero ancho (`aspect-[2/1]`) arriba y dos cuadrados abajo; el cuarto solo existe en la tira móvil. Es el mismo marcado en los dos tamaños para que cada foto se descargue una vez.
 - **Tarjeta de categoría:** ícono propio de la categoría (`IconoCategoria`, mismo estilo de trazo que `iconos.tsx`) en una pastilla `rounded-2xl` de `h-12`/`h-14`, arriba a la izquierda; la pastilla del conteo arriba a la derecha; nombre debajo y la descripción solo desde `sm`. El ícono se pinta con su tramo del degradado de marca (`userSpaceOnUse`, de arriba-izquierda a abajo-derecha) y la pastilla lleva ese mismo color al 12%, el recurso de las ventajas (`bg-acento/10`). No usa fotos: con fotos de producto, una categoría sin imágenes en el POS (Smart TV) quedaba vacía, y la foto podía no representar la categoría. No cambia de fondo en hover (la pastilla del conteo es `bg-superficie2` y desaparecía).
-- **Bandeja de foto blanca** (`bg-white`, en los dos temas, solo en la vitrina): la única excepción a "solo tokens". Las fotos del catálogo son de estudio con fondo blanco; sobre una bandeja de otro color se ven como un recuadro pegado.
+- La vitrina usa la misma bandeja de foto que el catálogo (ver "Foto de producto").
 - El hero no repite productos en "Lo más pedido".
+
+### Foto de producto (ProductImage)
+**Implementado en oct-2026 (Fase 4 de `docs/plan-mejora-visual.md`).** Las fotos del POS son de estudio con fondo blanco y no se pueden editar; en oscuro, un cuadrado blanco de borde a borde era lo más brillante de la pantalla y le ganaba al precio.
+
+- **Bandeja:** la pone `ProductImage` en los 6 lugares que muestran fotos (tarjeta, vitrina, galería y sus miniaturas, barra y modal del comparador). Es la utilidad `bandeja-foto`: fondo `--bandeja` (#fff, el blanco de estudio, así nunca asoma el recuadro de la imagen) más un `::after` con `--velo-foto` (`rgb(9 9 11 / .14)` en oscuro, ≈ #dcdcdd; `rgb(15 23 42 / .04)` en claro). Es un color con alfa: nada de `mix-blend-mode` ni `filter`, que abren una capa por foto en gama baja y en iOS pueden perder la mezcla durante el zoom.
+- **Aire:** la foto va en un `absolute inset-[5%]` dentro de la bandeja (next/image con `fill` ignora el padding del contenedor). Siempre `object-contain`.
+- **Marco:** tarjeta, vitrina y ficha llevan `p-1` (4px) y la bandeja `rounded-xl`, concéntrica con el `rounded-2xl` del contenedor (16 − 4 = 12). En miniaturas, barra y modal la bandeja llena la caja, que ya recorta con su radio.
+- **Agotado en listas** (`apagada`): capa `bg-superficie/30` sobre la bandeja entera. Tres niveles en oscuro: disponible (≈ #dcdcdd) > agotado con foto (apagado) > agotado sin foto (≈ #222225). En la ficha no se apaga.
+- **Sin foto:** el ícono de la categoría (`IconoCategoria` monocromo, `text-tenue`, 40% de la bandeja con tope de 64px), nunca un texto "SIN FOTO" ni un ícono genérico de imagen. El agotado sin foto va sobre `bg-superficie2`; el disponible sin foto (Imgur caído) conserva la bandeja. En la ficha sin fotos ni video: banda `aspect-[3/1]` (`2:1` en `lg`) en `bg-superficie2`, con el ícono y la leyenda "Sin foto" en `text-texto` (con `text-suave` no llega a AA en claro).
+- **Fotos de escena** (las de la galería con etiqueta del POS: "Con Luz", "A Oscuras", "Funciones"…): `escena`, sobre `bg-superficie` y sin velo. Sobre la bandeja blanca quedaban con bandas gris claro a los costados.
+
+### Named Rules
+**La Regla de la Bandeja.** Ninguna foto de producto se pinta sobre el fondo propio de un lugar: la bandeja la pone `ProductImage`, y cada lugar solo decide el marco y el radio. Un lugar nuevo que muestre fotos usa `ProductImage`, no un `next/image` suelto.
 
 ### Inputs / Fields
 - **Style:** `rounded-xl`, `border border-borde`, fondo `bg-superficie`, texto `text-sm`.

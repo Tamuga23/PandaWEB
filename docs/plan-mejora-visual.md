@@ -215,6 +215,21 @@ implementa a partir de esa previsualización y de los veredictos):
   de la galería; la barra del comparador deja de posicionar la foto contra el
   `div` de afuera.
 
+**Implementado** (rama `mejora-visual-fase-4`): globals.css (tokens y
+`bandeja-foto`), `IconoCategoria` (variante monocroma), `ProductImage` (la
+bandeja), `ProductCard`, vitrina, `Galeria`, ficha, `BarraComparar`,
+`ModalComparar`; sale `IconoImagen`. DESIGN.md: "Foto de producto" con **La
+Regla de la Bandeja**.
+
+**Verificado** (fixture, código real, sin CSS inyectado): las 12 tomas base y
+22 extra coinciden con la previsualización aprobada. Falla de Imgur simulada
+(data URI inválido → `onError` real) cae al ícono de la categoría. Ficha sin
+foto: banda 358×119 a 390px (precio a 514px, dentro de la primera pantalla) y
+540×270 a 1280px. Foto de escena "Con Luz" sobre la superficie, sin bandas.
+Sin desborde horizontal a 390. 63/63 pruebas (3 nuevas del ícono), typecheck,
+lint, `CATALOG_SOURCE=fixture npm run build` 39/39; el CSS del build sale plano
+(`.bandeja-foto:after{…}`, sin anidado).
+
 ## Fase 5 (resumen)
 
 - **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
