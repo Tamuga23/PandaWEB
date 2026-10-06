@@ -125,8 +125,6 @@ representa "Smart home" es un parlante Anker cargado en esa categoría.
 
 ## Fases 4–5 (resumen)
 
-- **4. Catálogo:** suavizar el cuadrado blanco de las fotos en tema oscuro y
-  mejorar el marcador "Sin foto" de los agotados.
 - **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
   la situación inicial.
 
