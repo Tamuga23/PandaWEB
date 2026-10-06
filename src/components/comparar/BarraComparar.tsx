@@ -57,10 +57,15 @@ export function BarraComparar() {
             : `${seleccion.length} de ${MAX_COMPARAR} seleccionados`}
         </p>
 
+        {/* -inset-1.5 (no -inset-3 como el resto del comparador): estos dos
+            botones están pegados uno al otro con solo 12px de gap — el
+            -3 completo de cada lado se hubiera solapado con el vecino
+            (Limpiar es destructivo, Comparar no; una zona de toque
+            ambigua entre ambos sería peor que el problema que arregla). */}
         <button
           type="button"
           onClick={limpiar}
-          className="shrink-0 rounded-lg px-2 py-2 text-xs font-medium text-tenue transition hover:text-texto"
+          className="relative shrink-0 rounded-lg px-2 py-2 text-xs font-medium text-tenue transition after:absolute after:-inset-1.5 after:content-[''] hover:text-texto"
         >
           Limpiar
         </button>
@@ -69,7 +74,7 @@ export function BarraComparar() {
           type="button"
           onClick={abrir}
           disabled={faltaUno}
-          className="btn-primary shrink-0 px-5 py-2.5 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+          className="btn-primary relative shrink-0 px-5 py-2.5 text-sm after:absolute after:-inset-1.5 after:content-[''] disabled:cursor-not-allowed disabled:opacity-40"
         >
           Comparar
         </button>
