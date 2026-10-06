@@ -33,13 +33,15 @@
 //   eval: imprime lo que devuelve (medir el DOM, contar elementos…).
 import { spawn } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
-const [salida, base, planRuta, puertoArg, cssArg, jsArg] = process.argv.slice(2);
-if (!salida || !base || !planRuta) {
+const [salidaArg, base, planRuta, puertoArg, cssArg, jsArg] = process.argv.slice(2);
+if (!salidaArg || !base || !planRuta) {
   console.error("Uso: node scripts/capturar.mjs <carpeta-salida> <base-url> <plan.json> [puerto] [archivo.css|-] [archivo.js|-]");
   process.exit(1);
 }
+// Absoluta: con un --user-data-dir relativo el navegador no arranca.
+const salida = resolve(salidaArg);
 const plan = JSON.parse(readFileSync(planRuta, "utf8"));
 const cssGlobal = cssArg && cssArg !== "-" ? readFileSync(cssArg, "utf8") : "";
 const jsGlobal = jsArg && jsArg !== "-" ? readFileSync(jsArg, "utf8") : "";
