@@ -243,6 +243,23 @@ previsualización aprobada. Confirmó 4 hallazgos medios, ya arreglados:
 Se aceptó y quedó escrito en DESIGN.md que en claro los agotados se lavan hacia
 el blanco sin escalón de bandeja. Suma 5 pruebas de `ProductImage` (68/68).
 
+**Lighthouse móvil, A/B intercalado** (`main` y la rama servidos a la vez desde
+dos builds de producción con fixture, corridas alternadas para que la carga de
+la máquina afecte a los dos por igual):
+
+| | `main` | Rama |
+|---|---|---|
+| Portada, TBT | 920 / 540 / 440 ms | 420 / 650 / 1,130 ms |
+| Ficha, TBT | 470 / 290 / 390 ms | 290 / 410 / 1,080 ms |
+| Peso de la portada | 523 KB | 524 KB |
+
+Los rangos se superponen: no hay diferencia medible (la rama suma ~1.4 KB de
+JS por `IconoCategoria` en `ProductImage`). Una primera medición en serie
+mostraba la portada 4 veces peor, pero era la carga de la máquina cambiando
+entre una corrida y otra: por eso el intercalado. Esta vez la máquina estaba
+más cargada que en la Fase 3, así que los números absolutos no se comparan con
+los de esa tabla.
+
 ## Fase 5 (resumen)
 
 - **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
