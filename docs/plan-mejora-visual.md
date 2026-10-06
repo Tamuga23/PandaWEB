@@ -13,8 +13,8 @@ paso que funcione. Fusionar a `main` solo con permiso explícito.
 | 0 | Mirar el sitio antes de tocarlo | Hecha (2026-10-05) |
 | 1 | Datos de prueba locales (`CATALOG_SOURCE=fixture`) | Hecha y en producción (2026-10-05) — PR #46 |
 | 2 | Profundidad: tokens de elevación | Hecha y en producción (2026-10-05) — PR #47 |
-| 3 | Portada con producto real (hero + categorías con foto) | Hecha (2026-10-05) — rama `mejora-visual-fase-3`, PR pendiente de fusionar |
-| 4 | Catálogo: tratamiento de fotos | Pendiente |
+| 3 | Portada con producto real (vitrina en el hero + categorías con íconos) | Hecha y en producción (2026-10-05) — PR #48 |
+| 4 | Catálogo: tratamiento de fotos (bandeja de foto) | Hecha (2026-10-06) — rama `mejora-visual-fase-4`, PR pendiente de fusionar |
 | 5 | Cierre: limpiar `bg-marca-hover`, actualizar DESIGN.md | Pendiente |
 
 ## Fase 0 — lo que se vio (capturas de producción, tema oscuro)
@@ -123,10 +123,145 @@ sin desborde horizontal; a 360×740 la vitrina asoma en la primera pantalla
 cargada (sus 2 productos están agotados y sin imágenes), y la foto que
 representa "Smart home" es un parlante Anker cargado en esa categoría.
 
-## Fases 4–5 (resumen)
+## Fase 4 — fotos del catálogo (en curso)
 
-- **4. Catálogo:** suavizar el cuadrado blanco de las fotos en tema oscuro y
-  mejorar el marcador "Sin foto" de los agotados.
+**Problema confirmado en capturas** (fixture, 390 y 1280px, dos temas):
+- En oscuro cada foto (estudio, fondo blanco, viene del POS) es un cuadrado
+  blanco de borde a borde: lo más brillante de la pantalla, por encima del
+  precio. En la ficha, un cuadrado blanco enorme.
+- `next/image` con `fill` es `absolute inset-0`: ignora el `p-4`/`p-6`/`p-3`
+  del contenedor, así que el producto toca los bordes, sin aire.
+- "Sin foto" (12 de los 19 agotados): el marcador sí respeta el padding y
+  queda como caja dentro de caja; en la ficha es la caja gris más grande de la
+  pantalla.
+- Los 6 lugares que usan `ProductImage` tienen 6 fondos distintos.
+
+**Panel de diseño** (workflow: diseñadores que previsualizan inyectando CSS en
+el sitio real → jueces → síntesis). Terminaron 3 propuestas antes de que la
+sesión llegara a su límite de uso; el diseñador "audaz", los jueces y la
+síntesis quedaron por correr.
+
+| Propuesta | Brillo en oscuro | Marco | Agotado | Sin foto |
+|---|---|---|---|---|
+| Sistema — "Bandeja de estudio velada" | blanco velado con `color-mix` (≈ #dadada) + `mix-blend-multiply` | de borde a borde | `opacity-70` solo en la foto | ícono de categoría gris sobre `bg-fondo`; en la ficha 2:1 con leyenda |
+| Conversión — "Bandeja de mostrador" | gris neutro #e5e5e5 + `mix-blend-multiply` | 4px, radio concéntrico | `opacity-70` en toda la bandeja | ícono gris; ficha 3:1 en el celular, 4:3 en `lg` |
+| Accesibilidad/rendimiento — "Bandeja con velo" | bandeja blanca + velo de color con alfa (≈ #dcdcdd), sin blend ni filter | 4px, radio concéntrico | velo más fuerte | ícono gris en `bg-superficie2`; ficha 2:1 |
+
+Coinciden en: una sola bandeja que dibuja `ProductImage`, aire con un
+contenedor `absolute inset-[5–8%]`, e `IconoCategoria` monocromo para el
+marcador (evita además `id` de degradado repetidos).
+
+**Bugs que ya existían, encontrados por el panel:**
+- `Galeria`: si una foto falla, el estado `fallo` de `ProductImage` queda
+  pegado al cambiar de miniatura (falta `key` por URL).
+- `BarraComparar`: el `div` interno no está posicionado, así que la imagen
+  `fill` se ubica contra el de afuera y pisa el borde y el radio.
+
+**Jueces** (cliente en el celular, director de arte, ingeniería; miraron las
+capturas y midieron píxeles): votos conversión 2, accesibilidad/rendimiento 1;
+puntaje sumado conversión 67, a11y-perf 65.5, sistema 64. Coinciden en la
+combinación:
+- **Diseño de conversión:** marco de 4px concéntrico (la tarjeta oscura vuelve
+  a contener la foto); agotados en tres niveles (disponible claro > agotado con
+  foto apagado > agotado sin foto oscuro); ficha sin foto como banda baja.
+- **Técnica de a11y-perf:** bandeja blanca + velo plano (`::after` de color con
+  alfa) en vez de `mix-blend-multiply`: mismos píxeles, sin el riesgo de iOS con
+  el zoom ni capas de composición. Brillo en oscuro ≈ #dcdcdd (14%), más bajo
+  que el #e5e5e5 de conversión.
+- **Ajustes:** aire 5–6% (no 8%); `className` sigue en la foto y el radio de la
+  bandeja va por otra prop; `span` en vez de `div` (vive dentro de `<button>`
+  en las miniaturas); `rounded-xl` en miniaturas, barra y hueco punteado;
+  leyenda "Sin foto" solo en la ficha (AA en los dos temas); ficha sin foto 3:1
+  en el celular y 2:1 en `lg`; zoom con `motion-safe`; tokens dentro de los
+  bloques de tema existentes; arreglar los dos bugs.
+- Sistema perdió en pantalla: sus agotados con foto quedaban más claros que los
+  disponibles y la sección de agotados se veía como un damero claro/negro.
+
+**Confirmado (no es CSS):** la foto del MagCubic HY450MAX tiene la sombra de
+piso cortada contra su borde derecho; con el aire nuevo el corte se ve en la
+vitrina, la primera tarjeta y la ficha, en las tres propuestas. Lo mismo, más
+leve, en el HY450GT, la Amazfit Active 2 y el ANKER SoundCore 2. Arreglo:
+volver a cargar esas fotos con margen blanco desde el POS.
+**Decisión de Carlos (2026-10-06): se acepta el corte por ahora** y la fase
+sigue; recargar esas fotos queda como pendiente del POS, no bloquea la fusión.
+
+**Síntesis** (el agente de síntesis llegó a previsualizar su versión final y
+sacar sus 12 capturas antes de que la sesión volviera a llegar al límite; se
+implementa a partir de esa previsualización y de los veredictos):
+- Token `--bandeja` (#fff, igual en los dos temas: es el blanco de estudio de
+  las fotos) y `--velo-foto` por tema: `rgb(9 9 11 / .14)` en oscuro (bandeja ≈
+  #dcdcdd), `rgb(15 23 42 / .04)` en claro. Utilidad `bandeja-foto`: fondo
+  `--bandeja` + un `::after` del velo. Sin `mix-blend-mode` ni `filter`.
+- `ProductImage` dibuja la bandeja en los 6 lugares: `span` relativo con
+  `overflow-hidden`, aire `absolute inset-[5%]`, `className` sigue en la foto y
+  el radio entra por `bandeja`.
+- Agotado en listas (`apagada`): capa `bg-superficie/30` encima. Sin foto: el
+  ícono de su categoría (`IconoCategoria` monocromo, `text-tenue`, 40% de la
+  bandeja con tope de 64px); el agotado sin foto va sobre `bg-superficie2`.
+  Resultado en oscuro: disponible ≈ #dcdcdd > agotado con foto apagado >
+  agotado sin foto ≈ #222225.
+- Fotos de escena (las de la galería que traen etiqueta del POS: "Con Luz", "A
+  Oscuras", "Funciones"…; en el catálogo de prueba la foto del héroe nunca la
+  tiene) van sobre `bg-superficie`, no sobre blanco: así no quedan con bandas
+  gris claro.
+- Marco de 4px (`p-1`) y bandeja `rounded-xl` en tarjeta, vitrina y ficha; en
+  miniaturas, barra y modal la bandeja llena la caja. Barra y hueco punteado a
+  `rounded-xl`; el modal suma `border-borde`.
+- Ficha sin foto: banda `aspect-[3/1]` (2:1 en `lg`) en `bg-superficie2` con el
+  ícono y la leyenda "Sin foto" en `text-texto` (AA en los dos temas).
+- Pastilla "Agotado" de la tarjeta: `bg-superficie/95` (en claro, sobre la
+  bandeja, `bg-fondo/90` dejaba el rosa en ~4.48:1).
+- Zoom del hover con `motion-safe:`. Arreglos: `key` por URL en la foto grande
+  de la galería; la barra del comparador deja de posicionar la foto contra el
+  `div` de afuera.
+
+**Implementado** (rama `mejora-visual-fase-4`): globals.css (tokens y
+`bandeja-foto`), `IconoCategoria` (variante monocroma), `ProductImage` (la
+bandeja), `ProductCard`, vitrina, `Galeria`, ficha, `BarraComparar`,
+`ModalComparar`; sale `IconoImagen`. DESIGN.md: "Foto de producto" con **La
+Regla de la Bandeja**.
+
+**Verificado** (fixture, código real, sin CSS inyectado): las 12 tomas base y
+22 extra coinciden con la previsualización aprobada. Falla de Imgur simulada
+(data URI inválido → `onError` real) cae al ícono de la categoría. Ficha sin
+foto: banda 358×119 a 390px (precio a 514px, dentro de la primera pantalla) y
+540×270 a 1280px. Foto de escena "Con Luz" sobre la superficie, sin bandas.
+Sin desborde horizontal a 390. 63/63 pruebas (3 nuevas del ícono), typecheck,
+lint, `CATALOG_SOURCE=fixture npm run build` 39/39; el CSS del build sale plano
+(`.bandeja-foto:after{…}`, sin anidado).
+
+**Revisión adversarial** (2 revisores, código y visual, y un verificador que
+intentó refutar cada hallazgo): la implementación coincide píxel a píxel con la
+previsualización aprobada. Confirmó 4 hallazgos medios, ya arreglados:
+- con Imgur caído, la foto grande de la ficha volvía a ser un cuadrado claro
+  sin leyenda (regresión frente a `main`) → `leyenda` en la galería;
+- en el comparador, el agotado sin foto salía en la bandeja clara → sin foto
+  en el POS va siempre a `superficie2`;
+- la infografía "Funciones" se pintaba #fff puro en oscuro → el velo pasa a su
+  propia utilidad (`velo-foto`) y también lo llevan las fotos de escena;
+- (bajo) la capa de agotado tapaba el ícono del sin foto → solo sobre fotos.
+Se aceptó y quedó escrito en DESIGN.md que en claro los agotados se lavan hacia
+el blanco sin escalón de bandeja. Suma 5 pruebas de `ProductImage` (68/68).
+
+**Lighthouse móvil, A/B intercalado** (`main` y la rama servidos a la vez desde
+dos builds de producción con fixture, corridas alternadas para que la carga de
+la máquina afecte a los dos por igual):
+
+| | `main` | Rama |
+|---|---|---|
+| Portada, TBT | 920 / 540 / 440 ms | 420 / 650 / 1,130 ms |
+| Ficha, TBT | 470 / 290 / 390 ms | 290 / 410 / 1,080 ms |
+| Peso de la portada | 523 KB | 524 KB |
+
+Los rangos se superponen: no hay diferencia medible (la rama suma ~1.4 KB de
+JS por `IconoCategoria` en `ProductImage`). Una primera medición en serie
+mostraba la portada 4 veces peor, pero era la carga de la máquina cambiando
+entre una corrida y otra: por eso el intercalado. Esta vez la máquina estaba
+más cargada que en la Fase 3, así que los números absolutos no se comparan con
+los de esa tabla.
+
+## Fase 5 (resumen)
+
 - **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
   la situación inicial.
 

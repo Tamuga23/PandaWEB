@@ -75,6 +75,11 @@
     0 4px 12px -4px rgb(0 0 0 / 0.5), 0 20px 48px -16px rgb(0 0 0 / 0.85);
   --sombra-modal: inset 0 1px 0 0 rgb(255 255 255 / 0.08),
     0 32px 80px -20px rgb(0 0 0 / 0.9);
+
+  /* Velo de la bandeja de foto (ver @utility bandeja-foto): baja ~14% la luz
+     del blanco de estudio, que en oscuro era lo más brillante de la pantalla
+     y le ganaba al precio. Teñido con --fondo, no negro puro. */
+  --velo-foto: rgb(9 9 11 / 0.14);
 }
 
 /* --- Tema claro --------------------------------------------------------- */
@@ -111,6 +116,10 @@
   --sombra-flotante: 0 4px 12px -4px rgb(15 23 42 / 0.1),
     0 20px 48px -16px rgb(15 23 42 / 0.25);
   --sombra-modal: 0 32px 80px -20px rgb(15 23 42 / 0.35);
+
+  /* En claro el blanco no encandila: el velo apenas separa la bandeja de la
+     tarjeta blanca (≈ #f6f6f7), teñido con slate-900 como las sombras. */
+  --velo-foto: rgb(15 23 42 / 0.04);
 }
 
 /* ---------------------------------------------------------------------------
@@ -124,6 +133,12 @@
   --marca-inicio: #10b981;
   --marca-medio: #06b6d4;
   --marca-fin: #0284c7;
+
+  /* Bandeja de foto: el blanco de estudio de las fotos del POS (no se pueden
+     editar). Es la única excepción a "solo tokens" de DESIGN.md y vive acá,
+     en un token, en vez de un bg-white suelto en cada lugar. No cambia con el
+     tema: lo que cambia es el velo que lleva encima (--velo-foto). */
+  --bandeja: #ffffff;
 }
 
 /* El degradado real (--marca-inicio/medio/fin, documentado en DESIGN.md) no
@@ -171,6 +186,33 @@
    idéntico en los 10. */
 @utility btn-primary {
   @apply rounded-full bg-marca font-semibold text-white transition hover:opacity-90;
+}
+
+/* Bandeja de foto: el fondo de toda foto de estudio, en los 6 lugares que
+   usan ProductImage (que es quien la pone). Blanca como el fondo de estudio
+   de las fotos, así nunca asoma el recuadro de la imagen. */
+@utility bandeja-foto {
+  background-color: var(--bandeja);
+}
+
+/* Velo de foto: un ::after con el velo del tema encima de la bandeja y de la
+   foto, que les baja la luz por igual. Va aparte de bandeja-foto porque
+   también lo llevan las fotos de escena (sobre la superficie): una
+   infografía con lienzo blanco, sin velo, volvía a ser lo más brillante de
+   la pantalla. Es un rectángulo de color con alfa que se pinta una vez con la
+   tarjeta: nada de mix-blend-mode ni filter (que en un Android de gama baja
+   abren una capa por foto, y en iOS pueden perder la mezcla durante el zoom
+   del hover). */
+@utility velo-foto {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--velo-foto);
+    pointer-events: none;
+  }
 }
 
 /* ---------------------------------------------------------------------------
