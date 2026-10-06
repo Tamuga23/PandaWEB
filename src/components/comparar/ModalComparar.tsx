@@ -153,7 +153,7 @@ export function ModalComparar() {
       onClick={cerrar}
     >
       <div
-        className="flex max-h-[92dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-borde2 bg-superficie sm:rounded-3xl"
+        className="flex max-h-[92dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-borde2 bg-superficie shadow-modal sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* div, no <header>/<footer>: fuera de main/article, Chrome los

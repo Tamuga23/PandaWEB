@@ -32,7 +32,7 @@ export function ToastComparar() {
       className="toast-comparar pointer-events-none fixed inset-x-0 z-50 flex justify-center px-3"
     >
       {visible && (
-        <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-borde2 bg-superficie px-4 py-2.5 text-sm text-texto shadow-2xl">
+        <div className="pointer-events-auto flex items-center gap-3 rounded-full border border-borde2 bg-superficie px-4 py-2.5 text-sm text-texto shadow-flotante">
           <span>
             Se quitó <span className="font-semibold">{descartado.name}</span> de la
             comparación — máximo 3 a la vez.
