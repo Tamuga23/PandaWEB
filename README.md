@@ -22,10 +22,21 @@ No hace falta configurar nada: la config de Firebase tiene valores por defecto
 en `src/config/firebase.ts`. Si querés cambiar algo, copiá `.env.example` como
 `.env.local`.
 
+**Para trabajar en la UI, usá los datos de prueba** (`CATALOG_SOURCE=fixture`):
+el catálogo sale de `src/lib/fixture-catalogo.json`, una copia del catálogo
+público, y no se lee Firestore. La cuota de lecturas la comparten el dev
+local, producción y el POS: el 4-oct-2026 una verificación visual con
+`next dev` la agotó y dejó caído el catálogo real hasta la medianoche.
+
+```bash
+CATALOG_SOURCE=fixture npm run dev     # macOS/Linux/Git Bash
+$env:CATALOG_SOURCE="fixture"; npm run dev   # PowerShell
+```
+
 ```bash
 npm run build        # build de producción
 npm run typecheck    # solo tipos
-npm test             # 36 pruebas de la lógica de datos
+npm test             # 56 pruebas de la lógica de datos
 npm run lint
 ```
 
