@@ -157,9 +157,31 @@ marcador (evita además `id` de degradado repetidos).
 - `BarraComparar`: el `div` interno no está posicionado, así que la imagen
   `fill` se ubica contra el de afuera y pisa el borde y el radio.
 
-**A verificar:** 4 fotos de héroe tendrían borde no blanco (MagCubic HY450MAX
-con la sombra de piso cortada a la derecha, Amazfit Active 2, ANKER
-SoundCore 2, otro MagCubic): con aire, el corte queda a la vista.
+**Jueces** (cliente en el celular, director de arte, ingeniería; miraron las
+capturas y midieron píxeles): votos conversión 2, accesibilidad/rendimiento 1;
+puntaje sumado conversión 67, a11y-perf 65.5, sistema 64. Coinciden en la
+combinación:
+- **Diseño de conversión:** marco de 4px concéntrico (la tarjeta oscura vuelve
+  a contener la foto); agotados en tres niveles (disponible claro > agotado con
+  foto apagado > agotado sin foto oscuro); ficha sin foto como banda baja.
+- **Técnica de a11y-perf:** bandeja blanca + velo plano (`::after` de color con
+  alfa) en vez de `mix-blend-multiply`: mismos píxeles, sin el riesgo de iOS con
+  el zoom ni capas de composición. Brillo en oscuro ≈ #dcdcdd (14%), más bajo
+  que el #e5e5e5 de conversión.
+- **Ajustes:** aire 5–6% (no 8%); `className` sigue en la foto y el radio de la
+  bandeja va por otra prop; `span` en vez de `div` (vive dentro de `<button>`
+  en las miniaturas); `rounded-xl` en miniaturas, barra y hueco punteado;
+  leyenda "Sin foto" solo en la ficha (AA en los dos temas); ficha sin foto 3:1
+  en el celular y 2:1 en `lg`; zoom con `motion-safe`; tokens dentro de los
+  bloques de tema existentes; arreglar los dos bugs.
+- Sistema perdió en pantalla: sus agotados con foto quedaban más claros que los
+  disponibles y la sección de agotados se veía como un damero claro/negro.
+
+**Confirmado (no es CSS):** la foto del MagCubic HY450MAX tiene la sombra de
+piso cortada contra su borde derecho; con el aire nuevo el corte se ve en la
+vitrina, la primera tarjeta y la ficha, en las tres propuestas. Lo mismo, más
+leve, en el HY450GT, la Amazfit Active 2 y el ANKER SoundCore 2. Arreglo:
+volver a cargar esas fotos con margen blanco desde el POS.
 
 ## Fase 5 (resumen)
 
