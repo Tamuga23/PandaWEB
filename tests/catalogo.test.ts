@@ -33,6 +33,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { elegirHero } from "../src/lib/portada";
 import { IconoCategoria, colorDeMarca } from "../src/components/IconoCategoria";
+import { ProductImage } from "../src/components/ProductImage";
 import type { Producto } from "../src/lib/types";
 
 const TASA = 36.6243;
@@ -586,5 +587,48 @@ describe("ícono de categoría", () => {
     const desconocido = html({ slug: "categoria-nueva" });
     assert.match(desconocido, /<rect/);
     assert.equal(desconocido, html({}));
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("foto de producto (bandeja)", () => {
+  // Un data URI no pasa por next/image (que fuera de Next no tiene la config
+  // de next.config): alcanza para cubrir la elección del fondo y el marcado.
+  const FOTO = "data:image/png;base64,iVBORw0KGgo=";
+  const html = (props: Partial<Parameters<typeof ProductImage>[0]>) =>
+    renderToStaticMarkup(createElement(ProductImage, { alt: "Producto", ...props }));
+
+  it("una foto de estudio va sobre la bandeja con el velo, con aire y sin divs", () => {
+    const h = html({ src: FOTO });
+    assert.match(h, /bandeja-foto velo-foto/);
+    assert.match(h, /inset-\[5%\]/);
+    // Vive dentro de <button> en las miniaturas: un div ahí no es HTML válido.
+    assert.doesNotMatch(h, /<div/);
+  });
+
+  it("una foto de escena va sobre la superficie, también con el velo", () => {
+    const h = html({ src: FOTO, escena: true });
+    assert.match(h, /bg-superficie velo-foto/);
+    assert.doesNotMatch(h, /bandeja-foto/);
+  });
+
+  it("sin foto en el POS: superficie2 con el ícono de la categoría, decorativo", () => {
+    // En el comparador y en la ficha no hay `apagada`: igual tiene que ir al
+    // nivel más bajo, no a una bandeja clara vacía.
+    const h = html({ categoria: "smartwatch" });
+    assert.match(h, /bg-superficie2/);
+    assert.doesNotMatch(h, /bandeja-foto/);
+    assert.match(h, /aria-hidden="true"/);
+    assert.match(h, /stroke="currentColor"/);
+    assert.doesNotMatch(h, /Sin foto/);
+  });
+
+  it("la foto grande de la ficha suma la leyenda", () => {
+    assert.match(html({ categoria: "smartwatch", leyenda: true }), /Sin foto/);
+  });
+
+  it("el agotado apaga la foto; sin foto no lleva la capa, que taparía el ícono", () => {
+    assert.match(html({ src: FOTO, apagada: true }), /bg-superficie\/30/);
+    assert.doesNotMatch(html({ categoria: "camara", apagada: true }), /bg-superficie\/30/);
   });
 });

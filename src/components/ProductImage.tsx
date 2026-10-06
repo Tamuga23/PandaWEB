@@ -24,16 +24,23 @@ interface Props {
    * la dejaba con bandas gris claro a los costados.
    */
   escena?: boolean;
+  /**
+   * Foto grande de la ficha: si no hay foto (o falla), el marcador suma la
+   * leyenda "Sin foto". En una lista el nombre ya está en la tarjeta; en la
+   * ficha, un bloque grande con solo un ícono se lee como una foto que
+   * todavía está cargando.
+   */
+  leyenda?: boolean;
 }
 
 /**
  * Foto de producto sobre su bandeja, tolerante a fallos.
  *
- * La bandeja (`bandeja-foto`, globals.css) la pone este componente en los 6
- * lugares que muestran fotos: cada lugar solo decide el marco y el radio. Las
- * fotos del POS son de estudio con fondo blanco, así que la bandeja es de ese
- * mismo blanco (nunca asoma el recuadro de la imagen) con el velo del tema
- * encima.
+ * La bandeja (`bandeja-foto` + `velo-foto`, globals.css) la pone este
+ * componente en los 6 lugares que muestran fotos: cada lugar solo decide el
+ * marco y el radio. Las fotos del POS son de estudio con fondo blanco, así que
+ * la bandeja es de ese mismo blanco (nunca asoma el recuadro de la imagen) con
+ * el velo del tema encima.
  *
  * Hoy las fotos están alojadas en Imgur, que bloquea el hotlinking de forma
  * intermitente y borra subidas anónimas viejas. En vez de mostrar un ícono roto,
@@ -52,21 +59,29 @@ export function ProductImage({
   categoria,
   apagada = false,
   escena = false,
+  leyenda = false,
 }: Props) {
   const [fallo, setFallo] = useState(false);
-  const conFoto = src != null && src !== "" && !fallo;
+  const tieneSrc = src != null && src !== "";
+  const conFoto = tieneSrc && !fallo;
 
-  // Sin foto no hay blanco de estudio que fundir. El agotado sin foto va sobre
-  // la superficie del sitio, el nivel más bajo de la sección de agotados; el
-  // disponible (Imgur caído) conserva la bandeja para no abrir un hueco oscuro
-  // entre sus vecinos.
-  const fondo = conFoto
-    ? escena
-      ? "bg-superficie"
-      : "bandeja-foto"
-    : apagada
-      ? "bg-superficie2"
-      : "bandeja-foto";
+  // El fondo, en orden:
+  // - escena: la superficie con el velo, aunque falle (una miniatura de
+  //   escena caída no se vuelve un cuadrado blanco);
+  // - foto de estudio: la bandeja blanca con el velo;
+  // - sin foto en el POS, agotado, o la foto grande de la ficha: superficie2,
+  //   el nivel más bajo. Sin foto no hay blanco de estudio que fundir, y una
+  //   bandeja clara vacía (en el comparador, o de 348px en la ficha) volvía a
+  //   ser el bloque más brillante de la pantalla sin decir nada;
+  // - solo una foto que falló en una lista (Imgur caído) conserva la
+  //   bandeja, para no abrir un hueco oscuro entre sus vecinos.
+  const fondo = escena
+    ? "bg-superficie velo-foto"
+    : conFoto
+      ? "bandeja-foto velo-foto"
+      : !tieneSrc || apagada || leyenda
+        ? "bg-superficie2"
+        : "bandeja-foto velo-foto";
 
   return (
     // span y no div: en las miniaturas de la galería vive dentro de un <button>.
@@ -98,17 +113,30 @@ export function ProductImage({
           )}
         </span>
       ) : (
-        // Sin texto: el nombre ya está en la tarjeta, y "que falta la foto"
-        // se entiende solo. La ficha suma la leyenda (ver Galeria).
-        <span aria-hidden="true" className="absolute inset-0 grid place-items-center text-tenue">
+        // Sin texto en las listas: el nombre ya está en la tarjeta. La ficha
+        // (`leyenda`) suma "Sin foto", igual que la banda de una ficha sin
+        // fotos (ver Galeria).
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-tenue"
+        >
           <IconoCategoria slug={categoria} grosor={1.25} className="h-2/5 w-2/5 max-h-16 max-w-16" />
+          {leyenda && (
+            <span className="text-label font-semibold uppercase tracking-wide text-texto">
+              Sin foto
+            </span>
+          )}
         </span>
       )}
       {/* El agotado se apaga entero (bandeja y foto) y no solo la foto: con
           la foto al 70% sobre una bandeja clara, los agotados brillaban casi
-          como los disponibles. Las pastillas Agotado/Oferta son hermanas de
-          este componente, así que conservan su contraste. */}
-      {apagada && <span aria-hidden="true" className="absolute inset-0 bg-superficie/30" />}
+          como los disponibles. Sin foto no hace falta: superficie2 ya es el
+          nivel más bajo, y la capa encima dejaba el ícono debajo de 3:1. Las
+          pastillas Agotado/Oferta son hermanas de este componente, así que
+          conservan su contraste. */}
+      {apagada && conFoto && (
+        <span aria-hidden="true" className="absolute inset-0 bg-superficie/30" />
+      )}
     </span>
   );
 }

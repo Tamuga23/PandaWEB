@@ -188,16 +188,23 @@
   @apply rounded-full bg-marca font-semibold text-white transition hover:opacity-90;
 }
 
-/* Bandeja de foto: el fondo de toda foto de producto, en los 6 lugares que
+/* Bandeja de foto: el fondo de toda foto de estudio, en los 6 lugares que
    usan ProductImage (que es quien la pone). Blanca como el fondo de estudio
-   de las fotos, así nunca asoma el recuadro de la imagen; el ::after le pone
-   encima el velo del tema, que baja la luz de bandeja y producto por igual.
-   Es un rectángulo de color con alfa: se pinta una vez con la tarjeta, sin
-   mix-blend-mode ni filter (que en un Android de gama baja abren una capa
-   por foto, y en iOS pueden perder la mezcla durante el zoom del hover). */
+   de las fotos, así nunca asoma el recuadro de la imagen. */
 @utility bandeja-foto {
-  position: relative;
   background-color: var(--bandeja);
+}
+
+/* Velo de foto: un ::after con el velo del tema encima de la bandeja y de la
+   foto, que les baja la luz por igual. Va aparte de bandeja-foto porque
+   también lo llevan las fotos de escena (sobre la superficie): una
+   infografía con lienzo blanco, sin velo, volvía a ser lo más brillante de
+   la pantalla. Es un rectángulo de color con alfa que se pinta una vez con la
+   tarjeta: nada de mix-blend-mode ni filter (que en un Android de gama baja
+   abren una capa por foto, y en iOS pueden perder la mezcla durante el zoom
+   del hover). */
+@utility velo-foto {
+  position: relative;
 
   &::after {
     content: "";

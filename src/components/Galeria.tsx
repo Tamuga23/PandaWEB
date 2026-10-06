@@ -99,6 +99,7 @@ export function Galeria({
               bandeja="rounded-xl"
               categoria={categoria}
               escena={!!foto?.label}
+              leyenda
             />
             {foto?.label && (
               <span className="absolute bottom-4 left-4 rounded-full bg-fondo/85 px-3 py-1.5 text-xs font-medium text-texto ring-1 ring-borde2">
