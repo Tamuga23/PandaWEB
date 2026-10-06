@@ -29,7 +29,8 @@ import {
   youTubeId,
 } from "../src/lib/format";
 import { canonizarSlug, normalizarProducto } from "../src/lib/normalize";
-import { elegirHero, fotoPorCategoria } from "../src/lib/portada";
+import { elegirHero } from "../src/lib/portada";
+import { colorDeMarca } from "../src/components/IconoCategoria";
 import type { Producto } from "../src/lib/types";
 
 const TASA = 36.6243;
@@ -548,32 +549,14 @@ describe("vitrina y categorías de la portada", () => {
     assert.deepEqual(ids(elegirHero(candidatos, 2)), ["proy-2"]);
   });
 
-  it("la foto de la categoría evita repetir la del hero", () => {
-    const productos = [prod("proy-1", "proyector"), prod("proy-2", "proyector")];
-    const fotos = fotoPorCategoria(productos, new Set(["proy-1"]));
-    assert.equal(fotos.proyector, "https://i.imgur.com/proy-2.jpg");
-  });
-
-  it("si la única foto es la del hero, se usa igual", () => {
-    const fotos = fotoPorCategoria([prod("tv-1", "smarttv")], new Set(["tv-1"]));
-    assert.equal(fotos.smarttv, "https://i.imgur.com/tv-1.jpg");
-  });
-
-  it("prefiere disponibles; un agotado solo ilustra si no hay otra", () => {
-    const productos = [
-      prod("agotado", "camara", { disponible: false }),
-      prod("disponible", "camara"),
-    ];
-    assert.equal(fotoPorCategoria(productos).camara, "https://i.imgur.com/disponible.jpg");
-    assert.equal(
-      fotoPorCategoria(productos, new Set(["disponible"])).camara,
-      "https://i.imgur.com/agotado.jpg",
-      "antes que repetir la foto del hero, mejor la de un agotado",
-    );
-  });
-
-  it("una categoría sin ninguna foto no aparece", () => {
-    const fotos = fotoPorCategoria([prod("sin-foto", "dashcam", { media: {} })]);
-    assert.equal(fotos.dashcam, undefined);
+  it("los íconos de categoría recorren el degradado de marca de punta a punta", () => {
+    // Los extremos y el medio son exactamente los tres tokens de globals.css.
+    assert.equal(colorDeMarca(0), "color-mix(in srgb, var(--marca-medio) 0%, var(--marca-inicio))");
+    assert.equal(colorDeMarca(0.5), "color-mix(in srgb, var(--marca-medio) 100%, var(--marca-inicio))");
+    assert.equal(colorDeMarca(1), "color-mix(in srgb, var(--marca-fin) 100%, var(--marca-medio))");
+    assert.equal(colorDeMarca(0.75), "color-mix(in srgb, var(--marca-fin) 50%, var(--marca-medio))");
+    // Fuera de rango no inventa colores: se queda en los extremos.
+    assert.equal(colorDeMarca(-1), colorDeMarca(0));
+    assert.equal(colorDeMarca(2), colorDeMarca(1));
   });
 });

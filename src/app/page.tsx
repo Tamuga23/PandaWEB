@@ -2,13 +2,13 @@ import Link from "next/link";
 import { EnlaceConversion } from "@/components/EnlaceConversion";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
+import { IconoCategoria, colorDeMarca } from "@/components/IconoCategoria";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductImage } from "@/components/ProductImage";
 import { itemsPropuestaValor } from "@/components/PropuestaValor";
 import {
   IconoCheck,
   IconoFlecha,
-  IconoImagen,
   IconoUbicacion,
   IconoWhatsApp,
 } from "@/components/iconos";
@@ -25,7 +25,7 @@ import { contarPorCategoria, destacados, getCatalogo } from "@/lib/catalog";
 import { esCategoriaSinInteres, type ConfigFinanciamiento } from "@/lib/financiamiento";
 import { cordobas, linkWhatsApp } from "@/lib/format";
 import { CONVERSIONES } from "@/lib/gtag";
-import { elegirHero, fotoPorCategoria } from "@/lib/portada";
+import { elegirHero } from "@/lib/portada";
 import type { Producto } from "@/lib/types";
 
 export const revalidate = 900;
@@ -42,13 +42,11 @@ export default async function Home() {
   const conteo = contarPorCategoria(productos);
   const catsConProductos = CATEGORIAS.filter((c) => (conteo[c.slug] ?? 0) > 0);
   const top = destacados(productos, 12);
-  // Hero, categorías y "Lo más pedido" van una debajo de la otra: lo que ya
-  // salió en la vitrina del hero no se repite en "Lo más pedido", y la foto de
-  // cada categoría evita repetir la de la vitrina.
+  // Lo que ya salió en la vitrina del hero no se repite en "Lo más pedido",
+  // dos secciones más abajo.
   const vitrina = elegirHero(top, 4);
   const idsVitrina = new Set(vitrina.map((p) => p.id));
   const masPedidos = top.filter((p) => !idsVitrina.has(p.id)).slice(0, 8);
-  const fotos = fotoPorCategoria(productos, idsVitrina);
 
   return (
     <>
@@ -56,11 +54,7 @@ export default async function Home() {
       <Ventajas config={configFinanciamiento} />
       {catsConProductos.length > 0 && (
         <Categorias
-          categorias={catsConProductos.map((c) => ({
-            ...c,
-            total: conteo[c.slug],
-            foto: fotos[c.slug],
-          }))}
+          categorias={catsConProductos.map((c) => ({ ...c, total: conteo[c.slug] }))}
         />
       )}
       {masPedidos.length > 0 && <Destacados productos={masPedidos} tasa={tasa} />}
@@ -273,13 +267,7 @@ function Ventajas({ config }: { config: ConfigFinanciamiento }) {
 function Categorias({
   categorias,
 }: {
-  categorias: {
-    slug: string;
-    nombre: string;
-    descripcion: string;
-    total: number;
-    foto?: string;
-  }[];
+  categorias: { slug: string; nombre: string; descripcion: string; total: number }[];
 }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16">
@@ -287,56 +275,55 @@ function Categorias({
         Qué estás buscando
       </h2>
       {/* Dos columnas desde el celular: eran tarjetas de solo texto, una por
-          fila, y ocupaban más de una pantalla sin mostrar ningún producto. */}
+          fila, y ocupaban más de una pantalla. */}
       <div className="mt-7 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-        {categorias.map((c) => (
-          // Mismo patrón que ProductCard: el Link detecta el hover y no se
-          // mueve; la tarjeta de adentro es la que sube (sin temblor en el
-          // borde de abajo).
-          <Link
-            key={c.slug}
-            href={`/catalogo?cat=${c.slug}`}
-            className="group block rounded-2xl"
-          >
-            {/* Sin cambio de fondo en hover: pasaba a superficie2, el mismo
-                color de la pastilla del conteo, que desaparecía. */}
-            <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition duration-200 group-hover:border-acento/50 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5">
-              {/* Bandeja blanca como en la vitrina del hero. La foto es
-                  decorativa (alt vacío): el nombre de la categoría ya es el
-                  texto del enlace. Si ningún producto de la categoría tiene
-                  foto cargada en el POS, una bandeja blanca vacía parecía una
-                  imagen que no cargó: va neutra, como el "Sin foto" de las
-                  tarjetas de producto. */}
-              {c.foto ? (
-                <div className="relative aspect-[4/3] overflow-hidden bg-white p-3 lg:aspect-[16/10]">
-                  <ProductImage
-                    src={c.foto}
-                    alt=""
-                    sizes="(min-width: 1024px) 360px, 50vw"
-                    className="transition duration-300 group-hover:scale-105"
-                  />
-                </div>
-              ) : (
-                <div className="grid aspect-[4/3] place-items-center bg-superficie2 text-tenue lg:aspect-[16/10]">
-                  <IconoImagen className="h-8 w-8" />
-                </div>
-              )}
-              <div className="flex flex-1 flex-col p-4">
+        {categorias.map((c, i) => {
+          // Cada tarjeta toma su tramo del degradado de marca según su
+          // posición: recorriendo la grilla se ve el degradado entero.
+          const desde = colorDeMarca(i / categorias.length);
+          const hasta = colorDeMarca((i + 1) / categorias.length);
+          const medio = colorDeMarca((i + 0.5) / categorias.length);
+          return (
+            // Mismo patrón que ProductCard: el Link detecta el hover y no se
+            // mueve; la tarjeta de adentro es la que sube (sin temblor en el
+            // borde de abajo).
+            <Link
+              key={c.slug}
+              href={`/catalogo?cat=${c.slug}`}
+              className="group block rounded-2xl"
+            >
+              {/* Sin cambio de fondo en hover: pasaba a superficie2, el mismo
+                  color de la pastilla del conteo, que desaparecía. */}
+              <div className="flex h-full flex-col rounded-2xl border border-borde bg-superficie p-4 transition duration-200 group-hover:border-acento/50 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5 sm:p-5">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-texto transition group-hover:text-acento sm:text-base">
-                    {c.nombre}
-                  </h3>
+                  {/* El fondo es el mismo color del ícono al 12%: el mismo
+                      recurso que las ventajas (bg-acento/10), con el tono de
+                      su tramo. */}
+                  <span
+                    className="grid h-12 w-12 place-items-center rounded-2xl transition duration-200 motion-safe:group-hover:scale-105 sm:h-14 sm:w-14"
+                    style={{ backgroundColor: `color-mix(in srgb, ${medio} 12%, transparent)` }}
+                  >
+                    <IconoCategoria
+                      slug={c.slug}
+                      desde={desde}
+                      hasta={hasta}
+                      className="h-6 w-6 sm:h-7 sm:w-7"
+                    />
+                  </span>
                   <span className="shrink-0 rounded-full bg-superficie2 px-2.5 py-0.5 text-xs font-medium text-suave">
                     {c.total}
                   </span>
                 </div>
+                <h3 className="mt-4 text-sm font-semibold text-texto transition group-hover:text-acento sm:text-base">
+                  {c.nombre}
+                </h3>
                 <p className="mt-1 hidden text-sm leading-relaxed text-suave sm:block">
                   {c.descripcion}
                 </p>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
