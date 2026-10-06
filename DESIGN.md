@@ -131,7 +131,7 @@ Paleta acotada y semántica: cada color dice algo funcional, ninguno es decorati
 - **Texto** (`#fafafa`), **Suave** (`#a1a1aa`), **Tenue** (`#86868f` oscuro / `#64748b` claro): jerarquía de tres niveles — título/cuerpo, texto secundario, metadatos y placeholders. **Actualizado (audit técnico):** el tono original (`#71717a` oscuro, `#94a3b8` claro) fallaba contraste AA (4.5:1) contra los fondos donde de verdad se usa. En claro, el mínimo que pasa AA contra `bg-fondo` coincide con el de Suave — no queda margen para un tercer nivel distinto ahí.
 
 ### Degradado de marca
-- **Esmeralda → Cian → Azul Cielo** (`#10b981` → `#06b6d4` → `#0284c7`, 135deg): el único gradiente del sistema. Vive en `bg-marca`/`text-marca`, y se usa para: el CTA principal de cada sección, la píldora de categoría activa, el badge de oferta, y el logo. Nunca se aplica a texto de párrafo ni a fondos grandes de sección.
+- **Esmeralda → Cian → Azul Cielo** (`#10b981` → `#06b6d4` → `#0284c7`, 135deg): el único gradiente del sistema. Vive en `bg-marca`/`text-marca`, y se usa para: el CTA principal de cada sección, la píldora de categoría activa, el badge de oferta, el logo, y los íconos de categoría de la portada (cada tarjeta toma un tramo según su posición, con `colorDeMarca()` en `components/IconoCategoria.tsx`, así la grilla completa recorre el degradado; pedido de Carlos, oct-2026). Nunca se aplica a texto de párrafo ni a fondos grandes de sección.
 
 ### Named Rules
 **La Regla del Degradado Único.** Solo hay un gradiente en todo el sistema y es el de marca. Ningún componente inventa su propio degradado — si algo necesita destacar, usa `bg-marca` o un color semántico plano, nunca una mezcla nueva.
@@ -163,6 +163,8 @@ Contenedor central `max-w-6xl` (72rem) con `px-4` de margen lateral en todo el s
 Grillas responsive por breakpoint: el catálogo pasa de 2 columnas en móvil a 3 (`lg`) y 4 (`xl`); los destacados de portada van de 2 a 4 columnas a partir de `lg`. Las tarjetas nunca superan el ancho de su columna — sin excepciones de ancho variable dentro de una misma grilla.
 
 **Mobile-first real, no solo responsive:** la ficha de producto tiene una barra de compra fija en la parte inferior en móvil (`barra-producto`) que desaparece en desktop a favor de un CTA inline — no es el mismo componente reescalado, es una composición distinta a propósito.
+
+**Portada (oct-2026):** el hero es texto a la izquierda y vitrina de productos a la derecha en `lg`; en móvil el texto va arriba (alineado a la izquierda, ya no centrado) y la vitrina es una tira horizontal debajo de los botones, para que la primera pantalla del teléfono ya muestre productos con precio. "Qué estás buscando" va a 2 columnas desde móvil y 3 en `lg`, con íconos (no fotos); las ventajas, a 2 columnas en móvil y 4 en `lg`. La profundidad del hero la dan los productos: el resplandor cyan difuminado que había detrás del título se sacó (contradecía "nada de gradientes de fondo decorativos").
 
 ## Elevation & Depth
 
@@ -214,6 +216,12 @@ Sin bordes duros en ningún componente interactivo. Las únicas esquinas a 0px s
 - **Shadow Strategy:** ninguna en reposo (ver Elevation). En hover: `shadow-elevada`, sube 2px y el borde pasa a `acento/50`, con el patrón de hover sin temblor.
 - **Border:** `border border-borde` siempre presente, incluso sin hover.
 - **Internal Padding:** `p-4` a `p-5`; el panel de financiamiento sube a `p-8`/`p-12` en desktop por ser una sección hero-like.
+
+### Vitrina del hero y tarjeta de categoría
+- **Vitrina** (`Vitrina`/`TarjetaVitrina` en `app/page.tsx`): hasta 4 productos, uno por categoría antes de repetir (`elegirHero` en `lib/portada.ts`), siempre con foto. Tarjeta = bandeja de foto + nombre (una línea) + precio en `text-precio`. En `lg` es un mosaico: el primero ancho (`aspect-[2/1]`) arriba y dos cuadrados abajo; el cuarto solo existe en la tira móvil. Es el mismo marcado en los dos tamaños para que cada foto se descargue una vez.
+- **Tarjeta de categoría:** ícono propio de la categoría (`IconoCategoria`, mismo estilo de trazo que `iconos.tsx`) en una pastilla `rounded-2xl` de `h-12`/`h-14`, arriba a la izquierda; la pastilla del conteo arriba a la derecha; nombre debajo y la descripción solo desde `sm`. El ícono se pinta con su tramo del degradado de marca (`userSpaceOnUse`, de arriba-izquierda a abajo-derecha) y la pastilla lleva ese mismo color al 12%, el recurso de las ventajas (`bg-acento/10`). No usa fotos: con fotos de producto, una categoría sin imágenes en el POS (Smart TV) quedaba vacía, y la foto podía no representar la categoría. No cambia de fondo en hover (la pastilla del conteo es `bg-superficie2` y desaparecía).
+- **Bandeja de foto blanca** (`bg-white`, en los dos temas, solo en la vitrina): la única excepción a "solo tokens". Las fotos del catálogo son de estudio con fondo blanco; sobre una bandeja de otro color se ven como un recuadro pegado.
+- El hero no repite productos en "Lo más pedido".
 
 ### Inputs / Fields
 - **Style:** `rounded-xl`, `border border-borde`, fondo `bg-superficie`, texto `text-sm`.

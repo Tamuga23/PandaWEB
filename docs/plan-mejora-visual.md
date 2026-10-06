@@ -12,8 +12,8 @@ paso que funcione. Fusionar a `main` solo con permiso explícito.
 |---|---|---|
 | 0 | Mirar el sitio antes de tocarlo | Hecha (2026-10-05) |
 | 1 | Datos de prueba locales (`CATALOG_SOURCE=fixture`) | Hecha y en producción (2026-10-05) — PR #46 |
-| 2 | Profundidad: tokens de elevación | Hecha (2026-10-05) — rama `mejora-visual-fase-2`, PR pendiente de fusionar |
-| 3 | Portada con producto real (hero + categorías con foto) | Pendiente |
+| 2 | Profundidad: tokens de elevación | Hecha y en producción (2026-10-05) — PR #47 |
+| 3 | Portada con producto real (hero + categorías con foto) | Hecha (2026-10-05) — rama `mejora-visual-fase-3`, PR pendiente de fusionar |
 | 4 | Catálogo: tratamiento de fotos | Pendiente |
 | 5 | Cierre: limpiar `bg-marca-hover`, actualizar DESIGN.md | Pendiente |
 
@@ -88,11 +88,43 @@ de esta fase.
 `scrollIntoView` y mide enseguida mide antes de que termine el desplazamiento;
 usar `behavior: "instant"`.
 
-## Fases 3–5 (resumen)
+## Fase 3 — portada con producto real
 
-- **3. Portada:** hero con fotos de destacados (tira horizontal en móvil, dos
-  columnas en escritorio) y sin el resplandor; categorías con la foto de su
-  primer producto disponible, a 2 columnas en móvil. El H1 sigue siendo el LCP.
+- **Hero:** texto a la izquierda y vitrina a la derecha en escritorio (mosaico:
+  uno ancho arriba, dos abajo); en el celular, tira horizontal de 4 productos
+  debajo de los botones. Uno por categoría antes de repetir
+  (`elegirHero`, `lib/portada.ts`). Sin el resplandor cyan.
+- **Título:** sin `<br>` y con `text-balance`: dos líneas parejas en vez de
+  "casa" sola en una línea (pasaba en el celular desde antes).
+- **Categorías:** 2 columnas desde el celular, sin cambio de fondo en hover
+  (arregla la pastilla del conteo que desaparecía). Primero llevaban la foto
+  de un producto; a pedido de Carlos pasaron a **íconos propios de cada
+  categoría pintados con el degradado de marca** (`IconoCategoria`): cada
+  tarjeta toma un tramo según su posición y la grilla recorre esmeralda →
+  cian → azul. Verificado: los 10 puntos de color van seguidos de `#10b981`
+  a `#0284c7`, en oscuro y en claro.
+- **Ventajas:** 2 columnas en el celular (antes ocupaban una pantalla).
+- **"Lo más pedido":** no repite los de la vitrina; sin `priority`.
+
+**Verificado** (fixture): capturas a 1280, 1024, 390 y 360px, oscuro y claro;
+sin desborde horizontal; a 360×740 la vitrina asoma en la primera pantalla
+(arranca a 573px). 63/63 pruebas, typecheck y lint limpios, build 39/39.
+
+**Lighthouse móvil** (build de producción con fixture, Edge):
+
+| | Antes (1 corrida) | Después (3 corridas) |
+|---|---|---|
+| Puntaje | 96 | 95 / 98 / 99 |
+| LCP | 2.8 s (H1) | 2.3 / 2.3 / 2.9 s (H1) |
+| CLS | 0 | 0 |
+| Peso | 453 KiB | ~509 KiB |
+
+**Para el POS (no es código):** la categoría Smart TV no tiene ninguna foto
+cargada (sus 2 productos están agotados y sin imágenes), y la foto que
+representa "Smart home" es un parlante Anker cargado en esa categoría.
+
+## Fases 4–5 (resumen)
+
 - **4. Catálogo:** suavizar el cuadrado blanco de las fotos en tema oscuro y
   mejorar el marcador "Sin foto" de los agotados.
 - **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
