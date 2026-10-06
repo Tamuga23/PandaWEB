@@ -15,9 +15,9 @@ export function ErrorDatos({ error }: { error: unknown }) {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-24 text-center">
-      <h2 className="text-xl font-semibold text-texto">
+      <h1 className="text-xl font-semibold text-texto">
         No pudimos cargar el catálogo
-      </h2>
+      </h1>
       <p className="mt-2 text-sm leading-relaxed text-suave">
         Es un problema nuestro, no tuyo. Mientras lo resolvemos, escribinos y te
         atendemos al momento.
