@@ -1,0 +1,1094 @@
+{
+  "nota": "Datos de prueba para CATALOG_SOURCE=fixture. Copiados del catálogo público de producción (lo que ya ve el navegador) el 2026-10-05. Sin cost ni precio.efectivo. Las cuotas se recalculan al leerlos.",
+  "tasa": 36.6243,
+  "productos": [
+    {
+      "id": "9b7b26de-ac11-4c4a-bdba-83b3e1ce5e66",
+      "sku": "1198",
+      "name": "MagCubic Proyector Portatil HY450MAX 1100 ANSI",
+      "description": "Tope de la línea Full HD de Magcubic. Con 1100 ANSI es el proyector más brillante del catálogo, así que rinde incluso en salas con luz encendida, y suma parlante de 12W, 2GB/16GB y funciones inteligentes: autofoco, detección de obstáculos y reconocimiento de pantalla. Para quien quiere la mejor imagen sin hacer concesiones.",
+      "categorySlug": "proyector",
+      "disponible": true,
+      "precio": {
+        "actual": 198.50208741191
+      },
+      "beneficio": "El más potente y brillante: imagen grande y nítida incluso con luz.",
+      "bullets": [
+        {
+          "texto": "Full HD 1080p nativo con HDR10+ (archivos hasta 8K@24fps)"
+        },
+        {
+          "texto": "Brillo 1100 ANSI: el más brillante de la línea, se ve con luz"
+        },
+        {
+          "texto": "Sonido potente: parlante integrado de 12W"
+        },
+        {
+          "texto": "Inteligente: autofoco + evita obstáculos + reconoce pantalla"
+        },
+        {
+          "texto": "Android 14 · 2GB/16GB · Wi-Fi 6 doble banda · BT 5.4 · 2.37kg"
+        }
+      ],
+      "specs": {
+        "ansi": 1100,
+        "autofoco": true,
+        "resolucion": "1080p Full HD",
+        "throwRatio": 1,
+        "distMinEnfoque": 0.9,
+        "sistema": "Android 14"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/WTo95aG.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/WTo95aG.png"
+          },
+          {
+            "url": "https://i.imgur.com/EX7tUm0.jpeg",
+            "label": "Con Luz"
+          },
+          {
+            "url": "https://i.imgur.com/oBVQdCa.jpeg",
+            "label": "A Oscuras"
+          }
+        ],
+        "videoUrl": "https://www.youtube.com/watch?v=feALt7J7nck"
+      },
+      "updatedAt": 1787756746393
+    },
+    {
+      "id": "5d05a73d-5a39-4f94-ab1e-1cdbc4b63f74",
+      "sku": "1217",
+      "name": "Amazfit Active Max",
+      "description": "Smartwatch con pantalla AMOLED de 1.5\" ultrabrillante (3000 nits) que se lee incluso bajo el sol fuerte, y hasta 25 días de batería. Trae 4 GB para tu música y mapas descargables con indicaciones giro a giro, GPS de 5 sistemas satelitales, más de 170 modos deportivos y planes con IA de Zepp Coach. El monitor de energía BioCharge te dice cuándo exigirte y cuándo descansar. Contestá llamadas por Bluetooth y respondé mensajes con la voz (Zepp Flow, requiere Android).",
+      "categorySlug": "smartwatch",
+      "disponible": true,
+      "precio": {
+        "actual": 173.928238901
+      },
+      "beneficio": "Pantalla enorme y brillante (3000 nits), hasta 25 días de batería y mapas offline en la muñeca.",
+      "bullets": [
+        {
+          "texto": "Pantalla AMOLED 1.5\" a 3000 nits: se lee clarísima incluso bajo el sol"
+        },
+        {
+          "texto": "Hasta 25 días de batería: menos cargas, más uso"
+        },
+        {
+          "texto": "4 GB para música + mapas offline con indicaciones giro a giro"
+        },
+        {
+          "texto": "+170 modos deportivos y planes con IA (Zepp Coach) + energía BioCharge"
+        },
+        {
+          "texto": "Llamadas Bluetooth y respuestas por voz (Zepp Flow, requiere Android)"
+        }
+      ],
+      "specs": {
+        "tamanoPantalla": "1.5\"",
+        "tipoPantalla": "AMOLED de 3000 nits, se lee clarísima bajo el sol",
+        "resistenciaAgua": "Apto para nadar (5 ATM)",
+        "duracionBateria": "Hasta 25 días de uso normal",
+        "almacenamiento": "4 GB para música y mapas sin llevar el celular",
+        "salud": [
+          "Ritmo cardíaco",
+          "Oxígeno en sangre",
+          "Sueño",
+          "Pasos",
+          "Estrés"
+        ],
+        "llamadas": true,
+        "gps": true,
+        "deportes": "Más de 170 modos deportivos",
+        "compatibilidad": "Android e iPhone"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/Gnfj7s7.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/Gnfj7s7.png"
+          }
+        ],
+        "videoUrl": "https://www.youtube.com/watch?v=nyQciPR11AY"
+      },
+      "updatedAt": 1790050512318
+    },
+    {
+      "id": "28aeba65-5d25-4e30-9b6f-ba672b5debcf",
+      "sku": "1174",
+      "name": "MagCubic Proyector Portatil HY350MAX 900 ANSI",
+      "description": "El equilibrio perfecto entre brillo, sonido y precio, y por eso el más vendido. Proyecta 1080p nativo con 900 ANSI (cómodo con luz ambiental) y trae parlante de 12W potente, 2GB/16GB y autofoco con detección de obstáculos y reconocimiento de pantalla. La opción segura para cine en casa.",
+      "categorySlug": "proyector",
+      "disponible": true,
+      "precio": {
+        "actual": 141.16310755427
+      },
+      "beneficio": "El más vendido: mucho brillo, sonido potente y precio equilibrado.",
+      "bullets": [
+        {
+          "texto": "Full HD 1080p nativo; HDR10+ y hasta 8K@24fps"
+        },
+        {
+          "texto": "Brillo 900 ANSI: cómodo con luz ambiental"
+        },
+        {
+          "texto": "Parlante de 12W potente, sin bocina extra"
+        },
+        {
+          "texto": "Autofoco + detección de obstáculos + reconocimiento de pantalla"
+        },
+        {
+          "texto": "Android 14 · 2GB/16GB · Wi-Fi 6 doble banda · BT 5.4 · 1.41kg"
+        }
+      ],
+      "specs": {
+        "ansi": 900,
+        "resolucion": "1080p Full HD",
+        "throwRatio": "1",
+        "distMinEnfoque": "0.9",
+        "autofoco": true,
+        "sistema": "Android 14"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/fH2Un7f.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/fH2Un7f.png"
+          },
+          {
+            "url": "https://i.imgur.com/MQ0uicG.jpeg",
+            "label": "Con Luz"
+          },
+          {
+            "url": "https://i.imgur.com/7VdCMsy.jpeg",
+            "label": "A Oscuras"
+          }
+        ],
+        "videoUrl": "https://www.youtube.com/watch?v=M-ChK84S0FI"
+      },
+      "updatedAt": 1790264662741
+    },
+    {
+      "id": "c836052b-55fd-4bf1-b085-8df5c256fcc3",
+      "sku": "1232",
+      "name": "70mai DashCam T800E 4K 3 Canales",
+      "categorySlug": "camara",
+      "disponible": true,
+      "precio": {
+        "actual": 135.7022523
+      },
+      "bullets": [],
+      "specs": {
+        "resolucion": "4K adelante (3840×2160) + 1080p interior + 1080p atrás",
+        "camaras": "3 canales: frontal, interior y trasera simultáneas",
+        "campoVision": "140° frontal, 130° interior, 140° trasera",
+        "visionNocturna": "Visión nocturna HDR en los 3 canales",
+        "almacenamiento": "microSD hasta 256 GB (no incluida)",
+        "modoEstacionamiento": true,
+        "gps": true,
+        "app": true,
+        "instalacion": "Hardwire para grabación continua; incluye cámara trasera e interior"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/gE3no1i.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/gE3no1i.png"
+          }
+        ],
+        "videoUrl": "https://youtu.be/nRHCJUKCfoo?si=-WPt2R7e_P8LNqHN"
+      },
+      "updatedAt": 1787763279088
+    },
+    {
+      "id": "1210",
+      "sku": "1210",
+      "name": "70mai Dash Cam A810 LITE",
+      "description": "Cámara de tablero doble 70mai A810 Lite: graba el frente en 4K real (3840×2160) y atrás en 1080p con la cámara RC21 incluida, para leer matrículas y señales con evidencia clara de día y de noche. Suma visión nocturna HDR con apertura F1.55, GPS de 3 modos, control por voz y supercondensador que aguanta el calor mejor que una batería. Se instala en minutos detrás del retrovisor y trae microSD de 64GB lista para usar.",
+      "categorySlug": "camara",
+      "disponible": true,
+      "precio": {
+        "actual": 127.510969
+      },
+      "beneficio": "Doble cámara 4K + 1080p con visión nocturna HDR, GPS y estacionamiento 24h.",
+      "bullets": [
+        {
+          "texto": "Doble grabación: 4K real adelante (3840×2160) + 1080p atrás (cámara RC21 incluida)"
+        },
+        {
+          "texto": "Visión nocturna HDR con apertura F1.55: reduce el deslumbramiento de los faros"
+        },
+        {
+          "texto": "GPS de 3 modos (GPS+GLONASS+BDS): registra velocidad, ruta y ubicación"
+        },
+        {
+          "texto": "Wi-Fi 6 de 5 GHz: transferencia rápida (hasta 25 MB/s) sin sacar la tarjeta"
+        },
+        {
+          "texto": "Control por voz manos libres + app 70mai (vista en vivo, reproducción, OTA)"
+        },
+        {
+          "texto": "Modo estacionamiento 24h: sensor G + timelapse + bucle (requiere kit hardwire)"
+        },
+        {
+          "texto": "Supercondensador (sin batería): aguanta mejor el calor · microSD 64GB incluida"
+        },
+        {
+          "texto": "Campo de visión 140°, tamaño tarjeta de crédito, instalación en minutos"
+        },
+        {
+          "texto": "4G LTE opcional: vista en vivo y rastreo remoto (requiere kit UP05)"
+        }
+      ],
+      "specs": {
+        "resolucion": "4K real adelante (3840×2160) y 1080p atrás",
+        "camaras": "Frontal y trasera",
+        "campoVision": "140°, cubre los tres carriles",
+        "visionNocturna": "Visión nocturna reforzada",
+        "almacenamiento": "microSD de 64 GB incluida",
+        "modoEstacionamiento": true,
+        "gps": true,
+        "app": true,
+        "instalacion": "Se pega al parabrisas y va al encendedor"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/0b25LO9.jpeg",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/0b25LO9.jpeg"
+          },
+          {
+            "url": "https://i.imgur.com/u5jsiBX.png",
+            "label": "Funciones"
+          },
+          {
+            "url": "https://i.imgur.com/eBVOIHI.png",
+            "label": "Contenido de la Caja"
+          }
+        ],
+        "videoUrl": "https://youtu.be/h01Fpd1Zu7c?si=F94GZJdOewpJ1juG"
+      },
+      "updatedAt": 1790909852449
+    },
+    {
+      "id": "54e189fd-a64c-4c91-8550-44cec0e45c9e",
+      "sku": "1235",
+      "name": "Amazfit BIP MAX",
+      "description": "Amazfit BIP MAX con pantalla AMOLED de 2.07\" y cuerpo de aleación de aluminio ligero. Hasta 20 días de batería con uso típico. Incluye 4 GB de almacenamiento para mapas offline descargados gratis desde Zepp, con indicaciones giro a giro respaldadas por 5 sistemas satelitales. Más de 150 modos deportivos (HYROX, fuerza, yoga), Zepp Coach con métricas avanzadas (VO₂ Max, carga de entrenamiento) y monitoreo BioCharge de recuperación diaria. App Zepp gratuita, sin suscripciones.",
+      "categorySlug": "smartwatch",
+      "disponible": true,
+      "precio": {
+        "actual": 122.050114268
+      },
+      "beneficio": "Pantalla AMOLED enorme 2.07\", 20 días de batería, GPS + mapas offline y 150+ modos deportivos.",
+      "bullets": [
+        {
+          "texto": "Pantalla AMOLED 2.07\" enorme — la más grande de la línea Bip"
+        },
+        {
+          "texto": "20 días de batería: cargás cada 3 semanas, no cada noche"
+        },
+        {
+          "texto": "4 GB integrados: mapas offline y música sin llevar el celular"
+        },
+        {
+          "texto": "GPS de 5 sistemas + mapas gratis giro a giro desde la app Zepp"
+        },
+        {
+          "texto": "+150 modos deportivos, Zepp Coach y BioCharge de recuperación diaria"
+        }
+      ],
+      "specs": {
+        "tamanoPantalla": "2.07\"",
+        "tipoPantalla": "AMOLED, cuerpo de aleación de aluminio",
+        "resistenciaAgua": "Apto para nadar (5 ATM)",
+        "duracionBateria": "Hasta 20 días de uso normal",
+        "almacenamiento": "4 GB para mapas y música",
+        "salud": [
+          "Ritmo cardíaco",
+          "Sueño",
+          "Pasos",
+          "Estrés",
+          "BioCharge (recuperación)"
+        ],
+        "llamadas": true,
+        "gps": true,
+        "deportes": "Más de 150 modos deportivos (HYROX, fuerza, yoga)",
+        "compatibilidad": "Android e iPhone"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/aTc4F5F.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/aTc4F5F.png"
+          }
+        ],
+        "videoUrl": "https://youtu.be/dB4D3FM4BQs?si=845yEeFecaS0erfQ"
+      },
+      "updatedAt": 1787763279088
+    },
+    {
+      "id": "8fe82ff0-54d6-426f-8501-a0296f37e4f2",
+      "sku": "1154",
+      "name": "Amazfit Active 2",
+      "description": "Smartwatch con marco de acero inoxidable y pantalla AMOLED de 1.32\" que se lee bien al sol, con hasta 10 días de batería. Sensor BioTracker para ritmo cardíaco y sueño más precisos, más de 160 modos deportivos (incluye HYROX, fuerza, pádel y yoga) y resistencia 5ATM para nadar y esquiar. Trae mapas gratis con indicaciones giro a giro y GPS de 5 sistemas satelitales. La app Zepp es gratis, sin suscripciones ocultas y con protección de datos (AWS, RGPD).",
+      "categorySlug": "smartwatch",
+      "disponible": true,
+      "precio": {
+        "lista": 122.05,
+        "actual": 102.937121
+      },
+      "beneficio": "Acero inoxidable, AMOLED brillante, hasta 10 días de batería y 5ATM para nadar.",
+      "bullets": [
+        {
+          "texto": "Marco de acero inoxidable + AMOLED 1.32\" brillante"
+        },
+        {
+          "texto": "Hasta 10 días de batería: olvidate de cargar cada noche"
+        },
+        {
+          "texto": "Ritmo cardíaco y sueño precisos con sensor BioTracker"
+        },
+        {
+          "texto": "+160 modos (HYROX, fuerza, pádel, yoga) + 5ATM: nadá y esquiá con confianza"
+        },
+        {
+          "texto": "Mapas gratis giro a giro + GPS de 5 sistemas satelitales"
+        }
+      ],
+      "specs": {
+        "tamanoPantalla": "1.32\"",
+        "tipoPantalla": "AMOLED con marco de acero inoxidable",
+        "resistenciaAgua": "Apto para nadar (5 ATM)",
+        "duracionBateria": "Hasta 10 días de uso normal",
+        "salud": [
+          "Ritmo cardíaco",
+          "Sueño",
+          "Pasos"
+        ],
+        "llamadas": true,
+        "gps": true,
+        "deportes": "Más de 160 modos: HYROX, fuerza, pádel y yoga",
+        "compatibilidad": "Android e iPhone"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/Db8sPoM.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/Db8sPoM.png"
+          }
+        ],
+        "videoUrl": "https://youtu.be/moo3BENngYQ?si=Sm_ExtN0logauPqO"
+      },
+      "updatedAt": 1790272442582
+    },
+    {
+      "id": "9ede5c11-49d2-4c49-9205-0ff301552791",
+      "sku": "1212",
+      "name": "Amazon Echo Dot Max",
+      "description": "La nueva generación del Echo Dot con chip AZ3 y tecnología Omnisense: sonido más potente (casi 3× los bajos del Echo Dot 2022) que se adapta a tu espacio. Trae hub de casa inteligente integrado para controlar luces, cerraduras y miles de dispositivos con Alexa sin equipo extra, y con eero Built-in extiende tu WiFi hasta 1,000 pies². Escuchá Amazon Music, Spotify, Apple Music y más, creá rutinas y controlá todo por voz. Con botón para apagar los micrófonos.",
+      "categorySlug": "smarthome",
+      "disponible": true,
+      "precio": {
+        "actual": 102.937120983
+      },
+      "beneficio": "El Echo Dot más potente: sonido que llena la sala, Alexa y centro de casa inteligente integrado.",
+      "bullets": [
+        {
+          "texto": "Sonido potente que llena la sala: casi 3× los bajos del Echo Dot 2022"
+        },
+        {
+          "texto": "Alexa: música, clima, recordatorios y rutinas por voz"
+        },
+        {
+          "texto": "Hub de casa inteligente integrado: luces, cerraduras y +1000 dispositivos, sin hub extra"
+        },
+        {
+          "texto": "eero Built-in: extiende tu WiFi hasta 1,000 pies² (adiós interrupciones)"
+        },
+        {
+          "texto": "Privacidad: botón para apagar los micrófonos + chip AZ3 y Omnisense"
+        }
+      ],
+      "specs": {
+        "funcion": "Parlante con Alexa y centro de casa inteligente en un solo equipo",
+        "controlApp": true,
+        "asistentes": [
+          "Alexa",
+          "Alexa+"
+        ],
+        "rutinas": true,
+        "alimentacion": "Corriente (enchufe)",
+        "instalacion": "Se instala solo, sin herramientas",
+        "resistenciaAgua": "Solo interior",
+        "conectividad": [
+          "Wi-Fi",
+          "Bluetooth",
+          "Hub de casa inteligente integrado"
+        ],
+        "app": "Alexa (Android e iPhone)"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/I2I42dt.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/I2I42dt.png"
+          }
+        ],
+        "videoUrl": "https://www.youtube.com/watch?v=OwzE37jFACk"
+      },
+      "updatedAt": 1787756746393
+    },
+    {
+      "id": "e6518acb-9219-4f2c-98b1-7699ad6952f9",
+      "sku": "1231",
+      "name": "MagCubic Proyector Portatil HY320PRO  400 ANSI",
+      "categorySlug": "proyector",
+      "disponible": true,
+      "precio": {
+        "actual": 97.47626576
+      },
+      "bullets": [],
+      "specs": {
+        "ansi": 400,
+        "throwRatio": "0.8",
+        "distMinEnfoque": "0.6",
+        "resolucion": "1080P",
+        "autofoco": true,
+        "sistema": "Android 14"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/RKok0EO.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/RKok0EO.png"
+          }
+        ],
+        "videoUrl": "https://youtu.be/r2WXn6ZvDpk?si=0axxipRgsIvmRsJN"
+      },
+      "updatedAt": 1787448478214
+    },
+    {
+      "id": "9e583dcd-525a-41a2-9a97-618db94fea60",
+      "sku": "1208",
+      "name": "70mai Dash Cam M310 Plus 2K 1440P",
+      "description": "Cámara frontal 2K 1440p con lente gran angular de 140°: las placas y señales se leen claras de día y de noche (apertura F1.55, WDR y reducción de ruido 3D). El sensor G detecta golpes y bloquea el video del incidente con pre-grabación, y el modo estacionamiento 24H vigila el carro apagado. Se controla por app WiFi (iOS/Android) y por voz, con instalación sencilla por Type-C. Tu respaldo ante cualquier reclamo.",
+      "categorySlug": "camara",
+      "disponible": true,
+      "precio": {
+        "actual": 70.17198964
+      },
+      "beneficio": "Graba en 2K nítido, ve bien de noche y te protege estacionado. Fácil de instalar.",
+      "bullets": [
+        {
+          "texto": "Video 2K 1440p + gran angular 140°: lee placas y señales con claridad"
+        },
+        {
+          "texto": "Visión nocturna F1.55 con WDR: nítida en poca luz, túneles y lluvia"
+        },
+        {
+          "texto": "Sensor G + pre-grabación: bloquea el video del golpe (1–3 min antes)"
+        },
+        {
+          "texto": "Modo estacionamiento 24H + timelapse (requiere kit de cableado UP03/UP06)"
+        },
+        {
+          "texto": "App WiFi (iOS/Android) + control por voz: ver, descargar y compartir al toque"
+        }
+      ],
+      "specs": {
+        "resolucion": "2K 1440p, se leen las placas",
+        "camaras": "Solo frontal",
+        "campoVision": "140°, cubre los tres carriles",
+        "visionNocturna": "Visión nocturna reforzada",
+        "almacenamiento": "microSD (no incluida)",
+        "modoEstacionamiento": true,
+        "app": true,
+        "instalacion": "Se pega al parabrisas y va al encendedor"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/5URXiP1.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/5URXiP1.png"
+          },
+          {
+            "url": "https://i.imgur.com/MvfAsEE.png",
+            "label": "Funciones"
+          },
+          {
+            "url": "https://i.imgur.com/yr8RQEo.png",
+            "label": "Contenido de la Caja"
+          }
+        ],
+        "videoUrl": "https://www.youtube.com/watch?v=uHvh7FyxFck"
+      },
+      "updatedAt": 1790909834405
+    },
+    {
+      "id": "5a41ba3b-0e5f-434c-a5c6-89f429a7fe72",
+      "sku": "1203",
+      "name": "MagCubic Proyector Portatil HY300 Pro + 260 ANSI",
+      "description": "El modelo de entrada: el más económico y portátil (0.4kg), tu primer cine en casa para estrenar en cuarto oscuro. HD 720p con Android 14, Netflix y YouTube, enfoque manual y conexión Wi-Fi doble banda y Bluetooth. La puerta de entrada a la marca.",
+      "categorySlug": "proyector",
+      "disponible": true,
+      "precio": {
+        "actual": 56.519851573955
+      },
+      "beneficio": "Tu primer cine en casa: compacto, económico y fácil de llevar.",
+      "bullets": [
+        {
+          "texto": "HD 720p; HDR10+ y compatible hasta 8K@24fps"
+        },
+        {
+          "texto": "Ultraportátil: apenas 0.4kg, tu primer cine para llevar"
+        },
+        {
+          "texto": "Enfoque manual con perilla; keystone vertical automático"
+        },
+        {
+          "texto": "Brillo 260 ANSI: para cuarto oscuro"
+        },
+        {
+          "texto": "Android 14 · Netflix y YouTube · Wi-Fi 6 doble banda · BT 5.4"
+        }
+      ],
+      "specs": {
+        "autofoco": false,
+        "resolucion": "HD 720p",
+        "throwRatio": 0.9,
+        "ansi": 290,
+        "distMinEnfoque": 0.75,
+        "sistema": "Android 14"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/7Ce1le5.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/7Ce1le5.png"
+          },
+          {
+            "url": "https://i.imgur.com/K02YMfT.jpeg",
+            "label": "Tamaño"
+          },
+          {
+            "url": "https://i.imgur.com/QNGHKz9.jpeg",
+            "label": "Con Luz/Proyección Inalambrica"
+          }
+        ]
+      },
+      "updatedAt": 1790272231986
+    },
+    {
+      "id": "b97ae62f-933d-4a84-8b8b-e8e5e2ee2521",
+      "sku": "1224",
+      "name": "Parlante ANKER SoundCore 2",
+      "description": "Parlante Bluetooth portátil con 12W y graves reforzados (tecnología BassUp + puerto en espiral) para un sonido potente y sin distorsión a cualquier volumen. Resistencia al agua IPX7: aguanta salpicaduras, olas y lluvia, ideal para la playa, la piscina o el camping. Hasta 24 horas de batería (5,200 mAh), Bluetooth con tu celular y emparejamiento estéreo para unir dos parlantes. Compacto, con controles simples para llevar a todos lados.",
+      "categorySlug": "smarthome",
+      "disponible": true,
+      "precio": {
+        "actual": 45.5981411249
+      },
+      "beneficio": "Parlante Bluetooth 12W con graves BassUp, a prueba de agua IPX7 y 24h de batería.",
+      "bullets": [
+        {
+          "texto": "12W con graves BassUp: potente y sin distorsión a todo volumen"
+        },
+        {
+          "texto": "A prueba de agua IPX7: playa, piscina, lluvia y camping"
+        },
+        {
+          "texto": "Hasta 24h de batería (5,200 mAh): suena todo el día"
+        },
+        {
+          "texto": "Bluetooth + emparejamiento estéreo: uní dos para más sonido"
+        },
+        {
+          "texto": "Compacto y fácil de llevar, con controles simples"
+        }
+      ],
+      "specs": {
+        "potencia": "12 W con graves reforzados BassUp",
+        "duracionBateria": "Hasta 24 horas de música",
+        "tamano": "Portátil, entra en la mochila",
+        "resistenciaAgua": "Sumergible, aguanta caer a la piscina (IPX7)",
+        "microfono": true,
+        "emparejamiento": true,
+        "conectividad": [
+          "Bluetooth 5.0 (hasta 20 m)",
+          "Entrada AUX"
+        ]
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/4j7TwOa.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/4j7TwOa.png"
+          }
+        ],
+        "videoUrl": "https://www.youtube.com/watch?v=RllKAxI9UZU"
+      },
+      "updatedAt": 1787756746393
+    },
+    {
+      "id": "bbaa59cf-6df8-4f5a-a2a9-0a943453ddf3",
+      "sku": "1230",
+      "name": "MagCubic Proyector Portatil HY450GT 1100 ANSI",
+      "categorySlug": "proyector",
+      "disponible": false,
+      "precio": {
+        "actual": 217.615080698
+      },
+      "bullets": [],
+      "specs": {
+        "ansi": 1100,
+        "throwRatio": "1.0",
+        "distMinEnfoque": "0.98",
+        "resolucion": "1080P",
+        "autofoco": true,
+        "sistema": "Google TV"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/wNFYmJC.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/wNFYmJC.png"
+          }
+        ],
+        "videoUrl": "https://youtu.be/fGguhuxE5V4?si=_KkD2tdIZQ5bGHqO"
+      },
+      "updatedAt": 1789659360001
+    },
+    {
+      "id": "49a576b4-5231-43ef-bdc6-b1b85b61fa78",
+      "sku": "1188",
+      "name": "MagCubic Proyector Portatil X7 1000 ANSI",
+      "description": "Proyector Full HD compacto y muy brillante (hasta 1000 ANSI), pensado para quien ya tiene equipo de sonido: incluye salida AUX para conectar tu bocina o teatro en casa. Suma autofoco, detección de obstáculos, reconocimiento de pantalla y 2GB/16GB en un cuerpo pequeño.",
+      "categorySlug": "proyector",
+      "disponible": false,
+      "precio": {
+        "actual": 190.3108045751
+      },
+      "beneficio": "Brillo alto y compacto, con salida AUX para tu propio sonido.",
+      "bullets": [
+        {
+          "texto": "Full HD 1080p nativo; HDR10+ y compatibilidad 8K@24fps"
+        },
+        {
+          "texto": "Brillo alto: hasta 1000 ANSI en modo alta luz"
+        },
+        {
+          "texto": "Salida AUX para tu equipo de sonido (parlante interno 5W)"
+        },
+        {
+          "texto": "Autofoco inteligente, evita obstáculos y reconoce la pantalla"
+        },
+        {
+          "texto": "Android 14 · 2GB/16GB · Wi-Fi 6 doble banda · BT 5.4 · con AUX"
+        }
+      ],
+      "specs": {
+        "ansi": 1000,
+        "autofoco": true,
+        "resolucion": "1080p Full HD",
+        "throwRatio": 1.08,
+        "distMinEnfoque": 1,
+        "sistema": "Android 14"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/3DBHlmk.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/3DBHlmk.png"
+          },
+          {
+            "url": "https://i.imgur.com/GRsY5Dg.jpeg",
+            "label": "Con Luz"
+          },
+          {
+            "url": "https://i.imgur.com/9vsnsEU.jpeg",
+            "label": "A Oscuras"
+          }
+        ],
+        "videoUrl": "https://www.youtube.com/watch?v=qX14AdbeGuw"
+      },
+      "updatedAt": 1787756746393
+    },
+    {
+      "id": "31c130d0-8cb0-48b4-ae9a-b819ecd70fcd",
+      "sku": "1179",
+      "name": "Amazfit Active 2 Premium Square Version",
+      "categorySlug": "smartwatch",
+      "disponible": false,
+      "precio": {
+        "actual": 171.2
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136104497
+    },
+    {
+      "id": "b1599faf-cbff-41ce-8976-93e5533d44b6",
+      "sku": "1153",
+      "name": "Amazfit Active 2 Premium Version",
+      "categorySlug": "smartwatch",
+      "disponible": false,
+      "precio": {
+        "actual": 143.89
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136149889
+    },
+    {
+      "id": "651ffc08-4c3c-44b7-adfa-e61139da807b",
+      "sku": "1112",
+      "name": "MagCubic Proyector Portatil L018 650 ANSI",
+      "description": "Full HD accesible que ya se defiende con algo de luz ambiental (650 ANSI en modo alto). Trae autofoco, keystone automático, detección de obstáculos y salida de audio para conectar tu bocina. Ideal para dar el salto a 1080p sin gastar de más.",
+      "categorySlug": "proyector",
+      "disponible": false,
+      "precio": {
+        "actual": 125.05
+      },
+      "beneficio": "Full HD que ya se defiende con algo de luz, a buen precio.",
+      "bullets": [
+        {
+          "texto": "Full HD 1080p nativo; HDR10+ y reproduce hasta 8K@24fps"
+        },
+        {
+          "texto": "Brillo 650 ANSI (modo alto): aguanta algo de luz"
+        },
+        {
+          "texto": "Parlante 3W + salida de audio para bocina externa"
+        },
+        {
+          "texto": "Autofoco + keystone automático + evita obstáculos"
+        },
+        {
+          "texto": "Android 14 · 1GB/16GB · Wi-Fi 6 doble banda · BT 5.4"
+        }
+      ],
+      "specs": {
+        "autofoco": true,
+        "resolucion": "1080p Full HD",
+        "throwRatio": 1.2,
+        "ansi": 650,
+        "distMinEnfoque": 1.05,
+        "sistema": "Android 14"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/JhMXbOs.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/JhMXbOs.png"
+          }
+        ]
+      },
+      "updatedAt": 1790909936168
+    },
+    {
+      "id": "0f12154b-da09-4710-8881-b4616130b5c9",
+      "sku": "1132",
+      "name": "Redmi Watch 5",
+      "categorySlug": "smartwatch",
+      "disponible": false,
+      "precio": {
+        "actual": 115
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136241688
+    },
+    {
+      "id": "2e2d10a0-2661-4794-b985-221293ff5a3a",
+      "sku": "1185",
+      "name": "70mai Dash Cam A800S 4K",
+      "categorySlug": "camara",
+      "disponible": false,
+      "precio": {
+        "actual": 113.86
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1783029765794
+    },
+    {
+      "id": "1dee15d5-72cc-4e6f-8776-75f6faf0e83a",
+      "sku": "1145",
+      "name": "Amazfit Bip 6",
+      "categorySlug": "smartwatch",
+      "disponible": false,
+      "precio": {
+        "actual": 102.94
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136048017
+    },
+    {
+      "id": "5311256c-fa23-40b2-9c2e-155abb6a2a25",
+      "sku": "1199",
+      "name": "MagCubic Proyector Portatil HY310X 420 ANSI",
+      "description": "El Full HD más económico del catálogo, con tiro corto 0.8:1 para llenar la pared en cuartos pequeños. Imagen 1080p nativa, autofoco y un cuerpo liviano (649g) que funciona con 12V. Perfecto para dormitorios y espacios reducidos.",
+      "categorySlug": "proyector",
+      "disponible": false,
+      "precio": {
+        "lista": 94.745838145712,
+        "actual": 92.0154105
+      },
+      "beneficio": "Full HD de tiro corto: imagen nítida y grande en espacios pequeños.",
+      "campania": "Mundial/Dia del Padre",
+      "bullets": [
+        {
+          "texto": "Full HD 1080p nativo (el 1080p más económico)"
+        },
+        {
+          "texto": "Tiro corto 0.8:1: pantalla grande a poca distancia"
+        },
+        {
+          "texto": "Autofoco; keystone vertical automático"
+        },
+        {
+          "texto": "Brillo 420 ANSI: ideal en penumbra"
+        },
+        {
+          "texto": "Android 14 · 1GB/8GB · Wi-Fi 6 doble banda · BT 5.4 · 649g"
+        }
+      ],
+      "specs": {
+        "autofoco": true,
+        "resolucion": "1080p Full HD",
+        "throwRatio": 0.8,
+        "ansi": 420,
+        "distMinEnfoque": 0.6,
+        "sistema": "Android 14"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/Jte7LcO.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/Jte7LcO.png"
+          }
+        ],
+        "videoUrl": "https://youtu.be/sbxQtkHggPc?si=MJdJehVAB6wuye_p"
+      },
+      "updatedAt": 1787756746393
+    },
+    {
+      "id": "ef09ed27-067e-4e5d-bd49-b3f5693be85d",
+      "sku": "1110",
+      "name": "Amazon Echo Show 5",
+      "categorySlug": "smarthome",
+      "disponible": false,
+      "precio": {
+        "actual": 85
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136186814
+    },
+    {
+      "id": "023d7227-b3eb-4bba-885d-a97d8eecef59",
+      "sku": "1138",
+      "name": "Xiaomi Mi TV Box S, 3a Generación",
+      "categorySlug": "smarthome",
+      "disponible": false,
+      "precio": {
+        "actual": 85
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1780183751843
+    },
+    {
+      "id": "f5c6e608-3d3d-45bd-b9a1-6748b24b617b",
+      "sku": "1204",
+      "name": "MagCubic Proyector Portatil HY300 Max 400 ANSI",
+      "description": "Compacto y portátil (575g) con autofoco y tiro corto 0.8:1: pantalla grande a poca distancia sin complicarte. Resolución HD 720p con Android 14; ideal como cine secundario o para llevar de un cuarto a otro. El salto lógico sobre el HY300 Pro+ por su enfoque automático.",
+      "categorySlug": "proyector",
+      "disponible": false,
+      "precio": {
+        "actual": 78.363272472102
+      },
+      "beneficio": "Compacto con autofoco y tiro corto: pantalla grande en poco espacio.",
+      "bullets": [
+        {
+          "texto": "HD 720p con HDR10+; reproduce hasta 8K@24fps"
+        },
+        {
+          "texto": "Autofoco: se ajusta solo (ventaja sobre el HY300 Pro+)"
+        },
+        {
+          "texto": "Tiro corto 0.8:1: pantalla grande en poco espacio"
+        },
+        {
+          "texto": "Brillo 400 ANSI: ideal en penumbra · liviano (575g)"
+        },
+        {
+          "texto": "Android 14 · Wi-Fi 6 doble banda · BT 5.4"
+        }
+      ],
+      "specs": {
+        "ansi": 400,
+        "autofoco": true,
+        "resolucion": "HD 720p",
+        "throwRatio": 0.8,
+        "distMinEnfoque": 0.6,
+        "sistema": "Android 14"
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/hUfJAqt.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/hUfJAqt.png"
+          },
+          {
+            "url": "https://i.imgur.com/vHQke0k.jpeg",
+            "label": "Tamaño"
+          },
+          {
+            "url": "https://i.imgur.com/6IUlX2Y.jpeg",
+            "label": "Con Luz"
+          }
+        ]
+      },
+      "updatedAt": 1787756746393
+    },
+    {
+      "id": "3ca6750f-5a91-4e31-89e8-34b7268cf58b",
+      "sku": "1097",
+      "name": "70mai Dash Cam M310 1296P",
+      "categorySlug": "camara",
+      "disponible": false,
+      "precio": {
+        "actual": 65
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136117388
+    },
+    {
+      "id": "51e0f08e-8ebb-4a12-b08f-e5cd81dbe913",
+      "sku": "1139",
+      "name": "TP-Link - Cámara de seguridad inalámbrica para exteriores, 1080P",
+      "categorySlug": "camara",
+      "disponible": false,
+      "precio": {
+        "actual": 65
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136251544
+    },
+    {
+      "id": "49b10af4-ccd8-4416-aa6d-25875efad018",
+      "sku": "1169",
+      "name": "Xiaomi Mi Band 10",
+      "categorySlug": "smartwatch",
+      "disponible": false,
+      "precio": {
+        "actual": 64.71
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136126750
+    },
+    {
+      "id": "e7409be7-ff18-4265-97dc-d90dddf8c8b8",
+      "sku": "1014",
+      "name": "Amazon Fire TV Stick 4K",
+      "categorySlug": "smarttv",
+      "disponible": false,
+      "precio": {
+        "actual": 55.02
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136178632
+    },
+    {
+      "id": "d157b474-6edd-48d6-be12-bab7de1ac74c",
+      "sku": "1004",
+      "name": "Amazon Fire TV HD",
+      "categorySlug": "smarttv",
+      "disponible": false,
+      "precio": {
+        "actual": 50.02
+      },
+      "bullets": [],
+      "media": {
+        "gallery": []
+      },
+      "updatedAt": 1781136160570
+    },
+    {
+      "id": "1501",
+      "sku": "1501",
+      "name": "TRIPODE PARA PROYECTOR",
+      "categorySlug": "proyector",
+      "disponible": false,
+      "precio": {
+        "actual": 28
+      },
+      "bullets": [],
+      "specs": {
+        "autofoco": false
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/SHodQwR.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/SHodQwR.png"
+          }
+        ]
+      },
+      "updatedAt": 1783028504852
+    },
+    {
+      "id": "1300",
+      "sku": "1300",
+      "name": "Manta Reflectiva 100 pulgadas",
+      "categorySlug": "proyector",
+      "disponible": false,
+      "precio": {
+        "actual": 15
+      },
+      "bullets": [],
+      "specs": {
+        "autofoco": false
+      },
+      "media": {
+        "heroImage": "https://i.imgur.com/4O0p7bn.png",
+        "gallery": [
+          {
+            "url": "https://i.imgur.com/4O0p7bn.png"
+          }
+        ]
+      },
+      "updatedAt": 1790909908135
+    }
+  ]
+}

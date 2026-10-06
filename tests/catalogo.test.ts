@@ -7,8 +7,10 @@
 // de PublicCatalogProduct (POS) y del normalizador de PandaLink.
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { decodeDocument } from "../src/lib/firestore-decode";
+import { fuenteCatalogo, leerFixture } from "../src/lib/fixture";
 import {
   CONFIG_FINANCIAMIENTO_DEFAULT,
   calcularPlanes,
@@ -456,5 +458,55 @@ describe("colapso de la tabla de specs", () => {
   it("categorías densas reales (proyector 12, smartwatch 13) sí colapsan", () => {
     assert.ok(dividirFilasSpecs(filas(12)).resto.length > 0);
     assert.ok(dividirFilasSpecs(filas(13)).resto.length > 0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("datos de prueba locales (CATALOG_SOURCE=fixture)", () => {
+  it("sin la variable se lee Firestore, como siempre", () => {
+    assert.equal(fuenteCatalogo({}), "firestore");
+    assert.equal(fuenteCatalogo({ CATALOG_SOURCE: "otra-cosa" }), "firestore");
+  });
+
+  it("en local o en un preview se usan los datos de prueba", () => {
+    assert.equal(fuenteCatalogo({ CATALOG_SOURCE: "fixture" }), "fixture");
+    assert.equal(
+      fuenteCatalogo({ CATALOG_SOURCE: "fixture", VERCEL_ENV: "preview" }),
+      "fixture",
+    );
+  });
+
+  it("en producción se niega: publicaría precios de prueba", () => {
+    assert.throws(
+      () => fuenteCatalogo({ CATALOG_SOURCE: "fixture", VERCEL_ENV: "production" }),
+      /producción/,
+    );
+  });
+
+  it("el JSON no trae cost ni precio.efectivo en ningún nivel", () => {
+    // Se busca en el texto crudo: así no importa a qué profundidad aparezcan.
+    const crudo = readFileSync("src/lib/fixture-catalogo.json", "utf8");
+    assert.doesNotMatch(crudo, /"cost"\s*:/);
+    assert.doesNotMatch(crudo, /"efectivo"\s*:/);
+  });
+
+  it("las cuotas se recalculan con las reglas vigentes, no vienen copiadas", async () => {
+    const { productos, tasa, configFinanciamiento } = await leerFixture();
+    assert.ok(productos.length > 0);
+    for (const p of productos) {
+      assert.deepEqual(
+        p.planes,
+        calcularPlanes(p.precio.actual, tasa, {
+          config: configFinanciamiento,
+          categoria: p.categorySlug,
+          override: p.financiamientoOverride,
+        }),
+      );
+    }
+    // Al menos un proyector disponible con cuotas: si no, el JSON quedó viejo
+    // o vacío y no sirve para revisar el bloque de financiamiento.
+    assert.ok(
+      productos.some((p) => p.categorySlug === "proyector" && p.disponible && p.planes.length > 0),
+    );
   });
 });

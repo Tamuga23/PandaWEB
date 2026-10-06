@@ -10,6 +10,7 @@ import {
   type ConfigFinanciamiento,
 } from "./financiamiento";
 import { getDocument, listCollection } from "./firestore-rest";
+import { fuenteCatalogo, leerFixture } from "./fixture";
 import { normalizarProducto } from "./normalize";
 import type { CatalogoData, Producto } from "./types";
 
@@ -116,11 +117,17 @@ const leerCatalogo = unstable_cache(async (): Promise<CatalogoData> => {
   return { productos, tasa, configFinanciamiento, leidoEn: Date.now() };
 }, ["catalogo"], { revalidate: REVALIDATE, tags: ["catalogo"] });
 
+// Se resuelve al cargar el módulo: si alguien deja CATALOG_SOURCE=fixture en
+// producción, el build se cae entero en vez de publicar precios de prueba.
+const FUENTE = fuenteCatalogo();
+
 /**
  * `cache` de React deduplica la llamada dentro de un mismo render: la portada
  * pide el catálogo una vez aunque lo consulten varios componentes.
  */
-export const getCatalogo = cache((): Promise<CatalogoData> => leerCatalogo());
+export const getCatalogo = cache(
+  (): Promise<CatalogoData> => (FUENTE === "fixture" ? leerFixture() : leerCatalogo()),
+);
 
 export async function getProducto(
   id: string,
