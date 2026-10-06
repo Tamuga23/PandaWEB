@@ -32,6 +32,12 @@
   --color-promo: var(--promo);
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  /* Elevación: shadow-elevada, shadow-flotante, shadow-modal. Los valores
+     cambian con el tema (ver los bloques de abajo). */
+  --shadow-elevada: var(--sombra-elevada);
+  --shadow-flotante: var(--sombra-flotante);
+  --shadow-modal: var(--sombra-modal);
 }
 
 /* --- Tema oscuro: el predeterminado de la marca ------------------------- */
@@ -58,6 +64,17 @@
   --precio: #34d399; /* emerald-400 */
   --agotado: #fb7185; /* rose-400 */
   --promo: #fbbf24; /* amber-400 */
+
+  /* Sobre #09090b una sombra negra casi no se ve: lo que da la sensación de
+     "esto está arriba" es el brillo de 1px en el borde superior (como la luz
+     que pega en el canto de una tarjeta), y la sombra solo oscurece lo que
+     queda debajo cuando hay contenido detrás (barras, modal). */
+  --sombra-elevada: inset 0 1px 0 0 rgb(255 255 255 / 0.06),
+    0 12px 28px -12px rgb(0 0 0 / 0.8);
+  --sombra-flotante: inset 0 1px 0 0 rgb(255 255 255 / 0.06),
+    0 4px 12px -4px rgb(0 0 0 / 0.5), 0 20px 48px -16px rgb(0 0 0 / 0.85);
+  --sombra-modal: inset 0 1px 0 0 rgb(255 255 255 / 0.08),
+    0 32px 80px -20px rgb(0 0 0 / 0.9);
 }
 
 /* --- Tema claro --------------------------------------------------------- */
@@ -85,6 +102,15 @@
   --precio: #059669; /* emerald-600 */
   --agotado: #e11d48; /* rose-600 */
   --promo: #d97706; /* amber-600 */
+
+  /* En claro el brillo superior no aporta nada (el fondo ya es claro): solo
+     sombra, teñida con slate-900 en vez de negro puro para que no se vea
+     sucia sobre slate-50. */
+  --sombra-elevada: 0 1px 2px 0 rgb(15 23 42 / 0.05),
+    0 12px 28px -12px rgb(15 23 42 / 0.18);
+  --sombra-flotante: 0 4px 12px -4px rgb(15 23 42 / 0.1),
+    0 20px 48px -16px rgb(15 23 42 / 0.25);
+  --sombra-modal: 0 32px 80px -20px rgb(15 23 42 / 0.35);
 }
 
 /* ---------------------------------------------------------------------------

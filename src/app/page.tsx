@@ -180,12 +180,15 @@ function Categorias({
       </h2>
       <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {categorias.map((c) => (
+          // Mismo patrón que ProductCard: el Link detecta el hover y no se
+          // mueve; la tarjeta de adentro es la que sube (sin temblor en el
+          // borde de abajo).
           <Link
             key={c.slug}
             href={`/catalogo?cat=${c.slug}`}
-            className="group rounded-2xl border border-borde bg-superficie p-5 transition hover:border-acento/50 hover:bg-superficie2"
+            className="group block rounded-2xl"
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex h-full items-start justify-between gap-3 rounded-2xl border border-borde bg-superficie p-5 transition duration-200 group-hover:border-acento/50 group-hover:bg-superficie2 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5">
               <div>
                 <h3 className="font-semibold text-texto transition group-hover:text-acento">
                   {c.nombre}

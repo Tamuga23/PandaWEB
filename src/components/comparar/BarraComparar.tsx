@@ -32,7 +32,7 @@ export function BarraComparar() {
           y el texto quedaba en 0px de ancho, encimado sobre Limpiar). Los
           botones bajan juntos a una segunda fila; desde ~470px (1-2
           productos) o ~525px (3) es una sola. */}
-      <div className="mx-auto flex max-w-2xl flex-wrap items-center gap-3 rounded-2xl border border-borde2 bg-superficie p-3 shadow-2xl">
+      <div className="mx-auto flex max-w-2xl flex-wrap items-center gap-3 rounded-2xl border border-borde2 bg-superficie p-3 shadow-flotante">
         <div className="flex gap-2">
           {seleccion.map((p) => (
             <div key={p.id} className="relative h-12 w-12 shrink-0">

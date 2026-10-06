@@ -11,8 +11,8 @@ paso que funcione. Fusionar a `main` solo con permiso explícito.
 | Fase | Qué | Estado |
 |---|---|---|
 | 0 | Mirar el sitio antes de tocarlo | Hecha (2026-10-05) |
-| 1 | Datos de prueba locales (`CATALOG_SOURCE=fixture`) | Hecha (2026-10-05) — rama `mejora-visual-fase-1`, PR pendiente de fusionar |
-| 2 | Profundidad: tokens de elevación | Pendiente |
+| 1 | Datos de prueba locales (`CATALOG_SOURCE=fixture`) | Hecha y en producción (2026-10-05) — PR #46 |
+| 2 | Profundidad: tokens de elevación | Hecha (2026-10-05) — rama `mejora-visual-fase-2`, PR pendiente de fusionar |
 | 3 | Portada con producto real (hero + categorías con foto) | Pendiente |
 | 4 | Catálogo: tratamiento de fotos | Pendiente |
 | 5 | Cierre: limpiar `bg-marca-hover`, actualizar DESIGN.md | Pendiente |
@@ -63,11 +63,33 @@ El lint marca 1 error y 2 avisos que ya estaban en `main`
 `{"productos":[...]}` de `CatalogoCliente`, decodificar `"$undefined"` y
 `"$$"`, sacar `planes` y verificar que no haya `cost`/`efectivo`.
 
-## Fases 2–5 (resumen)
+## Fase 2 — profundidad
 
-- **2. Profundidad:** `--sombra-1/2/3` por tema (en oscuro, sombra + brillo de
-  1px arriba). Tarjetas que suben en hover; las barras flotantes y el modal usan
-  los tokens. Sin cambiar alturas de header ni barras (`--reserva-barras`).
+- Tokens `shadow-elevada`, `shadow-flotante`, `shadow-modal`, con valores por
+  tema en `globals.css` (en oscuro, sombra + brillo de 1px arriba). Documentado
+  en DESIGN.md → Elevation & Depth.
+- Tarjetas de producto y de categoría suben 2px en hover con `shadow-elevada`.
+  El hover lo detecta un envoltorio que no se mueve (sin temblor en el borde).
+- Barra del comparador y toast: `shadow-2xl` → `shadow-flotante`. Modal:
+  `shadow-modal`. Badges y píldora activa siguen con `shadow-md`.
+- No cambió ninguna altura (header, barras, `--reserva-barras` intactos).
+
+**Verificado** con `CATALOG_SOURCE=fixture` y Edge por DevTools Protocol
+(emula 390px reales, pasa el mouse y hace clic): hover en catálogo y portada,
+oscuro y claro (`translate: 0 -2px` solo en la tarjeta bajo el mouse); barra
+del comparador y modal en los dos temas; móvil a 390px sin desborde
+horizontal (scrollWidth = 390). 56/56 pruebas, typecheck limpio.
+
+**Para la Fase 3:** en hover, la tarjeta de categoría pasa a `bg-superficie2`,
+el mismo color de la pastilla del conteo ("6"), que desaparece. Ya pasaba antes
+de esta fase.
+
+**Ojo al capturar:** el sitio usa `scroll-behavior: smooth`. Un script que hace
+`scrollIntoView` y mide enseguida mide antes de que termine el desplazamiento;
+usar `behavior: "instant"`.
+
+## Fases 3–5 (resumen)
+
 - **3. Portada:** hero con fotos de destacados (tira horizontal en móvil, dos
   columnas en escritorio) y sin el resplandor; categorías con la foto de su
   primer producto disponible, a 2 columnas en móvil. El H1 sigue siendo el LCP.

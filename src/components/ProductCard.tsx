@@ -24,68 +24,74 @@ export function ProductCard({
   const descuento = porcentajeDescuento(producto.precio.lista, producto.precio.actual);
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition hover:border-acento/50">
-      {/* Toda la tarjeta es clicable, pero un <button> (BotonComparar, más
-          abajo) no puede vivir adentro de un <a> — HTML no lo permite. Este
-          link "estirado" cubre la tarjeta entera por detrás (z-10, encima
-          de la imagen y el badge, que no tienen z-index propio);
-          BotonComparar se para más arriba todavía (z-20) para seguir
-          siendo su propio elemento clicable en vez de quedar tapado.
-          El outline de foco global cae afuera del link y el overflow-hidden
-          de la tarjeta lo recortaba entero: sin el ring inset, una tarjeta
-          enfocada con teclado se veía igual a las demás. */}
-      <Link
-        href={`/producto/${producto.id}`}
-        aria-label={`Ver ${producto.name}`}
-        className="absolute inset-0 z-10 rounded-2xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-acento"
-      />
-
-      <div className="relative aspect-square overflow-hidden bg-fondo/40 p-4">
-        {/* Un agotado se atenúa solo en la foto, no en toda la tarjeta: el
-            texto (el precio en text-tenue incluido) necesita su contraste
-            entero, y la pastilla "Agotado" vive fuera de la imagen. */}
-        <ProductImage
-          src={producto.media.heroImage}
-          alt={producto.name}
-          priority={priority}
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className={`transition duration-300 group-hover:scale-105 ${producto.disponible ? "" : "opacity-70"}`}
+    // El hover lo detecta este envoltorio, que no se mueve; la tarjeta sube
+    // adentro. Si subiera el mismo elemento que detecta el hover, con el
+    // cursor en los 2px de abajo la tarjeta se iría de debajo del cursor,
+    // bajaría, lo volvería a tocar y subiría otra vez: un temblor.
+    <div className="group h-full">
+      <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition duration-200 group-hover:border-acento/50 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5">
+        {/* Toda la tarjeta es clicable, pero un <button> (BotonComparar, más
+            abajo) no puede vivir adentro de un <a> — HTML no lo permite. Este
+            link "estirado" cubre la tarjeta entera por detrás (z-10, encima
+            de la imagen y el badge, que no tienen z-index propio);
+            BotonComparar se para más arriba todavía (z-20) para seguir
+            siendo su propio elemento clicable en vez de quedar tapado.
+            El outline de foco global cae afuera del link y el overflow-hidden
+            de la tarjeta lo recortaba entero: sin el ring inset, una tarjeta
+            enfocada con teclado se veía igual a las demás. */}
+        <Link
+          href={`/producto/${producto.id}`}
+          aria-label={`Ver ${producto.name}`}
+          className="absolute inset-0 z-10 rounded-2xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-acento"
         />
 
-        {descuento != null && (
-          <span className="absolute right-3 top-3 rounded-lg bg-marca px-2.5 py-1 text-micro font-black uppercase tracking-wider text-white shadow-md">
-            −{descuento}% Oferta
-          </span>
-        )}
+        <div className="relative aspect-square overflow-hidden bg-fondo/40 p-4">
+          {/* Un agotado se atenúa solo en la foto, no en toda la tarjeta: el
+              texto (el precio en text-tenue incluido) necesita su contraste
+              entero, y la pastilla "Agotado" vive fuera de la imagen. */}
+          <ProductImage
+            src={producto.media.heroImage}
+            alt={producto.name}
+            priority={priority}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className={`transition duration-300 group-hover:scale-105 ${producto.disponible ? "" : "opacity-70"}`}
+          />
 
-        {!producto.disponible && (
-          <span className="absolute left-3 top-3 rounded-full bg-fondo/90 px-2.5 py-1 text-label font-semibold text-agotado ring-1 ring-agotado/30">
-            Agotado
-          </span>
-        )}
-      </div>
+          {descuento != null && (
+            <span className="absolute right-3 top-3 rounded-lg bg-marca px-2.5 py-1 text-micro font-black uppercase tracking-wider text-white shadow-md">
+              −{descuento}% Oferta
+            </span>
+          )}
 
-      <div className="flex flex-1 flex-col p-4">
-        {producto.categorySlug && (
-          <p className="text-label font-medium uppercase tracking-wide text-tenue">
-            {NOMBRE_CATEGORIA[producto.categorySlug] ?? producto.categorySlug}
-          </p>
-        )}
-        <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-texto transition group-hover:text-acento">
-          {producto.name}
-        </h3>
-        {producto.beneficio && (
-          <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-suave">
-            {producto.beneficio}
-          </p>
-        )}
+          {!producto.disponible && (
+            <span className="absolute left-3 top-3 rounded-full bg-fondo/90 px-2.5 py-1 text-label font-semibold text-agotado ring-1 ring-agotado/30">
+              Agotado
+            </span>
+          )}
+        </div>
 
-        {/* Precio arriba, Comparar abajo. En la misma fila, el botón (103px
-            con su etiqueta visible) le dejaba al precio ~11px en móvil: la
-            cuota se partía palabra por palabra y quedaba tapada por el botón. */}
-        <div className="mt-auto flex flex-col items-start gap-2 pt-3">
-          <PrecioTarjeta producto={producto} tasa={tasa} />
-          <BotonComparar producto={producto} tasa={tasa} />
+        <div className="flex flex-1 flex-col p-4">
+          {producto.categorySlug && (
+            <p className="text-label font-medium uppercase tracking-wide text-tenue">
+              {NOMBRE_CATEGORIA[producto.categorySlug] ?? producto.categorySlug}
+            </p>
+          )}
+          <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-texto transition group-hover:text-acento">
+            {producto.name}
+          </h3>
+          {producto.beneficio && (
+            <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-suave">
+              {producto.beneficio}
+            </p>
+          )}
+
+          {/* Precio arriba, Comparar abajo. En la misma fila, el botón (103px
+              con su etiqueta visible) le dejaba al precio ~11px en móvil: la
+              cuota se partía palabra por palabra y quedaba tapada por el botón. */}
+          <div className="mt-auto flex flex-col items-start gap-2 pt-3">
+            <PrecioTarjeta producto={producto} tasa={tasa} />
+            <BotonComparar producto={producto} tasa={tasa} />
+          </div>
         </div>
       </div>
     </div>
