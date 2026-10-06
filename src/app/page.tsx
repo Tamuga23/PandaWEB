@@ -8,6 +8,7 @@ import { itemsPropuestaValor } from "@/components/PropuestaValor";
 import {
   IconoCheck,
   IconoFlecha,
+  IconoImagen,
   IconoUbicacion,
   IconoWhatsApp,
 } from "@/components/iconos";
@@ -127,16 +128,19 @@ function Hero({
   // Ahora la profundidad la dan los productos reales, no un degradado.
   return (
     <section className="border-b border-borde">
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:py-20">
+      <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:py-20">
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie/60 px-4 py-1.5 text-xs font-medium text-texto">
             <span className="h-1.5 w-1.5 rounded-full bg-precio" aria-hidden="true" />
             Entrega inmediata en Managua
           </span>
 
-          <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl xl:text-6xl">
-            Tecnología para tu casa
-            <br />
+          {/* Sin <br>: con el salto forzado, "Tecnología para tu casa" no
+              entraba en una línea (ni en el celular ni en la columna del
+              hero) y "casa" quedaba sola. text-balance reparte el título en
+              dos líneas parejas. */}
+          <h1 className="mt-6 text-balance text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl xl:text-6xl">
+            Tecnología para tu casa{" "}
             <span className="text-acento">y tu negocio</span>
           </h1>
 
@@ -299,17 +303,24 @@ function Categorias({
             <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition duration-200 group-hover:border-acento/50 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5">
               {/* Bandeja blanca como en la vitrina del hero. La foto es
                   decorativa (alt vacío): el nombre de la categoría ya es el
-                  texto del enlace. */}
-              <div className="relative aspect-[4/3] overflow-hidden bg-white p-3">
-                {c.foto && (
+                  texto del enlace. Si ningún producto de la categoría tiene
+                  foto cargada en el POS, una bandeja blanca vacía parecía una
+                  imagen que no cargó: va neutra, como el "Sin foto" de las
+                  tarjetas de producto. */}
+              {c.foto ? (
+                <div className="relative aspect-[4/3] overflow-hidden bg-white p-3 lg:aspect-[16/10]">
                   <ProductImage
                     src={c.foto}
                     alt=""
                     sizes="(min-width: 1024px) 360px, 50vw"
                     className="transition duration-300 group-hover:scale-105"
                   />
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="grid aspect-[4/3] place-items-center bg-superficie2 text-tenue lg:aspect-[16/10]">
+                  <IconoImagen className="h-8 w-8" />
+                </div>
+              )}
               <div className="flex flex-1 flex-col p-4">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-sm font-semibold text-texto transition group-hover:text-acento sm:text-base">
