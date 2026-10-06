@@ -185,6 +185,36 @@ volver a cargar esas fotos con margen blanco desde el POS.
 **Decisión de Carlos (2026-10-06): se acepta el corte por ahora** y la fase
 sigue; recargar esas fotos queda como pendiente del POS, no bloquea la fusión.
 
+**Síntesis** (el agente de síntesis llegó a previsualizar su versión final y
+sacar sus 12 capturas antes de que la sesión volviera a llegar al límite; se
+implementa a partir de esa previsualización y de los veredictos):
+- Token `--bandeja` (#fff, igual en los dos temas: es el blanco de estudio de
+  las fotos) y `--velo-foto` por tema: `rgb(9 9 11 / .14)` en oscuro (bandeja ≈
+  #dcdcdd), `rgb(15 23 42 / .04)` en claro. Utilidad `bandeja-foto`: fondo
+  `--bandeja` + un `::after` del velo. Sin `mix-blend-mode` ni `filter`.
+- `ProductImage` dibuja la bandeja en los 6 lugares: `span` relativo con
+  `overflow-hidden`, aire `absolute inset-[5%]`, `className` sigue en la foto y
+  el radio entra por `bandeja`.
+- Agotado en listas (`apagada`): capa `bg-superficie/30` encima. Sin foto: el
+  ícono de su categoría (`IconoCategoria` monocromo, `text-tenue`, 40% de la
+  bandeja con tope de 64px); el agotado sin foto va sobre `bg-superficie2`.
+  Resultado en oscuro: disponible ≈ #dcdcdd > agotado con foto apagado >
+  agotado sin foto ≈ #222225.
+- Fotos de escena (las de la galería que traen etiqueta del POS: "Con Luz", "A
+  Oscuras", "Funciones"…; en el catálogo de prueba la foto del héroe nunca la
+  tiene) van sobre `bg-superficie`, no sobre blanco: así no quedan con bandas
+  gris claro.
+- Marco de 4px (`p-1`) y bandeja `rounded-xl` en tarjeta, vitrina y ficha; en
+  miniaturas, barra y modal la bandeja llena la caja. Barra y hueco punteado a
+  `rounded-xl`; el modal suma `border-borde`.
+- Ficha sin foto: banda `aspect-[3/1]` (2:1 en `lg`) en `bg-superficie2` con el
+  ícono y la leyenda "Sin foto" en `text-texto` (AA en los dos temas).
+- Pastilla "Agotado" de la tarjeta: `bg-superficie/95` (en claro, sobre la
+  bandeja, `bg-fondo/90` dejaba el rosa en ~4.48:1).
+- Zoom del hover con `motion-safe:`. Arreglos: `key` por URL en la foto grande
+  de la galería; la barra del comparador deja de posicionar la foto contra el
+  `div` de afuera.
+
 ## Fase 5 (resumen)
 
 - **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
