@@ -12,8 +12,8 @@ paso que funcione. Fusionar a `main` solo con permiso explícito.
 |---|---|---|
 | 0 | Mirar el sitio antes de tocarlo | Hecha (2026-10-05) |
 | 1 | Datos de prueba locales (`CATALOG_SOURCE=fixture`) | Hecha y en producción (2026-10-05) — PR #46 |
-| 2 | Profundidad: tokens de elevación | Hecha (2026-10-05) — rama `mejora-visual-fase-2`, PR pendiente de fusionar |
-| 3 | Portada con producto real (hero + categorías con foto) | Pendiente |
+| 2 | Profundidad: tokens de elevación | Hecha y en producción (2026-10-05) — PR #47 |
+| 3 | Portada con producto real (hero + categorías con foto) | En curso — rama `mejora-visual-fase-3` |
 | 4 | Catálogo: tratamiento de fotos | Pendiente |
 | 5 | Cierre: limpiar `bg-marca-hover`, actualizar DESIGN.md | Pendiente |
 
