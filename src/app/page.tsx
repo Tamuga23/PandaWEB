@@ -3,6 +3,7 @@ import { EnlaceConversion } from "@/components/EnlaceConversion";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductImage } from "@/components/ProductImage";
 import { itemsPropuestaValor } from "@/components/PropuestaValor";
 import {
   IconoCheck,
@@ -21,8 +22,10 @@ import {
 } from "@/config/site";
 import { contarPorCategoria, destacados, getCatalogo } from "@/lib/catalog";
 import { esCategoriaSinInteres, type ConfigFinanciamiento } from "@/lib/financiamiento";
-import { linkWhatsApp } from "@/lib/format";
+import { cordobas, linkWhatsApp } from "@/lib/format";
 import { CONVERSIONES } from "@/lib/gtag";
+import { elegirHero, fotoPorCategoria } from "@/lib/portada";
+import type { Producto } from "@/lib/types";
 
 export const revalidate = 900;
 
@@ -37,18 +40,29 @@ export default async function Home() {
   const { productos, tasa, configFinanciamiento } = datos;
   const conteo = contarPorCategoria(productos);
   const catsConProductos = CATEGORIAS.filter((c) => (conteo[c.slug] ?? 0) > 0);
-  const top = destacados(productos, 8);
+  const top = destacados(productos, 12);
+  // Hero, categorías y "Lo más pedido" van una debajo de la otra: lo que ya
+  // salió en la vitrina del hero no se repite en "Lo más pedido", y la foto de
+  // cada categoría evita repetir la de la vitrina.
+  const vitrina = elegirHero(top, 4);
+  const idsVitrina = new Set(vitrina.map((p) => p.id));
+  const masPedidos = top.filter((p) => !idsVitrina.has(p.id)).slice(0, 8);
+  const fotos = fotoPorCategoria(productos, idsVitrina);
 
   return (
     <>
-      <Hero config={configFinanciamiento} />
+      <Hero config={configFinanciamiento} vitrina={vitrina} tasa={tasa} />
       <Ventajas config={configFinanciamiento} />
       {catsConProductos.length > 0 && (
         <Categorias
-          categorias={catsConProductos.map((c) => ({ ...c, total: conteo[c.slug] }))}
+          categorias={catsConProductos.map((c) => ({
+            ...c,
+            total: conteo[c.slug],
+            foto: fotos[c.slug],
+          }))}
         />
       )}
-      {top.length > 0 && <Destacados productos={top} tasa={tasa} />}
+      {masPedidos.length > 0 && <Destacados productos={masPedidos} tasa={tasa} />}
       <Financiamiento config={configFinanciamiento} />
       <Ubicacion />
       <NegocioJsonLd />
@@ -97,51 +111,133 @@ function NegocioJsonLd() {
 
 // ---------------------------------------------------------------------------
 
-function Hero({ config }: { config: ConfigFinanciamiento }) {
+function Hero({
+  config,
+  vitrina,
+  tasa,
+}: {
+  config: ConfigFinanciamiento;
+  vitrina: Producto[];
+  tasa: number;
+}) {
   const plazoMaximo = Math.max(...config.plazos);
 
+  // Antes era texto centrado sobre un resplandor cyan, sin ningún producto:
+  // en el celular la primera foto aparecía recién después de dos pantallas.
+  // Ahora la profundidad la dan los productos reales, no un degradado.
   return (
-    <section className="relative overflow-hidden border-b border-borde">
-      {/* Resplandor cyan de fondo: da profundidad sin costar una imagen. */}
-      <div
-        className="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-acento/10 blur-3xl"
-        aria-hidden="true"
-      />
-      <div className="relative mx-auto max-w-6xl px-4 py-20 text-center sm:py-28">
-        <span className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie/60 px-4 py-1.5 text-xs font-medium text-texto">
-          <span className="h-1.5 w-1.5 rounded-full bg-precio" aria-hidden="true" />
-          Entrega inmediata en Managua
-        </span>
+    <section className="border-b border-borde">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:py-20">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie/60 px-4 py-1.5 text-xs font-medium text-texto">
+            <span className="h-1.5 w-1.5 rounded-full bg-precio" aria-hidden="true" />
+            Entrega inmediata en Managua
+          </span>
 
-        <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-bold leading-[1.1] tracking-tight sm:text-6xl">
-          Tecnología para tu casa
-          <br />
-          <span className="text-acento">y tu negocio</span>
-        </h1>
+          <h1 className="mt-6 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl xl:text-6xl">
+            Tecnología para tu casa
+            <br />
+            <span className="text-acento">y tu negocio</span>
+          </h1>
 
-        <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-suave">
-          Proyectores, cámaras de seguridad, smartwatches y más. Pagá hasta en{" "}
-          {plazoMaximo} cuotas y llevate {GARANTIA_MESES} meses de garantía.
-        </p>
+          <p className="mt-5 max-w-xl text-lg leading-relaxed text-suave">
+            Proyectores, cámaras de seguridad, smartwatches y más. Pagá hasta en{" "}
+            {plazoMaximo} cuotas y llevate {GARANTIA_MESES} meses de garantía.
+          </p>
 
-        <div className="mt-9 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/catalogo"
-            className="btn-primary inline-flex items-center gap-2 px-6 py-3.5 text-sm"
-          >
-            Ver catálogo
-            <IconoFlecha className="h-4 w-4" />
-          </Link>
-          <EnlaceWhatsApp
-            href={linkWhatsApp(CONTACTO.whatsapp)}
-            className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie px-6 py-3.5 text-sm font-semibold text-texto transition hover:border-precio hover:text-precio"
-          >
-            <IconoWhatsApp className="h-4 w-4" />
-            Hablar con un asesor
-          </EnlaceWhatsApp>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/catalogo"
+              className="btn-primary inline-flex items-center gap-2 px-6 py-3.5 text-sm"
+            >
+              Ver catálogo
+              <IconoFlecha className="h-4 w-4" />
+            </Link>
+            <EnlaceWhatsApp
+              href={linkWhatsApp(CONTACTO.whatsapp)}
+              className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie px-6 py-3.5 text-sm font-semibold text-texto transition hover:border-precio hover:text-precio"
+            >
+              <IconoWhatsApp className="h-4 w-4" />
+              Hablar con un asesor
+            </EnlaceWhatsApp>
+          </div>
         </div>
+
+        {vitrina.length > 0 && <Vitrina productos={vitrina} tasa={tasa} />}
       </div>
     </section>
+  );
+}
+
+/**
+ * Vitrina del hero. En el celular es una tira que se desliza justo debajo de
+ * los botones, así lo primero que se ve ya son productos con precio; en
+ * escritorio, un mosaico al lado del texto (el primero ancho arriba, dos
+ * abajo; el cuarto solo existe en la tira).
+ *
+ * Es el mismo marcado en los dos tamaños y solo cambia el layout: con dos
+ * versiones ocultas por CSS, el celular descargaría también las fotos del
+ * mosaico.
+ */
+function Vitrina({ productos, tasa }: { productos: Producto[]; tasa: number }) {
+  return (
+    // -my-2 py-2: overflow-x-auto recorta también en vertical, y sin ese aire
+    // el anillo de foco de las tarjetas quedaba cortado arriba y abajo.
+    <ul
+      aria-label="Algunos de nuestros productos"
+      className="-mx-4 -my-2 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 py-2 scrollbar-none lg:mx-0 lg:my-0 lg:grid lg:grid-cols-2 lg:gap-4 lg:overflow-visible lg:px-0 lg:py-0"
+    >
+      {productos.map((p, i) => (
+        <li
+          key={p.id}
+          className={`w-40 shrink-0 snap-start lg:w-auto ${i === 0 ? "lg:col-span-2" : ""} ${i > 2 ? "lg:hidden" : ""}`}
+        >
+          <TarjetaVitrina producto={p} tasa={tasa} ancha={i === 0} prioridad={i < 2} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function TarjetaVitrina({
+  producto,
+  tasa,
+  ancha,
+  prioridad,
+}: {
+  producto: Producto;
+  tasa: number;
+  ancha: boolean;
+  prioridad: boolean;
+}) {
+  return (
+    // Mismo patrón de hover sin temblor que ProductCard (ver DESIGN.md).
+    <Link href={`/producto/${producto.id}`} className="group block h-full rounded-2xl">
+      <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition duration-200 group-hover:border-acento/50 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5">
+        {/* Bandeja blanca en los dos temas: las fotos del catálogo son de
+            estudio con fondo blanco, y así la foto se funde con su bandeja en
+            vez de verse como un recuadro pegado sobre la tarjeta. */}
+        <div
+          className={`relative overflow-hidden bg-white p-3 ${ancha ? "aspect-square lg:aspect-[2/1]" : "aspect-square"}`}
+        >
+          <ProductImage
+            src={producto.media.heroImage}
+            alt={producto.name}
+            priority={prioridad}
+            sizes={ancha ? "(min-width: 1024px) 540px, 160px" : "(min-width: 1024px) 260px, 160px"}
+            className="transition duration-300 group-hover:scale-105"
+          />
+        </div>
+        <div className="px-3 py-2.5">
+          <p className="line-clamp-1 text-sm font-semibold text-texto transition group-hover:text-acento">
+            {producto.name}
+          </p>
+          <p className="text-sm font-bold text-precio">
+            {cordobas(producto.precio.actual, tasa)}
+          </p>
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -151,9 +247,11 @@ function Ventajas({ config }: { config: ConfigFinanciamiento }) {
 
   return (
     <section className="border-b border-borde bg-superficie/40">
-      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Dos columnas también en el celular: apiladas de a una ocupaban una
+          pantalla entera entre el hero y las categorías. */}
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-4 gap-y-6 px-4 py-8 sm:gap-6 sm:py-10 lg:grid-cols-4">
         {items.map(({ Icono, titulo, texto }) => (
-          <div key={titulo} className="flex items-start gap-3">
+          <div key={titulo} className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:gap-3">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-acento/10 text-acento">
               <Icono className="h-5 w-5" />
             </span>
@@ -171,14 +269,22 @@ function Ventajas({ config }: { config: ConfigFinanciamiento }) {
 function Categorias({
   categorias,
 }: {
-  categorias: { slug: string; nombre: string; descripcion: string; total: number }[];
+  categorias: {
+    slug: string;
+    nombre: string;
+    descripcion: string;
+    total: number;
+    foto?: string;
+  }[];
 }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16">
       <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
         Qué estás buscando
       </h2>
-      <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Dos columnas desde el celular: eran tarjetas de solo texto, una por
+          fila, y ocupaban más de una pantalla sin mostrar ningún producto. */}
+      <div className="mt-7 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
         {categorias.map((c) => (
           // Mismo patrón que ProductCard: el Link detecta el hover y no se
           // mueve; la tarjeta de adentro es la que sube (sin temblor en el
@@ -188,18 +294,35 @@ function Categorias({
             href={`/catalogo?cat=${c.slug}`}
             className="group block rounded-2xl"
           >
-            <div className="flex h-full items-start justify-between gap-3 rounded-2xl border border-borde bg-superficie p-5 transition duration-200 group-hover:border-acento/50 group-hover:bg-superficie2 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5">
-              <div>
-                <h3 className="font-semibold text-texto transition group-hover:text-acento">
-                  {c.nombre}
-                </h3>
-                <p className="mt-1 text-sm leading-relaxed text-suave">
+            {/* Sin cambio de fondo en hover: pasaba a superficie2, el mismo
+                color de la pastilla del conteo, que desaparecía. */}
+            <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-borde bg-superficie transition duration-200 group-hover:border-acento/50 group-hover:shadow-elevada motion-safe:group-hover:-translate-y-0.5">
+              {/* Bandeja blanca como en la vitrina del hero. La foto es
+                  decorativa (alt vacío): el nombre de la categoría ya es el
+                  texto del enlace. */}
+              <div className="relative aspect-[4/3] overflow-hidden bg-white p-3">
+                {c.foto && (
+                  <ProductImage
+                    src={c.foto}
+                    alt=""
+                    sizes="(min-width: 1024px) 360px, 50vw"
+                    className="transition duration-300 group-hover:scale-105"
+                  />
+                )}
+              </div>
+              <div className="flex flex-1 flex-col p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="text-sm font-semibold text-texto transition group-hover:text-acento sm:text-base">
+                    {c.nombre}
+                  </h3>
+                  <span className="shrink-0 rounded-full bg-superficie2 px-2.5 py-0.5 text-xs font-medium text-suave">
+                    {c.total}
+                  </span>
+                </div>
+                <p className="mt-1 hidden text-sm leading-relaxed text-suave sm:block">
                   {c.descripcion}
                 </p>
               </div>
-              <span className="shrink-0 rounded-full bg-superficie2 px-2.5 py-1 text-xs font-medium text-suave">
-                {c.total}
-              </span>
             </div>
           </Link>
         ))}
@@ -231,8 +354,11 @@ function Destacados({
           </Link>
         </div>
         <div className="mt-7 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {productos.map((p, i) => (
-            <ProductCard key={p.id} producto={p} tasa={tasa} priority={i < 4} />
+          {/* Sin priority: esta sección quedó debajo del hero y de las
+              categorías, y las fotos con prioridad ahora son las de la
+              vitrina. */}
+          {productos.map((p) => (
+            <ProductCard key={p.id} producto={p} tasa={tasa} />
           ))}
         </div>
       </div>
