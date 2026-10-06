@@ -96,10 +96,13 @@ usar `behavior: "instant"`.
   (`elegirHero`, `lib/portada.ts`). Sin el resplandor cyan.
 - **Título:** sin `<br>` y con `text-balance`: dos líneas parejas en vez de
   "casa" sola en una línea (pasaba en el celular desde antes).
-- **Categorías:** foto de un producto que no esté en la vitrina
-  (`fotoPorCategoria`), 2 columnas desde el celular, sin cambio de fondo en
-  hover (arregla la pastilla del conteo que desaparecía). Sin foto → bandeja
-  neutra con ícono, no blanca vacía.
+- **Categorías:** 2 columnas desde el celular, sin cambio de fondo en hover
+  (arregla la pastilla del conteo que desaparecía). Primero llevaban la foto
+  de un producto; a pedido de Carlos pasaron a **íconos propios de cada
+  categoría pintados con el degradado de marca** (`IconoCategoria`): cada
+  tarjeta toma un tramo según su posición y la grilla recorre esmeralda →
+  cian → azul. Verificado: los 10 puntos de color van seguidos de `#10b981`
+  a `#0284c7`, en oscuro y en claro.
 - **Ventajas:** 2 columnas en el celular (antes ocupaban una pantalla).
 - **"Lo más pedido":** no repite los de la vitrina; sin `priority`.
 

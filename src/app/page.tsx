@@ -307,7 +307,7 @@ function Categorias({
                       slug={c.slug}
                       desde={desde}
                       hasta={hasta}
-                      className="h-6 w-6 sm:h-7 sm:w-7"
+                      className="h-7 w-7 sm:h-8 sm:w-8"
                     />
                   </span>
                   <span className="shrink-0 rounded-full bg-superficie2 px-2.5 py-0.5 text-xs font-medium text-suave">
