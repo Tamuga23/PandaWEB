@@ -29,6 +29,7 @@ import {
   youTubeId,
 } from "../src/lib/format";
 import { canonizarSlug, normalizarProducto } from "../src/lib/normalize";
+import { elegirHero, fotoPorCategoria } from "../src/lib/portada";
 import type { Producto } from "../src/lib/types";
 
 const TASA = 36.6243;
@@ -508,5 +509,71 @@ describe("datos de prueba locales (CATALOG_SOURCE=fixture)", () => {
     assert.ok(
       productos.some((p) => p.categorySlug === "proyector" && p.disponible && p.planes.length > 0),
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("vitrina y categorías de la portada", () => {
+  const prod = (id: string, categorySlug: string, extra: Partial<Producto> = {}): Producto => ({
+    id,
+    name: id,
+    categorySlug,
+    disponible: true,
+    precio: { actual: 100 },
+    bullets: [],
+    media: { heroImage: `https://i.imgur.com/${id}.jpg` },
+    planes: [],
+    ...extra,
+  });
+  const ids = (ps: Producto[]) => ps.map((p) => p.id);
+
+  it("el hero muestra una categoría distinta por producto antes de repetir", () => {
+    const candidatos = [
+      prod("proy-1", "proyector"),
+      prod("proy-2", "proyector"),
+      prod("reloj-1", "smartwatch"),
+      prod("proy-3", "proyector"),
+      prod("cam-1", "camara"),
+    ];
+    assert.deepEqual(ids(elegirHero(candidatos, 3)), ["proy-1", "reloj-1", "cam-1"]);
+  });
+
+  it("si no hay tantas categorías, completa en el orden recibido", () => {
+    const candidatos = [prod("proy-1", "proyector"), prod("proy-2", "proyector"), prod("reloj-1", "smartwatch")];
+    assert.deepEqual(ids(elegirHero(candidatos, 3)), ["proy-1", "reloj-1", "proy-2"]);
+  });
+
+  it("el hero nunca muestra un producto sin foto", () => {
+    const candidatos = [prod("sin-foto", "proyector", { media: {} }), prod("proy-2", "proyector")];
+    assert.deepEqual(ids(elegirHero(candidatos, 2)), ["proy-2"]);
+  });
+
+  it("la foto de la categoría evita repetir la del hero", () => {
+    const productos = [prod("proy-1", "proyector"), prod("proy-2", "proyector")];
+    const fotos = fotoPorCategoria(productos, new Set(["proy-1"]));
+    assert.equal(fotos.proyector, "https://i.imgur.com/proy-2.jpg");
+  });
+
+  it("si la única foto es la del hero, se usa igual", () => {
+    const fotos = fotoPorCategoria([prod("tv-1", "smarttv")], new Set(["tv-1"]));
+    assert.equal(fotos.smarttv, "https://i.imgur.com/tv-1.jpg");
+  });
+
+  it("prefiere disponibles; un agotado solo ilustra si no hay otra", () => {
+    const productos = [
+      prod("agotado", "camara", { disponible: false }),
+      prod("disponible", "camara"),
+    ];
+    assert.equal(fotoPorCategoria(productos).camara, "https://i.imgur.com/disponible.jpg");
+    assert.equal(
+      fotoPorCategoria(productos, new Set(["disponible"])).camara,
+      "https://i.imgur.com/agotado.jpg",
+      "antes que repetir la foto del hero, mejor la de un agotado",
+    );
+  });
+
+  it("una categoría sin ninguna foto no aparece", () => {
+    const fotos = fotoPorCategoria([prod("sin-foto", "dashcam", { media: {} })]);
+    assert.equal(fotos.dashcam, undefined);
   });
 });
