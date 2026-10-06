@@ -101,8 +101,9 @@ export async function listCollection(
         limit: opts.limit ?? 1000,
       },
     }),
-    // Next no cachea POST. No es problema: las páginas son estáticas con
-    // revalidación, así que Firestore solo se consulta al regenerarlas.
+    // Next no cachea POST. La caché vive un nivel más arriba: getCatalogo
+    // (lib/catalog.ts) guarda el resultado ya armado en la Data Cache. Ojo que
+    // no alcanzaba con el ISR: /catalogo se renderiza en cada visita.
     cache: "no-store",
   });
 
