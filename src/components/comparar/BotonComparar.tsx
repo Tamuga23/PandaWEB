@@ -24,7 +24,6 @@ export function BotonComparar({
       <button
         type="button"
         onClick={alHacerClic}
-        aria-pressed={activo}
         className={`inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 text-sm font-semibold transition ${
           activo
             ? "border-acento/40 bg-acento/10 text-acento"
@@ -46,7 +45,6 @@ export function BotonComparar({
     <button
       type="button"
       onClick={alHacerClic}
-      aria-pressed={activo}
       aria-label={activo ? `Quitar ${producto.name} de comparación` : `Comparar ${producto.name}`}
       title={activo ? "Quitar de comparación" : "Comparar"}
       className={`relative z-20 inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition after:absolute after:-inset-3 after:content-[''] ${

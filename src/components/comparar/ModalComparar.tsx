@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ProductImage } from "@/components/ProductImage";
 import { ORDEN_SPECS, etiquetaSpec, formatearValorSpec } from "@/components/Specs";
-import { IconoWhatsApp } from "@/components/iconos";
+import { IconoCerrar, IconoWhatsApp } from "@/components/iconos";
 import { CATEGORIAS, CONTACTO } from "@/config/site";
 import { planMasBajo } from "@/lib/financiamiento";
 import { cordobas, linkWhatsApp, porcentajeDescuento } from "@/lib/format";
@@ -76,7 +76,19 @@ export function ModalComparar() {
     return () => {
       document.removeEventListener("keydown", alPresionar);
       document.body.style.overflow = overflowPrevio;
-      disparador?.focus();
+      // El botón "Comparar" que abrió el modal vive en BarraComparar, que se
+      // desmonta mientras el modal está abierto: al cerrar, `disparador` ya
+      // no existe y el foco caía en <body>. Esta limpieza corre después del
+      // commit en que la barra vuelve a montarse, así que se enfoca su botón
+      // nuevo (o Limpiar, si quedó un solo producto y Comparar está
+      // deshabilitado).
+      const destino =
+        disparador?.isConnected && disparador !== document.body
+          ? disparador
+          : Array.from(
+              document.querySelectorAll<HTMLElement>(".barra-comparar button:not(:disabled)"),
+            ).pop();
+      destino?.focus();
     };
   }, [abierto, cerrar]);
 
@@ -118,7 +130,9 @@ export function ModalComparar() {
         className="flex max-h-[92dvh] w-full max-w-4xl flex-col overflow-hidden rounded-t-3xl border border-borde2 bg-superficie sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-borde px-5 py-4">
+        {/* div, no <header>/<footer>: fuera de main/article, Chrome los
+            expone como landmarks banner/contentinfo dentro del diálogo. */}
+        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-borde px-5 py-4">
           <h2 className="text-lg font-bold">Comparación</h2>
           <button
             type="button"
@@ -126,25 +140,34 @@ export function ModalComparar() {
             aria-label="Cerrar comparación"
             className="grid h-11 w-11 place-items-center rounded-full text-suave transition hover:bg-superficie2 hover:text-texto"
           >
-            ×
+            <IconoCerrar className="h-5 w-5" />
           </button>
-        </header>
+        </div>
 
         <div className="min-h-0 flex-1 overflow-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
                 {/* Columna de etiquetas: fija al hacer scroll horizontal. */}
-                <th className="sticky left-0 top-0 z-20 w-28 bg-superficie sm:w-40" />
+                <th className="sticky left-0 top-0 z-20 w-28 bg-superficie sm:w-40">
+                  <span className="sr-only">Característica</span>
+                </th>
                 {seleccion.map((p) => {
                   const desc = porcentajeDescuento(p.precio.lista, p.precio.actual);
                   return (
                     <th
                       key={p.id}
-                      className="sticky top-0 z-10 min-w-[9rem] border-l border-borde bg-superficie p-3 align-top sm:min-w-[11rem]"
+                      // En móvil (360px), con min-w de 9rem dos productos ya
+                      // no entraban: la 2.ª columna se cortaba a media palabra
+                      // sin señal de scroll. Con 7rem entran dos completos; con
+                      // tres el scroll sigue. Las fotos más chicas en móvil
+                      // le devuelven alto a las filas (el encabezado fijo
+                      // ocupaba ~45% del área visible).
+                      className="sticky top-0 z-10 min-w-[7rem] border-l border-borde bg-superficie p-3 align-top sm:min-w-[11rem]"
                     >
-                      <div className="relative mx-auto aspect-square w-full max-w-[8rem] overflow-hidden rounded-xl bg-fondo p-2">
-                        <ProductImage src={p.media.heroImage} alt={p.name} sizes="140px" />
+                      <div className="relative mx-auto aspect-square w-full max-w-[5rem] overflow-hidden rounded-xl bg-fondo p-2 sm:max-w-[8rem]">
+                        {/* alt vacío: el nombre ya está en el link de abajo. */}
+                        <ProductImage src={p.media.heroImage} alt="" sizes="140px" />
                         {desc != null && (
                           <span className="absolute left-1 top-1 rounded-lg bg-marca px-1.5 py-0.5 text-micro font-black text-white">
                             −{desc}%
@@ -153,7 +176,10 @@ export function ModalComparar() {
                       </div>
                       <Link
                         href={`/producto/${p.id}`}
-                        className="mt-2 line-clamp-2 block text-xs font-semibold leading-snug text-texto transition hover:text-acento"
+                        title={p.name}
+                        // Sin `block`: anulaba el display del line-clamp y un
+                        // nombre largo ocupaba 4 renglones.
+                        className="mt-2 line-clamp-2 text-xs font-semibold leading-snug text-texto transition hover:text-acento"
                       >
                         {p.name}
                       </Link>
@@ -171,6 +197,7 @@ export function ModalComparar() {
                       <button
                         type="button"
                         onClick={() => quitar(p.id)}
+                        aria-label={`Quitar ${p.name} de la comparación`}
                         className="relative mt-1 py-1.5 text-label font-medium text-tenue transition after:absolute after:-inset-3 after:content-[''] hover:text-texto"
                       >
                         Quitar
@@ -261,7 +288,7 @@ export function ModalComparar() {
           </table>
         </div>
 
-        <footer className="shrink-0 border-t border-borde p-4">
+        <div className="shrink-0 border-t border-borde p-4">
           <EnlaceWhatsApp
             href={linkWhatsApp(CONTACTO.whatsapp)}
             className="btn-primary flex w-full items-center justify-center gap-2 px-6 py-3.5 text-sm"
@@ -269,7 +296,7 @@ export function ModalComparar() {
             <IconoWhatsApp className="h-5 w-5" />
             ¿Cuál me conviene? Preguntale a un asesor
           </EnlaceWhatsApp>
-        </footer>
+        </div>
       </div>
     </div>
   );
@@ -288,11 +315,12 @@ function Fila({
 }) {
   return (
     <tr className="border-t border-borde">
+      {/* La etiqueta no se atenúa: con valores de color propio (Disponible en
+          verde) la fila se veía apagada sin motivo. Lo igual se distingue en
+          las celdas. */}
       <th
         scope="row"
-        className={`sticky left-0 z-10 bg-superficie p-3 text-left align-top text-xs font-medium ${
-          atenuar ? "text-tenue" : "text-suave"
-        }`}
+        className="sticky left-0 z-10 bg-superficie p-3 text-left align-top text-xs font-medium text-suave"
       >
         {etiqueta}
       </th>
