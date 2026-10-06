@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ProductImage } from "@/components/ProductImage";
 import { ORDEN_SPECS, etiquetaSpec, formatearValorSpec } from "@/components/Specs";
-import { IconoCerrar, IconoWhatsApp } from "@/components/iconos";
+import { IconoCerrar, IconoFlecha, IconoWhatsApp } from "@/components/iconos";
 import { CATEGORIAS, CONTACTO } from "@/config/site";
 import { planMasBajo } from "@/lib/financiamiento";
 import { cordobas, linkWhatsApp, porcentajeDescuento } from "@/lib/format";
@@ -92,6 +92,30 @@ export function ModalComparar() {
     };
   }, [abierto, cerrar]);
 
+  // Pista "Deslizá →": con 3 productos en un celular, la 3.ª columna asoma
+  // apenas unos píxeles y nada indica que hay otro producto a la derecha.
+  // Se muestra solo si la tabla de verdad se desborda y todavía no se
+  // deslizó; con 2 productos a 360px entran completos y no aparece. Se mide
+  // en callbacks (ResizeObserver y scroll), no en el cuerpo del efecto.
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [pista, setPista] = useState(false);
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!abierto || !scroller) return;
+    const medir = () =>
+      setPista(scroller.scrollWidth - scroller.clientWidth > 8 && scroller.scrollLeft < 8);
+    const observador = new ResizeObserver(medir);
+    observador.observe(scroller);
+    // La tabla también: cambia de ancho al quitar un producto, aunque la caja
+    // del scroller no cambie.
+    if (scroller.firstElementChild) observador.observe(scroller.firstElementChild);
+    scroller.addEventListener("scroll", medir, { passive: true });
+    return () => {
+      observador.disconnect();
+      scroller.removeEventListener("scroll", medir);
+    };
+  }, [abierto, seleccion.length]);
+
   if (!abierto || seleccion.length < 2) return null;
 
   // Unión de todas las specs presentes, en el orden de presentación habitual.
@@ -146,13 +170,25 @@ export function ModalComparar() {
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-auto">
+        <div ref={scrollerRef} className="min-h-0 flex-1 overflow-auto">
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
                 {/* Columna de etiquetas: fija al hacer scroll horizontal. */}
                 <th className="sticky left-0 top-0 z-20 w-28 bg-superficie sm:w-40">
                   <span className="sr-only">Característica</span>
+                  {/* aria-hidden: es una pista visual; el lector de pantalla
+                      recorre la tabla celda por celda. Siempre montada y con
+                      opacidad, para que aparezca y se vaya sin saltos. */}
+                  <span
+                    aria-hidden="true"
+                    className={`flex items-center justify-center gap-1 text-xs font-medium text-tenue transition-opacity duration-300 ${
+                      pista ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    Deslizá
+                    <IconoFlecha className="h-3.5 w-3.5" />
+                  </span>
                 </th>
                 {seleccion.map((p) => {
                   const desc = porcentajeDescuento(p.precio.lista, p.precio.actual);
