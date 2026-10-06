@@ -123,7 +123,7 @@ sin desborde horizontal; a 360×740 la vitrina asoma en la primera pantalla
 cargada (sus 2 productos están agotados y sin imágenes), y la foto que
 representa "Smart home" es un parlante Anker cargado en esa categoría.
 
-## Fase 4 — fotos del catálogo (en curso)
+## Fase 4 — fotos del catálogo
 
 **Problema confirmado en capturas** (fixture, 390 y 1280px, dos temas):
 - En oscuro cada foto (estudio, fondo blanco, viene del POS) es un cuadrado
@@ -260,10 +260,18 @@ entre una corrida y otra: por eso el intercalado. Esta vez la máquina estaba
 más cargada que en la Fase 3, así que los números absolutos no se comparan con
 los de esa tabla.
 
-## Fase 5 (resumen)
+## Fase 5 — cierre
 
-- **5. Cierre:** borrar `bg-marca-hover`, documentar en DESIGN.md y comparar con
-  la situación inicial.
+- **Código muerto:** sale `bg-marca-hover` (solo existía su definición).
+- **Repaso contra DESIGN.md** (barrido de `src/`): sin clases de paleta sueltas
+  salvo `text-white`/el punto `bg-white` sobre `bg-marca` (permitidos) y el
+  velo `bg-black/70` del modal (ya existía); sin sombras fuera de `shadow-md` y
+  los tres tokens; sin degradados fuera de `bg-marca`/`text-marca`; sin
+  `rounded-md`/`sm`/`none`; `text-marca` solo en el logotipo; hex solo en el
+  `theme-color` de `layout.tsx` y el respaldo de `IconoCategoria`.
+- **DESIGN.md al día:** `bandeja` en el frontmatter, la Regla de la Bandeja y
+  los íconos de categoría en Do's, y dos Don'ts (sombras solo con token; fotos
+  solo con `ProductImage`, sin `mix-blend`/`filter`).
 
 ## Validación por fase
 

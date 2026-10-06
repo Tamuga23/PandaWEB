@@ -17,6 +17,7 @@ colors:
   marca-inicio: "#10b981"
   marca-medio: "#06b6d4"
   marca-fin: "#0284c7"
+  bandeja: "#ffffff"
 typography:
   display:
     fontFamily: "Inter, system-ui, sans-serif"
@@ -249,7 +250,8 @@ Sin bordes duros en ningún componente interactivo. Las únicas esquinas a 0px s
 ## Do's and Don'ts
 
 ### Do:
-- **Do** reservar `bg-marca` (el degradado) para lo accionable: CTA primario, píldora activa, badge de oferta, logo. Es la Regla del Degradado Único.
+- **Do** reservar `bg-marca` (el degradado) para lo accionable: CTA primario, píldora activa, badge de oferta, logo, y los íconos de categoría de la portada (un tramo por tarjeta). Es la Regla del Degradado Único.
+- **Do** mostrar toda foto de producto con `ProductImage`, que pone la bandeja de foto con su velo y su aire; cada lugar solo elige marco y radio. Es la Regla de la Bandeja.
 - **Do** usar pastilla completa (`rounded-full`) para todo botón, badge de estado y filtro — es la forma por defecto de "esto se puede tocar".
 - **Do** mostrar el precio como el elemento tipográfico más grande de su bloque (Regla del Precio Gigante).
 - **Do** dejar que el borde y el salto de superficie hagan el trabajo de separar contenido, antes de recurrir a una sombra.
@@ -258,5 +260,6 @@ Sin bordes duros en ningún componente interactivo. Las únicas esquinas a 0px s
 - **Don't** crear un segundo degradado. Si algo necesita destacar más, sube de peso tipográfico o usa un color semántico plano — nunca mezcles otro gradiente.
 - **Don't** aplicar `text-marca` (texto con gradiente) a nada nuevo. Su única excepción confirmada es la palabra "store" en el logotipo (`Header.tsx`, `Footer.tsx`) — coincide con el asset de marca real. No es un patrón a reutilizar en títulos, métricas ni ningún otro texto; es una excepción de dos usos, no una herramienta disponible.
 - **Don't** usar el rosa "Agotado" ni el ámbar "Promo" fuera de su significado fijo (estado de stock y campaña activa, respectivamente). No son colores decorativos de repuesto.
-- **Don't** agregar una sombra sin que un estado real la justifique (activo, flotante, destacado) — ver la Regla de la Sombra con Motivo.
+- **Don't** agregar una sombra sin que un estado real la justifique (hover, flotante, modal, activo), ni una que no sea `shadow-md` o uno de los tres tokens de elevación — ver la Regla de la Sombra con Motivo.
+- **Don't** pintar una foto de producto con un `next/image` suelto ni sobre el fondo propio de un lugar, ni bajarle el brillo con `mix-blend-mode` o `filter`: la bandeja y el velo (`bandeja-foto`, `velo-foto`) los pone `ProductImage`.
 - **Don't** usar esquinas duras (`rounded-none` o radios chicos tipo `rounded-md`) en ningún elemento interactivo; el sistema no tiene ese registro.
