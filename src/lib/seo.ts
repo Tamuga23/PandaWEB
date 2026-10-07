@@ -7,7 +7,15 @@
 // ---------------------------------------------------------------------------
 
 import type { Metadata } from "next";
-import { CATEGORIAS, CONTACTO, COORDENADAS, FINANCIAMIENTO, REDES, SITE } from "@/config/site";
+import {
+  CATEGORIAS,
+  CONTACTO,
+  COORDENADAS,
+  FINANCIAMIENTO,
+  HORARIO,
+  REDES,
+  SITE,
+} from "@/config/site";
 import { filasDeSpecs } from "./categorySpecs";
 import {
   esCategoriaSinInteres,
@@ -222,6 +230,14 @@ export function tiendaJsonLd() {
           longitude: COORDENADAS.lng,
         },
         hasMap: CONTACTO.mapsUrl,
+        // El mismo horario que se ve en el footer: Google lo muestra en la
+        // ficha local ("Abierto · Cierra a las 6 p.m.").
+        openingHoursSpecification: HORARIO.map((franja) => ({
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: franja.diasSemana,
+          opens: franja.abre,
+          closes: franja.cierra,
+        })),
         // sameAs le dice a Google que estos perfiles son del mismo negocio,
         // así suma la reputación de las redes a la ficha de la tienda.
         sameAs: REDES.map((r) => r.url),

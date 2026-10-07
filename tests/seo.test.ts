@@ -9,7 +9,7 @@ import {
   CONFIG_FINANCIAMIENTO_DEFAULT,
   calcularPlanes,
 } from "../src/lib/financiamiento";
-import { cordobasNumero } from "../src/lib/format";
+import { cordobasNumero, horaLegible, lineaHorario } from "../src/lib/format";
 import {
   descripcionCategoria,
   descripcionPortada,
@@ -19,6 +19,7 @@ import {
   migasJsonLd,
   productoJsonLd,
   serializarJsonLd,
+  tiendaJsonLd,
   tituloProducto,
 } from "../src/lib/seo";
 import type { Producto } from "../src/lib/types";
@@ -244,6 +245,29 @@ describe("JSON-LD", () => {
       }),
       ["https://i.imgur.com/a.jpg", "https://i.imgur.com/b.jpg"],
     );
+  });
+
+  it("tienda: horario de lunes a sábado, en 24 h y sin domingo", () => {
+    const [tienda] = tiendaJsonLd()["@graph"];
+    assert.deepEqual(
+      (tienda.openingHoursSpecification ?? []).map((f) => [f.dayOfWeek.join(","), f.opens, f.closes]),
+      [
+        ["Monday,Tuesday,Wednesday,Thursday,Friday", "09:00", "18:00"],
+        ["Saturday", "09:00", "17:00"],
+      ],
+    );
+    assert.match(tienda.address?.streetAddress ?? "", /Colectivo Dreamy/);
+  });
+
+  it("horario visible: el mismo dato, en 12 h", () => {
+    assert.equal(horaLegible("09:00"), "9:00 a.m.");
+    assert.equal(horaLegible("18:00"), "6:00 p.m.");
+    assert.equal(horaLegible("12:30"), "12:30 p.m.");
+    assert.equal(horaLegible("00:15"), "12:15 a.m.");
+    const linea = lineaHorario({ dias: "Sábados", abre: "09:00", cierra: "17:00" });
+    assert.equal(linea.replace(/ /g, " "), "Sábados: 9:00 a.m. a 5:00 p.m.");
+    // El rango no se parte por dentro ("6:00 / p.m." en el footer).
+    assert.doesNotMatch(linea.split(": ")[1], / /);
   });
 
   it("migas: catálogo, categoría y producto, en orden", () => {

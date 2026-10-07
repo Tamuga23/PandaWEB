@@ -10,6 +10,7 @@ import { itemsPropuestaValor } from "@/components/PropuestaValor";
 import {
   IconoCheck,
   IconoFlecha,
+  IconoReloj,
   IconoUbicacion,
   IconoWhatsApp,
 } from "@/components/iconos";
@@ -18,11 +19,12 @@ import {
   CONTACTO,
   FINANCIAMIENTO,
   GARANTIA_MESES,
+  HORARIO,
   SITE,
 } from "@/config/site";
 import { contarPorCategoria, destacados, getCatalogo } from "@/lib/catalog";
 import { esCategoriaSinInteres, type ConfigFinanciamiento } from "@/lib/financiamiento";
-import { cordobas, linkWhatsApp } from "@/lib/format";
+import { cordobas, lineaHorario, linkWhatsApp } from "@/lib/format";
 import { CONVERSIONES } from "@/lib/gtag";
 import { elegirHero } from "@/lib/portada";
 import { TITULO_SITIO, descripcionPortada } from "@/lib/seo";
@@ -445,6 +447,16 @@ function Ubicacion() {
               {CONTACTO.direccion}
               <br />
               {CONTACTO.ciudad}
+            </span>
+          </p>
+          <p className="mt-3 flex items-start gap-2 leading-relaxed text-texto">
+            <IconoReloj className="mt-1 h-5 w-5 shrink-0 text-acento" />
+            <span>
+              {HORARIO.map((franja) => (
+                <span key={franja.dias} className="block">
+                  {lineaHorario(franja)}
+                </span>
+              ))}
             </span>
           </p>
 

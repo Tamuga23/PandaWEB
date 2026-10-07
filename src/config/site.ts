@@ -56,6 +56,25 @@ export const CONTACTO = {
   mapaEmbedUrl: `https://www.google.com/maps?q=${COORD}&z=17&hl=es&output=embed`,
 } as const;
 
+// Horario de atención de la tienda. De acá salen el texto de la web (footer y
+// "Visitanos") y el horario que lee Google (openingHoursSpecification en
+// lib/seo.ts): si cambia, se cambia solo acá. Horas en 24 h, como las pide
+// schema.org; el domingo no figura porque la tienda cierra.
+export const HORARIO = [
+  {
+    dias: "Lunes a viernes",
+    diasSemana: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    abre: "09:00",
+    cierra: "18:00",
+  },
+  {
+    dias: "Sábados",
+    diasSemana: ["Saturday"],
+    abre: "09:00",
+    cierra: "17:00",
+  },
+] as const;
+
 // Redes sociales. Agregar una acá la hace aparecer sola en el footer y en los
 // datos que lee Google (sameAs), sin tocar componentes.
 export const REDES = [

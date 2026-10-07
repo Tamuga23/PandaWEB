@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CATEGORIAS, CONTACTO, GARANTIA_MESES, REDES, SITE } from "@/config/site";
-import { linkWhatsApp } from "@/lib/format";
+import { CATEGORIAS, CONTACTO, GARANTIA_MESES, HORARIO, REDES, SITE } from "@/config/site";
+import { lineaHorario, linkWhatsApp } from "@/lib/format";
 import { EnlaceConversion } from "./EnlaceConversion";
 import { EnlaceWhatsApp } from "./EnlaceWhatsApp";
 import { CONVERSIONES } from "@/lib/gtag";
-import { ICONOS_RED, IconoUbicacion, IconoWhatsApp } from "./iconos";
+import { ICONOS_RED, IconoReloj, IconoUbicacion, IconoWhatsApp } from "./iconos";
 
 export function Footer() {
   return (
@@ -125,6 +125,18 @@ export function Footer() {
               {CONTACTO.ciudad}
             </span>
           </a>
+          {/* Visible en todas las páginas, como el horario que lee Google
+              en el JSON-LD de la tienda (lib/seo.ts). */}
+          <p className="mt-3 flex gap-2 text-sm leading-relaxed text-suave">
+            <IconoReloj className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>
+              {HORARIO.map((franja) => (
+                <span key={franja.dias} className="block">
+                  {lineaHorario(franja)}
+                </span>
+              ))}
+            </span>
+          </p>
         </div>
       </div>
 
