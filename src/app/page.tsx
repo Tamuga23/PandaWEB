@@ -175,7 +175,15 @@ function Vitrina({ productos, tasa }: { productos: Producto[]; tasa: number }) {
           key={p.id}
           className={`w-40 shrink-0 snap-start lg:w-auto ${i === 0 ? "lg:col-span-2" : ""} ${i > 2 ? "lg:hidden" : ""}`}
         >
-          <TarjetaVitrina producto={p} tasa={tasa} ancha={i === 0} prioridad={i < 2} />
+          {/* Precarga solo la primera, la ancha del mosaico (el LCP en
+              escritorio); las otras dos visibles se piden sin esperar. La
+              cuarta solo existe en la tira del celular, fuera de pantalla. */}
+          <TarjetaVitrina
+            producto={p}
+            tasa={tasa}
+            ancha={i === 0}
+            carga={i === 0 ? "lcp" : i < 3 ? "inmediata" : undefined}
+          />
         </li>
       ))}
     </ul>
@@ -186,12 +194,12 @@ function TarjetaVitrina({
   producto,
   tasa,
   ancha,
-  prioridad,
+  carga,
 }: {
   producto: Producto;
   tasa: number;
   ancha: boolean;
-  prioridad: boolean;
+  carga?: "lcp" | "inmediata";
 }) {
   return (
     // Mismo patrón de hover sin temblor que ProductCard (ver DESIGN.md).
@@ -205,7 +213,7 @@ function TarjetaVitrina({
           <ProductImage
             src={producto.media.heroImage}
             alt={producto.name}
-            priority={prioridad}
+            carga={carga}
             sizes={ancha ? "(min-width: 1024px) 540px, 160px" : "(min-width: 1024px) 260px, 160px"}
             bandeja="rounded-xl"
             categoria={producto.categorySlug}
@@ -338,9 +346,8 @@ function Destacados({
           </Link>
         </div>
         <div className="mt-7 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {/* Sin priority: esta sección quedó debajo del hero y de las
-              categorías, y las fotos con prioridad ahora son las de la
-              vitrina. */}
+          {/* Sin `carga`: esta sección quedó debajo del hero y de las
+              categorías, y la foto que se precarga es la de la vitrina. */}
           {productos.map((p) => (
             <ProductCard key={p.id} producto={p} tasa={tasa} />
           ))}
