@@ -27,6 +27,12 @@ const SUFIJO_TITULO = ` | ${SITE.nombre}`;
 const ENTREGA = "Delivery en Managua y envíos a todo Nicaragua.";
 const ENTREGA_CORTA = "Envíos a todo Nicaragua.";
 
+/**
+ * Título de la portada y de cualquier página sin título propio. Lo que se
+ * busca va primero; la tienda, al final, igual que en el resto de páginas.
+ */
+export const TITULO_SITIO = `Proyectores, dashcams y smartwatches en Managua${SUFIJO_TITULO}`;
+
 /** Identificador de la tienda en el JSON-LD: las ofertas la citan como vendedor. */
 export const ID_TIENDA = `${SITE.url}/#tienda`;
 
