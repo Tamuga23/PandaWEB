@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { EnlaceConversion } from "@/components/EnlaceConversion";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
@@ -15,10 +16,8 @@ import {
 import {
   CATEGORIAS,
   CONTACTO,
-  COORDENADAS,
   FINANCIAMIENTO,
   GARANTIA_MESES,
-  REDES,
   SITE,
 } from "@/config/site";
 import { contarPorCategoria, destacados, getCatalogo } from "@/lib/catalog";
@@ -26,9 +25,33 @@ import { esCategoriaSinInteres, type ConfigFinanciamiento } from "@/lib/financia
 import { cordobas, linkWhatsApp } from "@/lib/format";
 import { CONVERSIONES } from "@/lib/gtag";
 import { elegirHero } from "@/lib/portada";
+import { TITULO_SITIO, descripcionPortada } from "@/lib/seo";
 import type { Producto } from "@/lib/types";
 
 export const revalidate = 900;
+
+/**
+ * Sin `openGraph` propio: Next mezcla la metadata de forma superficial y la
+ * portada perdería la imagen de app/opengraph-image.tsx, que cuelga del
+ * layout. Comparte el título y la descripción general del sitio.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  let descripcion: string = SITE.descripcion;
+  try {
+    // La misma lectura en caché que usa la página: no suma lecturas.
+    const { configFinanciamiento } = await getCatalogo();
+    descripcion = descripcionPortada(configFinanciamiento);
+  } catch {
+    // Sin catálogo queda la descripción general, que no promete 0%.
+  }
+
+  return {
+    // absolute: TITULO_SITIO ya trae "| Panda Store".
+    title: { absolute: TITULO_SITIO },
+    description: descripcion,
+    alternates: { canonical: "/" },
+  };
+}
 
 export default async function Home() {
   let datos;
@@ -60,47 +83,9 @@ export default async function Home() {
       {masPedidos.length > 0 && <Destacados productos={masPedidos} tasa={tasa} />}
       <Financiamiento config={configFinanciamiento} />
       <Ubicacion />
-      <NegocioJsonLd />
+      {/* Los datos del negocio para Google (ElectronicsStore) están en el
+          layout, en todas las páginas: ver tiendaJsonLd en lib/seo.ts. */}
     </>
-  );
-}
-
-/**
- * Datos del negocio para Google. Con las coordenadas exactas, las búsquedas
- * locales tipo "proyectores Managua" pueden mostrar la tienda con su ubicación.
- */
-function NegocioJsonLd() {
-  const json = {
-    "@context": "https://schema.org",
-    "@type": "ElectronicsStore",
-    name: SITE.nombre,
-    description: SITE.descripcion,
-    telephone: CONTACTO.whatsappVisible,
-    email: CONTACTO.email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: CONTACTO.direccion,
-      addressLocality: "Managua",
-      addressCountry: "NI",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: COORDENADAS.lat,
-      longitude: COORDENADAS.lng,
-    },
-    hasMap: CONTACTO.mapsUrl,
-    // sameAs le dice a Google que estos perfiles son del mismo negocio, así
-    // suma la reputación de las redes a la ficha de la tienda.
-    sameAs: REDES.map((r) => r.url),
-    currenciesAccepted: "NIO",
-    areaServed: "Managua, Nicaragua",
-  };
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(json) }}
-    />
   );
 }
 
@@ -139,7 +124,7 @@ function Hero({
           </h1>
 
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-suave">
-            Proyectores, cámaras de seguridad, smartwatches y más. Pagá hasta en{" "}
+            Proyectores Magcubic, dashcams 70mai, smartwatches y más. Pagá hasta en{" "}
             {plazoMaximo} cuotas y llevate {GARANTIA_MESES} meses de garantía.
           </p>
 
@@ -437,7 +422,7 @@ function Ubicacion() {
   const incluye = [
     "Factura y garantía por escrito",
     "Prueba del equipo antes de llevártelo",
-    "Delivery dentro de Managua",
+    "Delivery en Managua y envíos a los departamentos",
   ];
 
   return (
