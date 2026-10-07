@@ -11,6 +11,7 @@ import {
 } from "../src/lib/financiamiento";
 import { cordobasNumero } from "../src/lib/format";
 import {
+  descripcionCategoria,
   descripcionPortada,
   descripcionProducto,
   imagenesPublicas,
@@ -180,6 +181,21 @@ describe("descripción de la portada", () => {
       porCategoria: { proyector: { recargo: { "3": 3, "6": 6 } } },
     };
     assert.doesNotMatch(descripcionPortada(config), /0%/);
+  });
+});
+
+describe("descripción de una categoría", () => {
+  const proyectores = { slug: "proyector", descripcion: "Convertí cualquier pared en una pantalla grande" };
+  const smartwatches = { slug: "smartwatch", descripcion: "Salud, notificaciones y deporte en la muñeca" };
+
+  it("0% solo en la categoría que el POS deja sin recargo", () => {
+    assert.match(descripcionCategoria(proyectores, CONFIG_FINANCIAMIENTO_DEFAULT), /0% de interés/);
+    assert.doesNotMatch(descripcionCategoria(smartwatches, CONFIG_FINANCIAMIENTO_DEFAULT), /0%/);
+  });
+
+  it("sin la configuración del POS no promete 0%", () => {
+    assert.doesNotMatch(descripcionCategoria(proyectores, null), /0%/);
+    assert.match(descripcionCategoria(proyectores, null), /Managua/);
   });
 });
 

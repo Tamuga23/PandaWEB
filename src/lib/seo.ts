@@ -164,6 +164,21 @@ export function descripcionPortada(config: ConfigFinanciamiento): string {
   return `Proyectores Magcubic, dashcams 70mai y smartwatches en Managua, Nicaragua. ${cuotas} y envíos a todo el país.`;
 }
 
+/**
+ * Descripción de una categoría del catálogo (`/catalogo?cat=…`). Sin la
+ * configuración del POS (Firestore caído) no promete 0%: es el lado seguro.
+ */
+export function descripcionCategoria(
+  categoria: { slug: string; descripcion: string },
+  config: ConfigFinanciamiento | null,
+): string {
+  const cuotas =
+    config && esCategoriaSinInteres(config, categoria.slug)
+      ? `Cuotas al 0% de interés con ${FINANCIAMIENTO.banco}`
+      : `Cuotas con ${FINANCIAMIENTO.banco}`;
+  return `${categoria.descripcion}. ${cuotas}, delivery en Managua y envíos a todo Nicaragua.`;
+}
+
 // ---------------------------------------------------------------------------
 // JSON-LD
 // ---------------------------------------------------------------------------

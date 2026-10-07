@@ -3,14 +3,20 @@ import { CatalogoCliente } from "@/components/CatalogoCliente";
 import { ErrorDatos } from "@/components/ErrorDatos";
 import { CATEGORIAS, NOTA_PRECIO } from "@/config/site";
 import { getCatalogo } from "@/lib/catalog";
+import type { ConfigFinanciamiento } from "@/lib/financiamiento";
+import { descripcionCategoria } from "@/lib/seo";
 
 const METADATA_GENERAL: Metadata = {
-  title: "Catálogo",
+  title: "Catálogo de tecnología en Managua",
   description:
-    "Proyectores, cámaras de seguridad, dashcams, smartwatches, parlantes y productos smart home. Con financiamiento Banpro en cuotas.",
+    "Proyectores Magcubic, dashcams 70mai, smartwatches Amazfit y Xiaomi, parlantes y smart home en Managua, Nicaragua. Cuotas con Banpro y envíos a todo el país.",
   alternates: { canonical: "/catalogo" },
 };
 
+/**
+ * Cada categoría es la página de destino de búsquedas como "proyectores
+ * Managua": título con el lugar y el 0% solo donde el POS lo tiene así.
+ */
 export async function generateMetadata({
   searchParams,
 }: {
@@ -20,9 +26,17 @@ export async function generateMetadata({
   const categoria = CATEGORIAS.find((c) => c.slug === cat);
   if (!categoria) return METADATA_GENERAL;
 
+  let config: ConfigFinanciamiento | null = null;
+  try {
+    // La misma lectura en caché que usa la página: no suma lecturas.
+    config = (await getCatalogo()).configFinanciamiento;
+  } catch {
+    // Sin configuración, la descripción no promete 0%.
+  }
+
   return {
-    title: categoria.nombre,
-    description: `${categoria.descripcion}. Con financiamiento Banpro en cuotas.`,
+    title: `${categoria.nombre} en Managua`,
+    description: descripcionCategoria(categoria, config),
     alternates: { canonical: `/catalogo?cat=${categoria.slug}` },
   };
 }
