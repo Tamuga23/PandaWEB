@@ -14,7 +14,10 @@ interface Props {
    *     Se precarga desde el <head> (`preload`, el reemplazo de `priority` en
    *     Next 16). UNA por página: precargar varias las pone a competir.
    *   - "inmediata": visible al cargar pero no es la más grande; se pide
-   *     enseguida (`loading="eager"`) sin precarga.
+   *     apenas se lee el HTML (`loading="eager"`) con prioridad baja. El
+   *     `fetchPriority="low"` no es opcional: React 19 precarga en el <head>
+   *     toda <img> del servidor que no sea lazy ni low, y una eager sola
+   *     terminaba compitiendo con la LCP igual que con `preload`.
    */
   carga?: "lcp" | "inmediata";
   sizes?: string;
@@ -116,6 +119,7 @@ export function ProductImage({
               sizes={sizes}
               preload={carga === "lcp"}
               loading={carga === "inmediata" ? "eager" : undefined}
+              fetchPriority={carga === "inmediata" ? "low" : undefined}
               onError={() => setFallo(true)}
               className={`object-contain ${className}`}
             />

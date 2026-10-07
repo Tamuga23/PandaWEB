@@ -165,6 +165,9 @@ export function Galeria({
               <img
                 src={`https://i.ytimg.com/vi/${videoId}/default.jpg`}
                 alt=""
+                // Sin lazy, React 19 la precargaba en el <head> junto a la
+                // foto principal, que es la que mide el LCP.
+                loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover opacity-50"
               />
               {/* SVG, no el carácter ▶: en iOS ese glifo puede pintarse como
