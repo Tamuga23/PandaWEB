@@ -220,8 +220,16 @@ export function CatalogoCliente({
                   tarjetas; "Agotados" ya tiene el suyo visible. */}
               <h2 className="sr-only">Disponibles</h2>
               <div className="mt-4 grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+                {/* La primera fila se ve al cargar, pero solo la primera
+                    foto se precarga: cuatro precargas competían entre sí y
+                    con la que de verdad mide el LCP. */}
                 {disponibles.map((p, i) => (
-                  <ProductCard key={p.id} producto={p} tasa={tasa} priority={i < 4} />
+                  <ProductCard
+                    key={p.id}
+                    producto={p}
+                    tasa={tasa}
+                    carga={i === 0 ? "lcp" : i < 4 ? "inmediata" : undefined}
+                  />
                 ))}
               </div>
             </>

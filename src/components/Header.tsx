@@ -24,7 +24,11 @@ export function Header() {
             alt=""
             width={38}
             height={36}
-            priority
+            // Sin precarga: está arriba en todas las páginas pero nunca es el
+            // LCP. eager + low (ver ProductImage): se pide al leer el HTML y
+            // React no lo precarga por su cuenta.
+            loading="eager"
+            fetchPriority="low"
             className="h-9 w-auto shrink-0"
           />
           <span className="text-lg font-bold tracking-tight">

@@ -11,12 +11,12 @@ import { PropuestaValorCompacta } from "@/components/PropuestaValor";
 import { TablaSpecs } from "@/components/Specs";
 import { BotonComparar } from "@/components/comparar/BotonComparar";
 import { IconoCheck, IconoWhatsApp } from "@/components/iconos";
+import { JsonLd } from "@/components/JsonLd";
 import {
   CATEGORIAS,
   CONTACTO,
   GARANTIA_MESES,
   NOTA_PRECIO,
-  SITE,
 } from "@/config/site";
 import { getCatalogo, getProducto } from "@/lib/catalog";
 import { filasDeSpecs } from "@/lib/categorySpecs";
@@ -24,10 +24,17 @@ import {
   MAX_SPECS_EN_BENEFICIO,
   beneficioDesdeSpecs,
   cordobas,
-  cordobasNumero,
   linkWhatsApp,
   porcentajeDescuento,
 } from "@/lib/format";
+import {
+  OPEN_GRAPH_BASE,
+  descripcionProducto,
+  imagenesPublicas,
+  migasJsonLd,
+  productoJsonLd,
+  tituloProducto,
+} from "@/lib/seo";
 
 // Regenera la página cada 15 minutos con los datos frescos del espejo.
 export const revalidate = 900;
@@ -59,22 +66,25 @@ export async function generateMetadata({
     if (!datos) return { title: "Producto no encontrado" };
 
     const { producto, tasa } = datos;
-    const descripcion =
-      producto.beneficio ??
-      producto.description ??
-      `${producto.name} disponible en ${SITE.nombre}. ${cordobas(producto.precio.actual, tasa)}, con opción de pago en cuotas.`;
+    const titulo = tituloProducto(producto);
+    const descripcion = descripcionProducto(producto, tasa);
+    const [foto] = imagenesPublicas(producto.media);
 
     return {
-      title: producto.name,
+      title: titulo,
       description: descripcion,
       alternates: { canonical: `/producto/${id}` },
+      // Next reemplaza el openGraph del layout entero: por eso la base
+      // (sitio, idioma) y, sin foto, la imagen de la tienda van explícitas.
       openGraph: {
-        title: producto.name,
+        ...OPEN_GRAPH_BASE,
+        title: titulo,
         description: descripcion,
-        type: "website",
+        url: `/producto/${id}`,
         // La vista previa con foto es lo que hace que compartir el enlace por
-        // WhatsApp funcione como herramienta de venta.
-        images: producto.media.heroImage ? [producto.media.heroImage] : undefined,
+        // WhatsApp funcione como herramienta de venta. Los data URI heredados
+        // del POS no sirven como vista previa.
+        images: foto ? [{ url: foto, alt: producto.name }] : ["/opengraph-image"],
       },
     };
   } catch {
@@ -288,19 +298,10 @@ export default async function ProductoPage({
         </div>
       </div>
 
-      <ProductoJsonLd
-        nombre={producto.name}
-        descripcion={beneficioMostrado ?? producto.description}
-        imagen={producto.media.heroImage}
-        sku={producto.sku}
-        url={`${SITE.url}/producto/${id}`}
-        precioNio={
-          producto.precio.actual != null
-            ? cordobasNumero(producto.precio.actual, tasa)
-            : undefined
-        }
-        disponible={producto.disponible}
-      />
+      {/* Producto con su oferta (precio y disponibilidad en el resultado de
+          Google) y las mismas migas que se ven arriba. */}
+      <JsonLd datos={productoJsonLd(producto, tasa, beneficioMostrado)} />
+      <JsonLd datos={migasJsonLd(producto)} />
       <EventoVerFicha sku={producto.sku} />
     </div>
   );
@@ -352,56 +353,5 @@ function CtaWhatsApp({
       <IconoWhatsApp className="h-5 w-5" />
       {disponible ? "Lo quiero" : "Avisarme cuando llegue"}
     </EnlaceWhatsApp>
-  );
-}
-
-/**
- * Datos estructurados para Google: habilitan el resultado enriquecido con
- * precio y disponibilidad en la búsqueda.
- */
-function ProductoJsonLd({
-  nombre,
-  descripcion,
-  imagen,
-  sku,
-  url,
-  precioNio,
-  disponible,
-}: {
-  nombre: string;
-  descripcion?: string;
-  imagen?: string;
-  sku?: string;
-  url: string;
-  precioNio?: number;
-  disponible: boolean;
-}) {
-  const json = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: nombre,
-    url,
-    ...(descripcion && { description: descripcion }),
-    ...(imagen && !imagen.startsWith("data:") && { image: imagen }),
-    ...(sku && { sku }),
-    brand: { "@type": "Brand", name: SITE.nombre },
-    ...(precioNio != null && {
-      offers: {
-        "@type": "Offer",
-        url,
-        priceCurrency: "NIO",
-        price: precioNio,
-        availability: disponible
-          ? "https://schema.org/InStock"
-          : "https://schema.org/OutOfStock",
-      },
-    }),
-  };
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(json) }}
-    />
   );
 }

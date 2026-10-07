@@ -13,8 +13,11 @@ const urlPorDefecto =
 export const SITE = {
   nombre: "Panda Store",
   tagline: "Tecnología para tu casa y tu negocio",
+  // La leen Google y las vistas previas al compartir el enlace: nombra las
+  // marcas y el lugar, que es lo que se busca. Sin "0% de interés": eso
+  // depende de la categoría y lo decide el POS (ver lib/seo.ts).
   descripcion:
-    "Proyectores, cámaras de seguridad, smartwatches, parlantes y más. Pagá en cuotas con Banpro, garantía de 3 meses y entrega inmediata en Managua.",
+    "Tienda de tecnología en Managua, Nicaragua: proyectores Magcubic, dashcams 70mai, smartwatches y parlantes. Cuotas con Banpro y envíos a todo el país.",
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
     urlPorDefecto ??
@@ -52,6 +55,25 @@ export const CONTACTO = {
   /** Mapa embebido, sin clave de API. `z=17` deja ver las calles alrededor. */
   mapaEmbedUrl: `https://www.google.com/maps?q=${COORD}&z=17&hl=es&output=embed`,
 } as const;
+
+// Horario de atención de la tienda. De acá salen el texto de la web (footer y
+// "Visitanos") y el horario que lee Google (openingHoursSpecification en
+// lib/seo.ts): si cambia, se cambia solo acá. Horas en 24 h, como las pide
+// schema.org; el domingo no figura porque la tienda cierra.
+export const HORARIO = [
+  {
+    dias: "Lunes a viernes",
+    diasSemana: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    abre: "09:00",
+    cierra: "18:00",
+  },
+  {
+    dias: "Sábados",
+    diasSemana: ["Saturday"],
+    abre: "09:00",
+    cierra: "17:00",
+  },
+] as const;
 
 // Redes sociales. Agregar una acá la hace aparecer sola en el footer y en los
 // datos que lee Google (sameAs), sin tocar componentes.

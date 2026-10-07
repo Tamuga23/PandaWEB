@@ -2,6 +2,12 @@ import type { MetadataRoute } from "next";
 import { CATEGORIAS, SITE } from "@/config/site";
 import { contarPorCategoria, getCatalogo } from "@/lib/catalog";
 
+// El sitemap es una ruta estática: sin esto se generaba una sola vez en el
+// build y un producto nuevo del POS no aparecía hasta el próximo deploy. Se
+// regenera con el mismo ritmo que las páginas, sobre la misma lectura en
+// caché del catálogo (no suma lecturas a Firestore).
+export const revalidate = 900;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base: MetadataRoute.Sitemap = [
     { url: SITE.url, changeFrequency: "weekly", priority: 1 },

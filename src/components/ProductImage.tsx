@@ -7,8 +7,19 @@ import { IconoCategoria } from "./IconoCategoria";
 interface Props {
   src?: string;
   alt: string;
-  /** `true` para la foto principal de la ficha: carga con prioridad. */
-  priority?: boolean;
+  /**
+   * Cómo carga la foto. Sin valor, diferida (`loading="lazy"`): la mayoría
+   * están debajo del pliegue.
+   *   - "lcp": la foto más grande de la primera pantalla, la que mide el LCP.
+   *     Se precarga desde el <head> (`preload`, el reemplazo de `priority` en
+   *     Next 16). UNA por página: precargar varias las pone a competir.
+   *   - "inmediata": visible al cargar pero no es la más grande; se pide
+   *     apenas se lee el HTML (`loading="eager"`) con prioridad baja. El
+   *     `fetchPriority="low"` no es opcional: React 19 precarga en el <head>
+   *     toda <img> del servidor que no sea lazy ni low, y una eager sola
+   *     terminaba compitiendo con la LCP igual que con `preload`.
+   */
+  carga?: "lcp" | "inmediata";
   sizes?: string;
   /** Clases de la foto en sí (el zoom del hover, su transición). */
   className?: string;
@@ -52,7 +63,7 @@ interface Props {
 export function ProductImage({
   src,
   alt,
-  priority = false,
+  carga,
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   className = "",
   bandeja = "",
@@ -106,7 +117,9 @@ export function ProductImage({
               alt={alt}
               fill
               sizes={sizes}
-              priority={priority}
+              preload={carga === "lcp"}
+              loading={carga === "inmediata" ? "eager" : undefined}
+              fetchPriority={carga === "inmediata" ? "low" : undefined}
               onError={() => setFallo(true)}
               className={`object-contain ${className}`}
             />

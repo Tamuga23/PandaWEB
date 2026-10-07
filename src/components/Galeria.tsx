@@ -94,8 +94,12 @@ export function Galeria({
               key={foto?.url}
               src={foto?.url}
               alt={`${nombre}${foto?.label ? ` — ${foto.label}` : ""}`}
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              // La primera foto es el LCP de la ficha. Las que el cliente
+              // elige después cargan enseguida, sin precarga.
+              carga={indice === 0 ? "lcp" : "inmediata"}
+              // En lg la galería es media columna de max-w-6xl (~540px), no
+              // medio ancho de pantalla: con "50vw", 1920px pedía 960px.
+              sizes="(min-width: 1024px) 540px, 100vw"
               bandeja="rounded-xl"
               categoria={categoria}
               escena={!!foto?.label}
@@ -161,6 +165,9 @@ export function Galeria({
               <img
                 src={`https://i.ytimg.com/vi/${videoId}/default.jpg`}
                 alt=""
+                // Sin lazy, React 19 la precargaba en el <head> junto a la
+                // foto principal, que es la que mide el LCP.
+                loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover opacity-50"
               />
               {/* SVG, no el carácter ▶: en iOS ese glifo puede pintarse como

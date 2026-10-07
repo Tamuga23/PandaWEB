@@ -13,11 +13,12 @@ const NOMBRE_CATEGORIA = Object.fromEntries(
 export function ProductCard({
   producto,
   tasa,
-  priority = false,
+  carga,
 }: {
   producto: Producto;
   tasa: number;
-  priority?: boolean;
+  /** Ver ProductImage: "lcp" solo para la primera tarjeta de la página. */
+  carga?: "lcp" | "inmediata";
 }) {
   // El badge de oferta se enciende con el dato real: existe precio de lista
   // mayor al vigente, o sea que hay un precioPromo cargado en el POS.
@@ -58,8 +59,12 @@ export function ProductCard({
           <ProductImage
             src={producto.media.heroImage}
             alt={producto.name}
-            priority={priority}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            carga={carga}
+            // Las grillas son de 2 columnas hasta lg y de 3 o 4 después,
+            // dentro de max-w-6xl (1152px): la tarjeta nunca pasa de ~370px.
+            // Con "25vw" una pantalla de 1920px pedía fotos de 480px para
+            // tarjetas de 268.
+            sizes="(min-width: 1280px) 270px, (min-width: 1024px) 370px, 50vw"
             bandeja="rounded-xl"
             categoria={producto.categorySlug}
             apagada={!producto.disponible}

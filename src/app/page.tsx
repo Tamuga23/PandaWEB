@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { EnlaceConversion } from "@/components/EnlaceConversion";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
@@ -9,26 +10,50 @@ import { itemsPropuestaValor } from "@/components/PropuestaValor";
 import {
   IconoCheck,
   IconoFlecha,
+  IconoReloj,
   IconoUbicacion,
   IconoWhatsApp,
 } from "@/components/iconos";
 import {
   CATEGORIAS,
   CONTACTO,
-  COORDENADAS,
   FINANCIAMIENTO,
   GARANTIA_MESES,
-  REDES,
+  HORARIO,
   SITE,
 } from "@/config/site";
 import { contarPorCategoria, destacados, getCatalogo } from "@/lib/catalog";
 import { esCategoriaSinInteres, type ConfigFinanciamiento } from "@/lib/financiamiento";
-import { cordobas, linkWhatsApp } from "@/lib/format";
+import { cordobas, lineaHorario, linkWhatsApp } from "@/lib/format";
 import { CONVERSIONES } from "@/lib/gtag";
 import { elegirHero } from "@/lib/portada";
+import { TITULO_SITIO, descripcionPortada } from "@/lib/seo";
 import type { Producto } from "@/lib/types";
 
 export const revalidate = 900;
+
+/**
+ * Sin `openGraph` propio: Next mezcla la metadata de forma superficial y la
+ * portada perdería la imagen de app/opengraph-image.tsx, que cuelga del
+ * layout. Comparte el título y la descripción general del sitio.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  let descripcion: string = SITE.descripcion;
+  try {
+    // La misma lectura en caché que usa la página: no suma lecturas.
+    const { configFinanciamiento } = await getCatalogo();
+    descripcion = descripcionPortada(configFinanciamiento);
+  } catch {
+    // Sin catálogo queda la descripción general, que no promete 0%.
+  }
+
+  return {
+    // absolute: TITULO_SITIO ya trae "| Panda Store".
+    title: { absolute: TITULO_SITIO },
+    description: descripcion,
+    alternates: { canonical: "/" },
+  };
+}
 
 export default async function Home() {
   let datos;
@@ -60,47 +85,9 @@ export default async function Home() {
       {masPedidos.length > 0 && <Destacados productos={masPedidos} tasa={tasa} />}
       <Financiamiento config={configFinanciamiento} />
       <Ubicacion />
-      <NegocioJsonLd />
+      {/* Los datos del negocio para Google (ElectronicsStore) están en el
+          layout, en todas las páginas: ver tiendaJsonLd en lib/seo.ts. */}
     </>
-  );
-}
-
-/**
- * Datos del negocio para Google. Con las coordenadas exactas, las búsquedas
- * locales tipo "proyectores Managua" pueden mostrar la tienda con su ubicación.
- */
-function NegocioJsonLd() {
-  const json = {
-    "@context": "https://schema.org",
-    "@type": "ElectronicsStore",
-    name: SITE.nombre,
-    description: SITE.descripcion,
-    telephone: CONTACTO.whatsappVisible,
-    email: CONTACTO.email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: CONTACTO.direccion,
-      addressLocality: "Managua",
-      addressCountry: "NI",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: COORDENADAS.lat,
-      longitude: COORDENADAS.lng,
-    },
-    hasMap: CONTACTO.mapsUrl,
-    // sameAs le dice a Google que estos perfiles son del mismo negocio, así
-    // suma la reputación de las redes a la ficha de la tienda.
-    sameAs: REDES.map((r) => r.url),
-    currenciesAccepted: "NIO",
-    areaServed: "Managua, Nicaragua",
-  };
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(json) }}
-    />
   );
 }
 
@@ -139,7 +126,7 @@ function Hero({
           </h1>
 
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-suave">
-            Proyectores, cámaras de seguridad, smartwatches y más. Pagá hasta en{" "}
+            Proyectores Magcubic, dashcams 70mai, smartwatches y más. Pagá hasta en{" "}
             {plazoMaximo} cuotas y llevate {GARANTIA_MESES} meses de garantía.
           </p>
 
@@ -190,7 +177,15 @@ function Vitrina({ productos, tasa }: { productos: Producto[]; tasa: number }) {
           key={p.id}
           className={`w-40 shrink-0 snap-start lg:w-auto ${i === 0 ? "lg:col-span-2" : ""} ${i > 2 ? "lg:hidden" : ""}`}
         >
-          <TarjetaVitrina producto={p} tasa={tasa} ancha={i === 0} prioridad={i < 2} />
+          {/* Precarga solo la primera, la ancha del mosaico (el LCP en
+              escritorio); las otras dos visibles se piden sin esperar. La
+              cuarta solo existe en la tira del celular, fuera de pantalla. */}
+          <TarjetaVitrina
+            producto={p}
+            tasa={tasa}
+            ancha={i === 0}
+            carga={i === 0 ? "lcp" : i < 3 ? "inmediata" : undefined}
+          />
         </li>
       ))}
     </ul>
@@ -201,12 +196,12 @@ function TarjetaVitrina({
   producto,
   tasa,
   ancha,
-  prioridad,
+  carga,
 }: {
   producto: Producto;
   tasa: number;
   ancha: boolean;
-  prioridad: boolean;
+  carga?: "lcp" | "inmediata";
 }) {
   return (
     // Mismo patrón de hover sin temblor que ProductCard (ver DESIGN.md).
@@ -220,7 +215,7 @@ function TarjetaVitrina({
           <ProductImage
             src={producto.media.heroImage}
             alt={producto.name}
-            priority={prioridad}
+            carga={carga}
             sizes={ancha ? "(min-width: 1024px) 540px, 160px" : "(min-width: 1024px) 260px, 160px"}
             bandeja="rounded-xl"
             categoria={producto.categorySlug}
@@ -353,9 +348,8 @@ function Destacados({
           </Link>
         </div>
         <div className="mt-7 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {/* Sin priority: esta sección quedó debajo del hero y de las
-              categorías, y las fotos con prioridad ahora son las de la
-              vitrina. */}
+          {/* Sin `carga`: esta sección quedó debajo del hero y de las
+              categorías, y la foto que se precarga es la de la vitrina. */}
           {productos.map((p) => (
             <ProductCard key={p.id} producto={p} tasa={tasa} />
           ))}
@@ -437,7 +431,7 @@ function Ubicacion() {
   const incluye = [
     "Factura y garantía por escrito",
     "Prueba del equipo antes de llevártelo",
-    "Delivery dentro de Managua",
+    "Delivery en Managua y envíos a los departamentos",
   ];
 
   return (
@@ -453,6 +447,16 @@ function Ubicacion() {
               {CONTACTO.direccion}
               <br />
               {CONTACTO.ciudad}
+            </span>
+          </p>
+          <p className="mt-3 flex items-start gap-2 leading-relaxed text-texto">
+            <IconoReloj className="mt-1 h-5 w-5 shrink-0 text-acento" />
+            <span>
+              {HORARIO.map((franja) => (
+                <span key={franja.dias} className="block">
+                  {lineaHorario(franja)}
+                </span>
+              ))}
             </span>
           </p>
 

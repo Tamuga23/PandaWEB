@@ -57,6 +57,23 @@ export function beneficioDesdeSpecs(
     .join(" · ");
 }
 
+/** "18:00" → "6:00 p.m.": el horario se guarda en 24 h (schema.org) y se lee en 12. */
+export function horaLegible(hhmm: string): string {
+  const [h, m] = hhmm.split(":").map(Number);
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${h < 12 ? "a.m." : "p.m."}`;
+}
+
+/**
+ * Una línea del horario de atención: "Sábados: 9:00 a.m. a 5:00 p.m.". El
+ * rango de horas va con espacios duros: en la columna angosta del footer,
+ * "p.m." quedaba sola en la línea de abajo; así, si no entra, baja entero.
+ */
+export function lineaHorario(franja: { dias: string; abre: string; cierra: string }): string {
+  const rango = `${horaLegible(franja.abre)} a ${horaLegible(franja.cierra)}`;
+  return `${franja.dias}: ${rango.replace(/ /g, " ")}`;
+}
+
 /** Extrae el ID de un video de YouTube de cualquier formato de URL. */
 export function youTubeId(url: string | undefined): string | null {
   if (!url) return null;

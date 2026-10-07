@@ -10,7 +10,9 @@ import { FondoDePagina } from "@/components/comparar/FondoDePagina";
 import { ModalComparar } from "@/components/comparar/ModalComparar";
 import { ToastComparar } from "@/components/comparar/ToastComparar";
 import { SCRIPT_TEMA, TemaProvider } from "@/components/tema/TemaProvider";
+import { JsonLd } from "@/components/JsonLd";
 import { SITE } from "@/config/site";
+import { OPEN_GRAPH_BASE, TITULO_SITIO, tiendaJsonLd } from "@/lib/seo";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,21 +25,26 @@ const inter = Inter({
 // que contaminen los datos de la cuenta real.
 const ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 
+// Sin `alternates.canonical` acá: el layout lo heredan todas las páginas, y
+// una que se olvidara de definir el suyo le diría a Google que es la portada.
+// Cada página declara su canonical.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: `${SITE.nombre} — ${SITE.tagline}`,
+    default: TITULO_SITIO,
     template: `%s | ${SITE.nombre}`,
   },
   description: SITE.descripcion,
-  alternates: { canonical: "/" },
+  applicationName: SITE.nombre,
+  // La imagen la pone app/opengraph-image.tsx; las fichas usan la foto del
+  // producto.
   openGraph: {
-    type: "website",
-    locale: "es_NI",
-    siteName: SITE.nombre,
-    title: `${SITE.nombre} — ${SITE.tagline}`,
+    ...OPEN_GRAPH_BASE,
+    title: TITULO_SITIO,
     description: SITE.descripcion,
   },
+  // Título, descripción e imagen los completa Next con los de Open Graph.
+  twitter: { card: "summary_large_image" },
   robots: {
     index: true,
     follow: true,
@@ -66,6 +73,9 @@ export default function RootLayout({
     <html lang="es-NI" className={inter.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
+        {/* La tienda (dirección en el Colectivo Dreamy, mapa, redes) en todas
+            las páginas: así las ofertas de cada ficha la citan como vendedor. */}
+        <JsonLd datos={tiendaJsonLd()} />
       </head>
       <body className="flex min-h-dvh flex-col bg-fondo font-sans text-texto">
         {ADS_ID && (
