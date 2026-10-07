@@ -17,7 +17,9 @@ import {
 import {
   CATEGORIAS,
   CONTACTO,
+  ENVIOS,
   FINANCIAMIENTO,
+  GARANTIA_COBERTURA,
   GARANTIA_MESES,
   HORARIO,
   SITE,
@@ -429,9 +431,10 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
 
 function Ubicacion() {
   const incluye = [
-    "Factura y garantía por escrito",
+    `Garantía de ${GARANTIA_MESES} meses por escrito en la factura, ${GARANTIA_COBERTURA}`,
     "Prueba del equipo antes de llevártelo",
-    "Delivery en Managua y envíos a los departamentos",
+    ENVIOS.managua,
+    ENVIOS.departamentos,
   ];
 
   return (

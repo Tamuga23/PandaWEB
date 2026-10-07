@@ -12,6 +12,7 @@ import {
   CONTACTO,
   COORDENADAS,
   FINANCIAMIENTO,
+  GARANTIA_COBERTURA,
   HORARIO,
   REDES,
   SITE,
@@ -22,7 +23,7 @@ import {
   type ConfigFinanciamiento,
   type PlanCuotas,
 } from "./financiamiento";
-import { beneficioDesdeSpecs, cordobas, cordobasNumero } from "./format";
+import { beneficioDesdeSpecs, cordobas, cordobasNumero, mesesDeGarantia } from "./format";
 import type { Media, Producto } from "./types";
 
 /** Lo que Google muestra antes de cortar con "…" (aprox., en escritorio). */
@@ -309,6 +310,19 @@ export function productoJsonLd(producto: Producto, tasa: number, resumen?: strin
           : "https://schema.org/OutOfStock",
         itemCondition: "https://schema.org/NewCondition",
         seller: { "@type": "Organization", "@id": ID_TIENDA, name: SITE.nombre },
+        // La garantía, igual que la nota de la ficha. Va como warranty y no
+        // como hasMerchantReturnPolicy: es por desperfecto de fábrica, no
+        // una devolución por cambio de opinión. Sin shippingDetails: Google
+        // exige una tarifa y el envío se cotiza según el destino.
+        warranty: {
+          "@type": "WarrantyPromise",
+          durationOfWarranty: {
+            "@type": "QuantitativeValue",
+            value: mesesDeGarantia(producto.specs),
+            unitCode: "MON",
+          },
+          description: `Garantía de ${mesesDeGarantia(producto.specs)} meses ${GARANTIA_COBERTURA}, por escrito en la factura.`,
+        },
       },
     }),
   };

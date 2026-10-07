@@ -114,6 +114,20 @@ export const FINANCIAMIENTO = {
 
 export const GARANTIA_MESES = 3;
 
+// Qué cubre la garantía, que va por escrito en la factura. Se escribe para
+// seguir a "garantía de N meses …". La usan la ficha, la portada y el JSON-LD
+// de cada oferta (lib/seo.ts). "Según el caso": el reemplazo o el reembolso
+// se decide con el cliente, no se promete uno de los dos.
+export const GARANTIA_COBERTURA =
+  "contra desperfectos de fábrica, con reemplazo o reembolso según el caso";
+
+// Cómo se paga la entrega. No hay tarifa fija de envío (depende del
+// destino), así que ningún texto ni el JSON-LD publican un monto.
+export const ENVIOS = {
+  managua: "Delivery en Managua: pagás al recibir",
+  departamentos: "Envíos a los departamentos: pago antes del envío, costo según el destino",
+} as const;
+
 // ---------------------------------------------------------------------------
 // Categorías. El POS guarda slugs en español; algunos docs viejos vienen en
 // inglés. Acá se define el nombre visible y los alias que se normalizan.

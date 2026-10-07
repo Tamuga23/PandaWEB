@@ -1,3 +1,5 @@
+import { GARANTIA_MESES } from "@/config/site";
+
 /** Precio en córdobas ya redondeado a la decena, como número. Fuente única del monto. */
 export function cordobasNumero(usd: number, tasa: number): number {
   return Math.round((usd * tasa) / 10) * 10;
@@ -55,6 +57,18 @@ export function beneficioDesdeSpecs(
     .slice(0, max)
     .map((f) => f.valor)
     .join(" · ");
+}
+
+/**
+ * Meses de garantía de un producto. El POS permite cargar `garantiaMeses` en
+ * la ficha técnica ("vacío si aplica la garantía estándar"): si está, manda
+ * ese; si no, la estándar de la tienda. Así la nota de la ficha, la tabla de
+ * specs y el JSON-LD no pueden decir números distintos.
+ */
+export function mesesDeGarantia(specs?: Record<string, unknown> | null): number {
+  const extra = specs?.extra as Record<string, unknown> | undefined;
+  const meses = Number(specs?.garantiaMeses ?? extra?.garantiaMeses);
+  return Number.isFinite(meses) && meses > 0 ? meses : GARANTIA_MESES;
 }
 
 /** "18:00" → "6:00 p.m.": el horario se guarda en 24 h (schema.org) y se lee en 12. */

@@ -15,7 +15,8 @@ import { JsonLd } from "@/components/JsonLd";
 import {
   CATEGORIAS,
   CONTACTO,
-  GARANTIA_MESES,
+  ENVIOS,
+  GARANTIA_COBERTURA,
   NOTA_PRECIO,
 } from "@/config/site";
 import { getCatalogo, getProducto } from "@/lib/catalog";
@@ -25,6 +26,7 @@ import {
   beneficioDesdeSpecs,
   cordobas,
   linkWhatsApp,
+  mesesDeGarantia,
   porcentajeDescuento,
 } from "@/lib/format";
 import {
@@ -205,8 +207,12 @@ export default async function ProductoPage({
             disponible={producto.disponible}
           />
 
+          {/* Lo mismo que lee Google en la oferta (warranty en lib/seo.ts),
+              y cómo se paga según adónde va. */}
           <p className="mt-4 text-xs leading-relaxed text-tenue">
-            {NOTA_PRECIO} Incluye factura y garantía de {GARANTIA_MESES} meses.
+            {NOTA_PRECIO} Incluye factura y garantía de{" "}
+            {mesesDeGarantia(producto.specs)} meses {GARANTIA_COBERTURA}.{" "}
+            {ENVIOS.managua}. {ENVIOS.departamentos}.
           </p>
 
           {producto.bullets.length > 0 && (
