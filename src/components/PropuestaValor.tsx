@@ -27,13 +27,13 @@ export function itemsPropuestaValor(plazoMaximo: number, disponible = true) {
       id: "garantia",
       Icono: IconoEscudo,
       titulo: `Garantía ${GARANTIA_MESES} meses`,
-      texto: "Con factura y respaldo real",
+      texto: "Contra desperfectos de fábrica",
     },
     {
       id: "entrega",
       Icono: IconoCamion,
       titulo: "Entrega inmediata",
-      texto: "Delivery en Managua",
+      texto: "Delivery en Managua, pagás al recibir",
     },
     {
       id: "atencion",

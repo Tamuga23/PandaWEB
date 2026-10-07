@@ -9,7 +9,7 @@ import {
   CONFIG_FINANCIAMIENTO_DEFAULT,
   calcularPlanes,
 } from "../src/lib/financiamiento";
-import { cordobasNumero, horaLegible, lineaHorario } from "../src/lib/format";
+import { cordobasNumero, horaLegible, lineaHorario, mesesDeGarantia } from "../src/lib/format";
 import {
   descripcionCategoria,
   descripcionPortada,
@@ -225,6 +225,33 @@ describe("JSON-LD", () => {
 
     const agotado = productoJsonLd({ ...p, disponible: false }, TASA);
     assert.equal(agotado.offers?.availability, "https://schema.org/OutOfStock");
+  });
+
+  it("oferta: garantía de 3 meses por desperfecto, sin envío ni devoluciones inventados", () => {
+    const { offers } = productoJsonLd(producto({ name: "Amazfit Bip 6", categorySlug: "smartwatch" }), TASA);
+    assert.deepEqual(offers?.warranty.durationOfWarranty, {
+      "@type": "QuantitativeValue",
+      value: 3,
+      unitCode: "MON",
+    });
+    assert.match(offers?.warranty.description ?? "", /desperfectos de fábrica.*reemplazo o reembolso.*factura/);
+    // El envío se cotiza según el destino y la garantía no es una política
+    // de devoluciones: publicar cualquiera de los dos sería inventar.
+    assert.ok(offers && !("shippingDetails" in offers));
+    assert.ok(offers && !("hasMerchantReturnPolicy" in offers));
+  });
+
+  it("garantía: manda la que cargó el POS en la ficha; si no, la estándar", () => {
+    assert.equal(mesesDeGarantia(undefined), 3);
+    assert.equal(mesesDeGarantia({ ansi: 900 }), 3);
+    assert.equal(mesesDeGarantia({ garantiaMeses: "" }), 3);
+    assert.equal(mesesDeGarantia({ garantiaMeses: 12 }), 12);
+    assert.equal(mesesDeGarantia({ extra: { garantiaMeses: "6" } }), 6);
+    const json = productoJsonLd(
+      producto({ name: "Algo", specs: { garantiaMeses: 12 } }),
+      TASA,
+    );
+    assert.equal(json.offers?.warranty.durationOfWarranty.value, 12);
   });
 
   it("sin precio no publica una oferta, y sin marca no publica brand", () => {
