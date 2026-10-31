@@ -26,11 +26,36 @@ const TemaCtx = createContext<Ctx>({
 
 export const useTema = () => useContext(TemaCtx);
 
-/** Avisa a React cada vez que cambia la clase de <html> (al alternar el tema). */
+/**
+ * Avisa a React cada vez que cambia la clase de <html> (al alternar el tema).
+ *
+ * Además repone la clase del tema si desaparece: cuando falla un render del
+ * servidor, React vuelve a dibujar <html> en el navegador con el className
+ * del servidor y borra la que puso SCRIPT_TEMA. Pasaba en la pantalla de
+ * error (error.tsx), que en tema claro salía en oscuro.
+ */
 function suscribirClaseHtml(avisar: () => void) {
-  const observador = new MutationObserver(avisar);
+  const observador = new MutationObserver(() => {
+    reponerClaseTema();
+    avisar();
+  });
   observador.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  // Después de observar: si la repone acá, el observador avisa el cambio.
+  reponerClaseTema();
   return () => observador.disconnect();
+}
+
+/** Si a <html> le falta la clase del tema, la vuelve a poner desde lo guardado. */
+function reponerClaseTema() {
+  const raiz = document.documentElement;
+  if (raiz.classList.contains("dark") || raiz.classList.contains("light")) return;
+  let guardado: string | null = null;
+  try {
+    guardado = localStorage.getItem(CLAVE_TEMA);
+  } catch {
+    // Almacenamiento bloqueado: queda el tema por defecto, como en SCRIPT_TEMA.
+  }
+  raiz.classList.add(guardado === "light" ? "light" : "dark");
 }
 
 function temaDelDom(): Tema {
