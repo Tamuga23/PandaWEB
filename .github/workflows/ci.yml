@@ -1,0 +1,37 @@
+# Verificación de cada PR y de main: tipos, lint y pruebas.
+#
+# No compila: el preview de Vercel ya hace `next build` en cada PR, y un build
+# más acá volvería a leer Firestore (la cuota se comparte con la tienda y el
+# POS). Las pruebas usan el catálogo de prueba versionado, sin red.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# Un push nuevo al mismo PR cancela la corrida anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Tipos
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Pruebas
+        run: npm test
