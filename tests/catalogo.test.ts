@@ -34,6 +34,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { elegirHero } from "../src/lib/portada";
 import { IconoCategoria, colorDeMarca } from "../src/components/IconoCategoria";
 import { ProductImage } from "../src/components/ProductImage";
+import ErrorPagina from "../src/app/error";
 import type { Producto } from "../src/lib/types";
 
 const TASA = 36.6243;
@@ -630,5 +631,29 @@ describe("foto de producto (bandeja)", () => {
   it("el agotado apaga la foto; sin foto no lleva la capa, que taparía el ícono", () => {
     assert.match(html({ src: FOTO, apagada: true }), /bg-superficie\/30/);
     assert.doesNotMatch(html({ categoria: "camara", apagada: true }), /bg-superficie\/30/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe("pantalla de error (error.tsx)", () => {
+  const html = (digest?: string) =>
+    renderToStaticMarkup(
+      createElement(ErrorPagina, {
+        error: Object.assign(new Error("detalle interno del servidor"), digest ? { digest } : {}),
+        unstable_retry: () => {},
+      }),
+    );
+
+  it("ofrece reintentar y WhatsApp, con el código que aparece en los logs", () => {
+    const h = html("1719844883");
+    assert.match(h, /Probar de nuevo/);
+    assert.match(h, /href="https:\/\/wa\.me\/50583725528/);
+    assert.match(h, /Código del error: 1719844883/);
+  });
+
+  it("nunca muestra el mensaje real del error, y sin código no deja la línea", () => {
+    const h = html();
+    assert.doesNotMatch(h, /detalle interno/);
+    assert.doesNotMatch(h, /Código del error/);
   });
 });
