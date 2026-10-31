@@ -53,7 +53,7 @@ navegador, `NAVEGADOR=<ruta del ejecutable>`. Las capturas quedan en
 ```bash
 npm run build        # build de producción
 npm run typecheck    # solo tipos
-npm test             # 56 pruebas de la lógica de datos
+npm test             # pruebas de datos, financiamiento y SEO (sin red)
 npm run lint
 ```
 
@@ -192,6 +192,20 @@ público desde entonces. Quedan dos ítems de contenido, no bloqueantes:
 
 ---
 
+## Deploy y rollback
+
+- Cada PR pasa por el CI (`.github/workflows/ci.yml`: tipos, lint y pruebas) y
+  Vercel arma un preview. Fusionar a `main` despliega a producción solo.
+- **Si un deploy rompe producción:** en Vercel, proyecto `panda-web` →
+  Deployments → el último deploy bueno → **Instant Rollback** (o "Promote to
+  Production"). Es inmediato y no recompila, así que no gasta lecturas de
+  Firestore. Después, revertir el commit en `main` (`git revert <sha>`) para
+  que el próximo deploy no vuelva a traer el problema.
+- **Logs:** Vercel → el deploy → Logs. El "Código del error" que muestra la
+  pantalla de error (`src/app/error.tsx`) es el `digest` que aparece ahí.
+
+---
+
 ## Deuda técnica conocida
 
 - **Imágenes en Imgur.** Sus términos prohíben el uso comercial y el hotlinking;
@@ -202,4 +216,8 @@ público desde entonces. Quedan dos ítems de contenido, no bloqueantes:
 - **Slugs de categoría duplicados.** PandaWEB canoniza las seis categorías a
   español; PandaLink todavía traduce a inglés y deja `dashcam` sin mapear.
   Conviene unificarlo allá también.
-- Quedaron los SVG de la plantilla de Next en `public/`. Se pueden borrar.
+- **Usuarios anónimos en Firebase Auth.** Cada arranque en frío del servidor
+  inicia una sesión anónima nueva (`src/lib/firestore-rest.ts`) y Firebase la
+  guarda como usuario. Con el caché de 15 minutos son pocos, pero se acumulan:
+  conviene borrarlos de vez en cuando desde Authentication, o activar la
+  limpieza automática si algún día el proyecto pasa a Identity Platform.
