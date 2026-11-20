@@ -331,10 +331,14 @@
    galería de la ficha), nunca detrás de texto. Sin filter: blur ni
    imágenes: un ::before pintado una vez. El dial lo pone el componente
    Escenario. Quien lo use recorta el desborde con overflow-x-clip en un
-   ancestro (clip, no hidden: no rompe el sticky de la galería). */
+   ancestro (clip, no hidden: no rompe el sticky de la galería).
+   min-width: 0: como ítem de grid o flex, el min-content de lo de adentro
+   (la tira de la vitrina mide ~676px) ensanchaba la pista, y en el celular
+   el hero de la portada quedaba cortado a la derecha, h1 incluido. */
 @utility escenario {
   position: relative;
   isolation: isolate;
+  min-width: 0;
   --escenario-halo: var(--halo-verde);
 
   &::before {
