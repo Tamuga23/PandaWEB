@@ -81,7 +81,7 @@ SEO local), su kit de assets y el gate/hook Stop.
 | 4 | Ficha tipo afiche: eyebrow, h1, datos clave 2x2, precio protagonista, fila de garantías | hecho |
 | 5 | Catálogo y tarjeta: jerarquía, precio, foco visible en filtros | hecho |
 | 6 | Firma de marca en el footer, skip link, áreas táctiles | hecho (skip link en fase 5) |
-| 7 | QA: verificadores de Taste, checklist de UI UX Pro Max, AA en ambos temas, regresión funcional | pendiente |
+| 7 | QA: verificadores de Taste, checklist de UI UX Pro Max, AA en ambos temas, regresión funcional | hecho (ver "Resultado del QA") |
 
 ## Línea base (antes de tocar nada)
 
@@ -93,6 +93,37 @@ Verificadores de Taste sobre el fixture (portada y ficha del HY450MAX, 1440 y 39
   17-20px de alto (bajo 44px); "Por qué te sirve" en 14px.
 - Tema claro: --acento #0891b2 (3.5:1), --precio #059669 (3.6:1) y --promo
   #d97706 (3.2:1) fallan AA como texto chico.
+
+## Resultado del QA
+
+Un workflow de revisión (Taste, fidelidad a las piezas, accesibilidad y
+regresión, con verificación adversarial de cada hallazgo) confirmó 11
+hallazgos y descartó 0. Todos quedaron resueltos y medidos en el servidor con
+datos de prueba:
+
+- **Alto:** el hero de la portada medía 676px en el celular y cortaba el h1
+  (el escenario, como ítem de grid, tomaba el ancho de la vitrina). Ahora
+  358px a 390.
+- **Ficha:** "Lo quiero" volvió a la primera pantalla (CTA entre el precio y
+  las cuotas; el código del producto pasó a la fila de estado), la cuota más
+  baja al lado de la cifra, sello 0% en verde plano, escenario solo en la foto
+  principal, la marca dentro del h1 sin repetirse en el eyebrow, datos clave
+  alineados y con las cifras de los valores sin unidad, h2 en text-2xl.
+- **Consistencia:** un solo botón secundario y un solo estilo de Comparar,
+  remates en degradado que llegan al azul, eyebrow del financiamiento en gris,
+  eyebrow de la tarjeta en una línea, garantías en 2x2, copyright alineado.
+- **AA en claro:** grises secundarios a #5b6779 (de 4.34 a 5.24:1 sobre
+  superficie2) y token --precio-sello para el verde sobre tinte (de 4.57 a
+  6.40:1).
+
+Quedan, sin tocar a propósito:
+
+- El titular del hero ocupa tres líneas a 1440 y la marca usa dos: es una
+  decisión de copy para Carlos ("Tecnología para tu casa / y tu negocio").
+- Los links del nav en 14 y 16px y los del footer de 17-20px de alto en el
+  celular (ya estaban en main; pasan AA por el espacio entre ellos).
+- La franja vertical en el borde derecho de las capturas en claro: también
+  está en producción y no sale del DOM. Mirarla en un teléfono real.
 
 ## Lo que respondió Carlos (resuelto)
 
