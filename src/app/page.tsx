@@ -275,7 +275,7 @@ function Categorias({
 }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16">
-      <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+      <h2 className="text-seccion">
         Qué estás buscando
       </h2>
       {/* Dos columnas desde el celular: eran tarjetas de solo texto, una por
@@ -344,7 +344,7 @@ function Destacados({
     <section className="border-y border-borde bg-superficie/40">
       <div className="mx-auto max-w-6xl px-4 py-16">
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 className="text-seccion">
             Lo más pedido
           </h2>
           <Link
@@ -390,8 +390,9 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
           <p className="text-sm font-semibold uppercase tracking-wide text-precio">
             Financiamiento {FINANCIAMIENTO.banco}
           </p>
-          <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
-            Llevalo hoy y pagalo en cuotas
+          <h2 className="mt-3 text-seccion">
+            Llevalo hoy{" "}
+            <span className="block text-marca">y pagalo en cuotas</span>
           </h2>
           <p className="mt-4 leading-relaxed text-texto">
             Pagalo en {plazos.join(" o ")} cuotas mensuales, sin prima y sin cargos
@@ -447,7 +448,7 @@ function Ubicacion() {
     <section id="ubicacion" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16">
       <div className="grid gap-10 lg:grid-cols-2">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 className="text-seccion">
             Visitanos
           </h2>
           <p className="mt-4 flex items-start gap-2 leading-relaxed text-texto">

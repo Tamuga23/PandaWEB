@@ -62,7 +62,7 @@ export default async function CatalogoPage({
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Catálogo</h1>
+        <h1 className="text-titular">Catálogo</h1>
         <p className="mt-2 max-w-2xl text-suave">
           Todo lo que tenemos, con precio en córdobas y la cuota mensual de cada
           producto.{" "}

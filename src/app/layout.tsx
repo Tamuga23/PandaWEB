@@ -96,8 +96,15 @@ export default function RootLayout({
         <TemaProvider>
           <CompararProvider>
             <FondoDePagina>
+              {/* Primera parada del Tab: saltar el header y la navegación. */}
+              <a
+                href="#contenido"
+                className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-50 focus:rounded-full focus:bg-superficie focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-texto focus:shadow-flotante"
+              >
+                Saltar al contenido
+              </a>
               <Header />
-              <main className="flex-1">{children}</main>
+              <main id="contenido" className="flex-1">{children}</main>
               <Footer />
             </FondoDePagina>
             <BarraComparar />

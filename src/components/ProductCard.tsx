@@ -88,11 +88,11 @@ export function ProductCard({
 
         <div className="flex flex-1 flex-col p-4">
           {producto.categorySlug && (
-            <p className="text-label font-medium uppercase tracking-wide text-tenue">
+            <p className="text-label font-semibold uppercase tracking-[0.18em] text-tenue">
               {NOMBRE_CATEGORIA[producto.categorySlug] ?? producto.categorySlug}
             </p>
           )}
-          <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-texto transition group-hover:text-acento">
+          <h3 className="mt-1 line-clamp-2 text-sm font-bold leading-snug tracking-tight text-texto transition group-hover:text-acento">
             {producto.name}
           </h3>
           {producto.beneficio && (
