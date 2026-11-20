@@ -88,11 +88,13 @@ export function ProductCard({
 
         <div className="flex flex-1 flex-col p-4">
           {producto.categorySlug && (
-            <p className="text-label font-medium uppercase tracking-wide text-tenue">
+            // Una sola línea: a 390, "Cámaras de seguridad" en dos dejaba
+            // los nombres de una misma fila a distinta altura.
+            <p className="truncate text-label font-semibold uppercase tracking-[0.18em] text-tenue max-sm:tracking-[0.12em]">
               {NOMBRE_CATEGORIA[producto.categorySlug] ?? producto.categorySlug}
             </p>
           )}
-          <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-texto transition group-hover:text-acento">
+          <h3 className="mt-1 line-clamp-2 text-sm font-bold leading-snug tracking-tight text-texto transition group-hover:text-acento">
             {producto.name}
           </h3>
           {producto.beneficio && (

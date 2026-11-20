@@ -1,5 +1,5 @@
 import { FINANCIAMIENTO, GARANTIA_MESES } from "@/config/site";
-import { IconoCamion, IconoEscudo, IconoTarjeta, IconoWhatsApp } from "./iconos";
+import { IconoCamion, IconoCheck, IconoEscudo, IconoTarjeta, IconoWhatsApp } from "./iconos";
 
 /**
  * Los cuatro props de valor del negocio, en un solo lugar para que la home y
@@ -62,17 +62,17 @@ export function PropuestaValorCompacta({
 }) {
   const items = itemsPropuestaValor(plazoMaximo, disponible);
 
+  // La fila de garantías de los afiches ("✓ Cuotas con Banpro ✓ Garantía 3
+  // meses"): antes eran cuatro cajitas con ícono que competían con el precio.
   return (
-    <div className="mt-5 grid auto-rows-fr grid-cols-2 gap-2">
-      {items.map(({ Icono, titulo }) => (
-        <div
-          key={titulo}
-          className="flex items-center gap-2 rounded-xl border border-borde bg-superficie px-3 py-2.5"
-        >
-          <Icono className="h-4 w-4 shrink-0 text-acento" />
-          <span className="text-xs font-medium text-suave">{titulo}</span>
-        </div>
+    // 2x2 parejo: con flex-wrap, a 1440 quedaban tres arriba y una sola abajo.
+    <ul aria-label="Lo que incluye tu compra" className="mt-5 grid grid-cols-2 gap-x-5 gap-y-2">
+      {items.map(({ titulo }) => (
+        <li key={titulo} className="flex items-center gap-2 text-sm font-medium text-texto">
+          <IconoCheck className="h-4 w-4 shrink-0 text-precio" />
+          {titulo}
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

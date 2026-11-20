@@ -15,10 +15,10 @@ export const contentType = "image/png";
 
 // Los colores de DESIGN.md: el fondo casi negro de todo el sitio y el
 // degradado de marca solo en el logotipo, como en el header.
-const FONDO = "#09090b";
+const FONDO = "#090c11";
 const TEXTO = "#fafafa";
-const SUAVE = "#a1a1aa";
-const BORDE = "#27272a";
+const SUAVE = "#a3adba";
+const BORDE = "#1f2a37";
 const MARCA = "linear-gradient(135deg, #10b981, #06b6d4, #0284c7)";
 
 export default async function Image() {
@@ -27,7 +27,8 @@ export default async function Image() {
   const [bold, regular, logo] = await Promise.all([
     readFile(join(process.cwd(), "src/app/_og/Inter-Bold.ttf")),
     readFile(join(process.cwd(), "src/app/_og/Inter-Regular.ttf")),
-    readFile(join(process.cwd(), "public/logo.png"), "base64"),
+    // El panda blanco solo: sobre este fondo se ve como en los afiches.
+    readFile(join(process.cwd(), "public/marca/panda.png"), "base64"),
   ]);
 
   return new ImageResponse(
@@ -47,7 +48,7 @@ export default async function Image() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse no usa next/image */}
-          <img src={`data:image/png;base64,${logo}`} alt="" width={96} height={90} />
+          <img src={`data:image/png;base64,${logo}`} alt="" width={104} height={90} />
           <div style={{ display: "flex", fontSize: 52, fontWeight: 700, letterSpacing: -1.5 }}>
             <span>panda</span>
             <span style={{ backgroundImage: MARCA, backgroundClip: "text", color: "transparent" }}>

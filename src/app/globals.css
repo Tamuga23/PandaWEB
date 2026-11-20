@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* La documentación cita clases como ejemplo ("sin focus:outline-none"), y
+   Tailwind las generaba igual: CSS que nadie usa y que confundía las
+   auditorías de foco. */
+@source not "../../docs";
+@source not "../../*.md";
+
 /* ---------------------------------------------------------------------------
    Sistema de diseño de Panda Store.
 
@@ -28,6 +34,7 @@
 
   --color-acento: var(--acento);
   --color-precio: var(--precio);
+  --color-precio-sello: var(--precio-sello);
   --color-agotado: var(--agotado);
   --color-promo: var(--promo);
 
@@ -45,23 +52,28 @@
 .dark {
   color-scheme: dark;
 
-  --fondo: #09090b; /* zinc-950 */
-  --superficie: #18181b; /* zinc-900 */
-  --superficie2: #27272a; /* zinc-800 */
-  --borde: #27272a;
-  --borde2: #3f3f46; /* zinc-700 */
+  /* Negro azulado, medido en las piezas de redes (plan-identidad-marca.md):
+     la marca nunca usa negro neutro. Antes era la escala zinc (#09090b,
+     #18181b, #27272a), que al lado de los afiches se veía gris. */
+  --fondo: #090c11;
+  --superficie: #111822;
+  --superficie2: #1a2330;
+  --borde: #1f2a37;
+  --borde2: #334155;
 
   --texto: #fafafa;
-  --suave: #a1a1aa; /* zinc-400 */
-  /* zinc-500 (#71717a) medía 3.67:1 contra bg-superficie y 4.12:1 contra
-     bg-fondo — falla AA (4.5:1) en los dos fondos donde de verdad aparece
-     (precio tachado, nota de financiamiento, SKU). Este tono a medida
-     mide ~4.9:1 y ~5.5:1 respectivamente: el mínimo más chico que sigue
-     leyéndose claramente más apagado que --suave. */
-  --tenue: #86868f;
+  /* Grises fríos para no verse sucios sobre el azul: --suave mide 7.9:1 sobre
+     --superficie y --tenue 5.8:1 (6.4:1 sobre --fondo). Con los zinc
+     anteriores, "Comparar" en --tenue sobre --superficie2 daba 4.13:1 y
+     fallaba AA; ahora da 5.2:1. */
+  --suave: #a3adba;
+  --tenue: #8a94a3;
 
   --acento: #22d3ee; /* cyan-400 — más legible sobre fondo oscuro */
   --precio: #34d399; /* emerald-400 */
+  /* Texto verde sobre tinte verde (pastillas de estado, sello 0% de la
+     tarjeta, pasos numerados). En oscuro el mismo verde ya pasa AA. */
+  --precio-sello: var(--precio);
   --agotado: #fb7185; /* rose-400 */
   --promo: #fbbf24; /* amber-400 */
 
@@ -69,17 +81,34 @@
      "esto está arriba" es el brillo de 1px en el borde superior (como la luz
      que pega en el canto de una tarjeta), y la sombra solo oscurece lo que
      queda debajo cuando hay contenido detrás (barras, modal). */
+  /* Teñidas con el azul del lienzo: el negro puro se veía gris sobre él. */
   --sombra-elevada: inset 0 1px 0 0 rgb(255 255 255 / 0.06),
-    0 12px 28px -12px rgb(0 0 0 / 0.8);
+    0 12px 28px -12px rgb(2 6 12 / 0.8);
   --sombra-flotante: inset 0 1px 0 0 rgb(255 255 255 / 0.06),
-    0 4px 12px -4px rgb(0 0 0 / 0.5), 0 20px 48px -16px rgb(0 0 0 / 0.85);
+    0 4px 12px -4px rgb(2 6 12 / 0.5), 0 20px 48px -16px rgb(2 6 12 / 0.85);
   --sombra-modal: inset 0 1px 0 0 rgb(255 255 255 / 0.08),
-    0 32px 80px -20px rgb(0 0 0 / 0.9);
+    0 32px 80px -20px rgb(2 6 12 / 0.9);
 
   /* Velo de la bandeja de foto (ver @utility bandeja-foto): baja ~14% la luz
      del blanco de estudio, que en oscuro era lo más brillante de la pantalla
      y le ganaba al precio. Teñido con --fondo, no negro puro. */
-  --velo-foto: rgb(9 9 11 / 0.14);
+  --velo-foto: rgb(9 12 17 / 0.14);
+
+  /* Degradado para TEXTO (remate de titulares, "store"): las paradas 400 del
+     mismo verde→cian→azul. El #0284c7 de relleno daba 4.4:1 como texto sobre
+     superficie; #38bdf8 da más de 8:1. */
+  --marca-texto-inicio: #34d399;
+  --marca-texto-medio: #22d3ee;
+  --marca-texto-fin: #38bdf8;
+
+  /* Escenario de producto: el brillo de los afiches (verde o azul, según la
+     variante) y el tramo encendido del dial. */
+  --halo-verde: rgb(16 185 129 / 0.22);
+  --halo-azul: rgb(2 132 199 / 0.26);
+  --dial-marca: rgb(255 255 255 / 0.13);
+  --trama: rgb(148 163 184 / 0.05);
+
+  --seleccion: #0e7490;
 }
 
 /* --- Tema claro --------------------------------------------------------- */
@@ -93,20 +122,43 @@
   --borde2: #cbd5e1; /* slate-300 */
 
   --texto: #0f172a; /* slate-900 */
-  --suave: #64748b; /* slate-500 */
-  /* slate-400 (#94a3b8) medía ~2.56:1 contra el fondo blanco — falla feo.
-     bg-fondo claro (#f8fafc) es tan brillante que el mínimo real que
-     alcanza 4.5:1 ahí es slate-500, el mismo tono que --suave: no hay
-     margen para un tercer nivel más claro y que siga pasando AA en este
-     tema. Mejor compartir el tono que fallar contraste. */
-  --tenue: #64748b; /* slate-500, igual que --suave — ver nota arriba */
+  /* Un solo gris secundario en claro, un poco más oscuro que slate-500:
+     #64748b daba 4.34:1 sobre --superficie2 ("Comparar", el contador de las
+     categorías) y no llegaba a AA en texto chico. #5b6779 da 5.24:1 sobre
+     --superficie2, 5.48:1 sobre --fondo y 5.1:1 sobre la caja teñida de
+     cuotas. slate-400 (#94a3b8) medía ~2.56:1: no hay margen para un tercer
+     nivel más claro que siga pasando AA en este tema, así que --suave y
+     --tenue comparten el tono. */
+  --suave: #5b6779;
+  --tenue: #5b6779;
 
   /* Los acentos se oscurecen en claro: el cyan-400 sobre blanco no cumple
-     contraste suficiente para texto. */
-  --acento: #0891b2; /* cyan-600 */
-  --precio: #059669; /* emerald-600 */
+     contraste suficiente para texto. Los tonos 600 tampoco alcanzaban en
+     texto chico (cyan-600 3.5:1, emerald-600 3.6:1, amber-600 3.2:1 sobre
+     --fondo): los 700 pasan AA (5.1, 5.2 y 4.8:1 sobre --fondo; el ámbar da
+     5.0:1 sobre --superficie). */
+  --acento: #0e7490; /* cyan-700 */
+  --precio: #047857; /* emerald-700 */
+  /* Sobre el tinte verde (precio/10-15) el emerald-700 quedaba entre 4.0 y
+     4.6:1 (los pasos del financiamiento, 3.99); emerald-800 da de 5.6 a
+     6.4:1. Los precios siguen en --precio. */
+  --precio-sello: #065f46; /* emerald-800 */
   --agotado: #e11d48; /* rose-600 */
-  --promo: #d97706; /* amber-600 */
+  --promo: #b45309; /* amber-700 */
+
+  /* Degradado para texto en claro: las paradas 700, que pasan AA sobre el
+     fondo claro (las 500 de relleno daban 2.4:1). */
+  --marca-texto-inicio: #047857;
+  --marca-texto-medio: #0e7490;
+  --marca-texto-fin: #0369a1;
+
+  /* El escenario en claro: el mismo brillo, mucho más suave. */
+  --halo-verde: rgb(16 185 129 / 0.1);
+  --halo-azul: rgb(2 132 199 / 0.1);
+  --dial-marca: rgb(15 23 42 / 0.12);
+  --trama: rgb(15 23 42 / 0.04);
+
+  --seleccion: #0e7490;
 
   /* En claro el brillo superior no aporta nada (el fondo ya es claro): solo
      sombra, teñida con slate-900 en vez de negro puro para que no se vea
@@ -162,17 +214,34 @@
     );
 }
 
+/* Degradado en TEXTO: el remate de los titulares ("Elegí tu / smartwatch") y
+   "store" del logo. Corre horizontal como en las piezas de redes, con las
+   paradas para texto de cada tema (--marca-texto-*), que pasan AA también en
+   claro. Regla del Remate (DESIGN.md): una vez por pantalla, solo en la
+   última línea de un titular, nunca en párrafos ni precios.
+   El color sólido es el respaldo si background-clip no se aplica, y en alto
+   contraste de Windows vuelve al color del sistema. */
 @utility text-marca {
+  color: var(--marca-texto-medio);
   background-image: linear-gradient(
-    135deg,
-    var(--marca-inicio) 0%,
-    var(--marca-medio) 50%,
-    var(--marca-fin) 100%
+    90deg,
+    var(--marca-texto-inicio) 0%,
+    var(--marca-texto-medio) 50%,
+    var(--marca-texto-fin) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  /* El tracking negativo de los titulares recorta el último glifo. */
+  padding-inline-end: 0.04em;
+
+  @media (forced-colors: active) {
+    background-image: none;
+    -webkit-text-fill-color: CanvasText;
+    color: CanvasText;
+  }
 }
 
 /* Botón primario: la única forma de CTA fuerte del sitio. Antes se repetía
@@ -231,6 +300,98 @@
   line-height: 1.2;
 }
 
+/* Escala de titulares de la marca: la grotesca negrísima y apretada de los
+   afiches ("A810 Lite", "Elegí tu smartwatch"). Es Inter 800 de la misma
+   fuente variable que ya se carga: no suma descargas. Uso:
+   - text-display: el h1 de la portada.
+   - text-titular: el h1 del catálogo y de la ficha (el nombre del modelo).
+   - text-seccion: los h2 de sección.
+   - text-cifra: el precio protagonista (siempre más chico que el h1 de su
+     página: la cifra nunca le gana al nombre). */
+@theme {
+  --text-display: clamp(2.5rem, 1.6rem + 4.2vw, 4.5rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.045em;
+  --text-display--font-weight: 800;
+
+  --text-titular: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
+  --text-titular--line-height: 1;
+  --text-titular--letter-spacing: -0.04em;
+  --text-titular--font-weight: 800;
+
+  --text-seccion: clamp(1.625rem, 1.25rem + 1.5vw, 2.25rem);
+  --text-seccion--line-height: 1.08;
+  --text-seccion--letter-spacing: -0.03em;
+  --text-seccion--font-weight: 800;
+
+  --text-cifra: clamp(2rem, 1.5rem + 2vw, 3rem);
+  --text-cifra--line-height: 1;
+  --text-cifra--letter-spacing: -0.035em;
+  --text-cifra--font-weight: 800;
+}
+
+/* Eyebrow: la línea en mayúsculas espaciadas de los afiches ("MAGCUBIC ·
+   HY350 MAX", "PANDA STORE · DISPONIBLES HOY"). El color lo pone cada uso
+   (text-suave o text-tenue; los dos pasan AA en ambos temas a este tamaño). */
+@utility eyebrow {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Escenario de producto: el brillo de los afiches (un radial de un solo tono,
+   verde o azul según la variante) sobre una trama de 48px que se apaga hacia
+   los bordes. Excepción con nombre a "nada de gradientes de fondo" de
+   DESIGN.md: solo detrás del producto protagonista (vitrina del hero y
+   galería de la ficha), nunca detrás de texto. Sin filter: blur ni
+   imágenes: un ::before pintado una vez. El dial lo pone el componente
+   Escenario. Quien lo use recorta el desborde con overflow-x-clip en un
+   ancestro (clip, no hidden: no rompe el sticky de la galería).
+   min-width: 0: como ítem de grid o flex, el min-content de lo de adentro
+   (la tira de la vitrina mide ~676px) ensanchaba la pista, y en el celular
+   el hero de la portada quedaba cortado a la derecha, h1 incluido. */
+@utility escenario {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  --escenario-halo: var(--halo-verde);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -10% -8%;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 48% at 50% 56%, var(--escenario-halo), transparent 72%),
+      linear-gradient(var(--trama) 1px, transparent 1px) 0 0 / 48px 48px,
+      linear-gradient(90deg, var(--trama) 1px, transparent 1px) 0 0 / 48px 48px;
+    mask-image: radial-gradient(ellipse 62% 56% at 50% 50%, #000 38%, transparent 78%);
+  }
+}
+
+@utility escenario-azul {
+  --escenario-halo: var(--halo-azul);
+}
+
+/* Tinta del panda (ver LogoPanda): en claro, orejas, ojos, boca, brazo y un
+   contorno fino, recortados con panda-tinta.png y pintados con el color de
+   texto debajo del panda blanco. En oscuro no lleva nada: lo negro del panda
+   es el fondo, como en los afiches. Sin soporte de máscaras no se pinta: una
+   tinta sin recortar sería justo el rectángulo que se sacó. */
+@supports (mask-image: none) or (-webkit-mask-image: none) {
+  .light .logo-panda::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--texto);
+    -webkit-mask: url("/marca/panda-tinta.png") center / 100% 100% no-repeat;
+    mask: url("/marca/panda-tinta.png") center / 100% 100% no-repeat;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    Base
 --------------------------------------------------------------------------- */
@@ -249,8 +410,9 @@ body {
     color 0.2s ease;
 }
 
+/* Era blanco sobre --marca-medio (~2.4:1). Con cyan-700 el blanco pasa AA. */
 ::selection {
-  background: var(--marca-medio);
+  background: var(--seleccion);
   color: #ffffff;
 }
 

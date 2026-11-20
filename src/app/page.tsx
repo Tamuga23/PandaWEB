@@ -3,6 +3,7 @@ import Link from "next/link";
 import { EnlaceConversion } from "@/components/EnlaceConversion";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
+import { Escenario } from "@/components/Escenario";
 import { IconoCategoria, colorDeMarca } from "@/components/IconoCategoria";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductImage } from "@/components/ProductImage";
@@ -106,25 +107,28 @@ function Hero({
 }) {
   const plazoMaximo = Math.max(...config.plazos);
 
-  // Antes era texto centrado sobre un resplandor cyan, sin ningún producto:
-  // en el celular la primera foto aparecía recién después de dos pantallas.
-  // Ahora la profundidad la dan los productos reales, no un degradado.
+  // La profundidad la dan los productos reales sobre el escenario de los
+  // afiches (brillo y dial detrás de la vitrina, nunca detrás del texto).
+  // overflow-x-clip recorta el dial, que se sale de la vitrina a propósito.
   return (
-    <section className="border-b border-borde">
+    <section className="overflow-x-clip border-b border-borde">
       <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:py-20">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie/60 px-4 py-1.5 text-xs font-medium text-texto">
+          {/* La pastilla de estado de las piezas ("● Disponible"): borde y
+              texto en el verde de precio, no un botón. */}
+          <span className="inline-flex items-center gap-2 rounded-full border border-precio/35 bg-precio/10 px-3.5 py-1.5 text-xs font-semibold text-precio-sello">
             <span className="h-1.5 w-1.5 rounded-full bg-precio" aria-hidden="true" />
             Entrega inmediata en Managua
           </span>
 
-          {/* Sin <br>: con el salto forzado, "Tecnología para tu casa" no
-              entraba en una línea (ni en el celular ni en la columna del
-              hero) y "casa" quedaba sola. text-balance reparte el título en
-              dos líneas parejas. */}
-          <h1 className="mt-6 text-balance text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl xl:text-6xl">
+          {/* El titular de dos líneas de la marca: la primera en blanco y el
+              remate en degradado (Regla del Remate, DESIGN.md), en la escala
+              display. text-balance reparte la primera línea si no entra. */}
+          <h1 className="mt-6 text-balance text-display">
             Tecnología para tu casa{" "}
-            <span className="text-acento">y tu negocio</span>
+            {/* w-fit: el degradado se reparte en el ancho de la caja; con
+                block a secas ocupaba toda la columna y no llegaba al azul. */}
+            <span className="block w-fit text-marca">y tu negocio</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-suave">
@@ -142,7 +146,9 @@ function Hero({
             </Link>
             <EnlaceWhatsApp
               href={linkWhatsApp(CONTACTO.whatsapp)}
-              className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie px-6 py-3.5 text-sm font-semibold text-texto transition hover:border-precio hover:text-precio"
+              // El secundario de todo el sitio: borde y texto, sin relleno, y
+              // acento en hover (también el de WhatsApp: el verde es del precio).
+              className="inline-flex items-center gap-2 rounded-full border border-borde2 px-6 py-3.5 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
             >
               <IconoWhatsApp className="h-4 w-4" />
               Hablar con un asesor
@@ -150,7 +156,11 @@ function Hero({
           </div>
         </div>
 
-        {vitrina.length > 0 && <Vitrina productos={vitrina} tasa={tasa} />}
+        {vitrina.length > 0 && (
+          <Escenario dial="escritorio">
+            <Vitrina productos={vitrina} tasa={tasa} />
+          </Escenario>
+        )}
       </div>
     </section>
   );
@@ -269,7 +279,7 @@ function Categorias({
 }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16">
-      <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+      <h2 className="text-seccion">
         Qué estás buscando
       </h2>
       {/* Dos columnas desde el celular: eran tarjetas de solo texto, una por
@@ -338,7 +348,7 @@ function Destacados({
     <section className="border-y border-borde bg-superficie/40">
       <div className="mx-auto max-w-6xl px-4 py-16">
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 className="text-seccion">
             Lo más pedido
           </h2>
           <Link
@@ -381,11 +391,14 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
     <section id="financiamiento" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16">
       <div className="grid gap-10 rounded-3xl border border-precio/20 bg-precio/5 p-8 lg:grid-cols-2 lg:p-12">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-precio">
+          {/* Eyebrow de los afiches, en gris: el verde queda para precios
+              y para el 0%. */}
+          <p className="eyebrow text-tenue">
             Financiamiento {FINANCIAMIENTO.banco}
           </p>
-          <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
-            Llevalo hoy y pagalo en cuotas
+          <h2 className="mt-3 text-seccion">
+            Llevalo hoy{" "}
+            <span className="block w-fit text-marca">y pagalo en cuotas</span>
           </h2>
           <p className="mt-4 leading-relaxed text-texto">
             Pagalo en {plazos.join(" o ")} cuotas mensuales, sin prima y sin cargos
@@ -415,7 +428,7 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
         <ol className="space-y-4">
           {pasos.map((paso, i) => (
             <li key={paso} className="flex items-start gap-3">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-precio/15 text-xs font-bold text-precio">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-precio/15 text-xs font-bold text-precio-sello">
                 {i + 1}
               </span>
               <span className="pt-0.5 text-sm leading-relaxed text-texto">
@@ -441,7 +454,7 @@ function Ubicacion() {
     <section id="ubicacion" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16">
       <div className="grid gap-10 lg:grid-cols-2">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 className="text-seccion">
             Visitanos
           </h2>
           <p className="mt-4 flex items-start gap-2 leading-relaxed text-texto">

@@ -1,30 +1,53 @@
-import Image from "next/image";
 import Link from "next/link";
 import { CATEGORIAS, CONTACTO, GARANTIA_MESES, HORARIO, REDES, SITE } from "@/config/site";
 import { lineaHorario, linkWhatsApp } from "@/lib/format";
 import { EnlaceConversion } from "./EnlaceConversion";
 import { EnlaceWhatsApp } from "./EnlaceWhatsApp";
+import { LogoPanda } from "./LogoPanda";
 import { CONVERSIONES } from "@/lib/gtag";
 import { ICONOS_RED, IconoReloj, IconoUbicacion, IconoWhatsApp } from "./iconos";
 
 export function Footer() {
   return (
     <footer className="mt-20 border-t border-borde bg-fondo">
+      {/* La firma de cierre de todos los afiches: logo y lugar a la
+          izquierda, el WhatsApp con el número grande a la derecha. El número
+          va dentro de EnlaceWhatsApp, así que la conversión se mide igual. */}
+      <div className="mx-auto max-w-6xl px-4 pt-12">
+        <div className="flex flex-col gap-5 rounded-3xl border border-borde bg-superficie p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div className="flex items-center gap-3">
+            <LogoPanda className="h-12" sizes="56px" carga="lazy" />
+            <div>
+              <p className="text-xl font-bold tracking-tight">
+                panda<span className="text-marca">store</span>
+              </p>
+              <p className="mt-0.5 flex items-center gap-1.5 text-sm text-suave">
+                <IconoUbicacion className="h-4 w-4 shrink-0" />
+                {/* "Colectivo Dreamy · Managua", como en los afiches. */}
+                {CONTACTO.direccion.split(",")[0]} · Managua
+              </p>
+            </div>
+          </div>
+          <EnlaceWhatsApp
+            href={linkWhatsApp(CONTACTO.whatsapp)}
+            className="group flex items-center gap-3 rounded-2xl"
+          >
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-marca text-white">
+              <IconoWhatsApp className="h-6 w-6" />
+            </span>
+            <span>
+              <span className="block text-sm text-suave">Escribinos por WhatsApp</span>
+              <span className="block text-3xl font-extrabold tracking-tight tabular-nums text-texto transition group-hover:text-acento">
+                {CONTACTO.whatsappVisible.replace(/^\+505\s*/, "")}
+              </span>
+            </span>
+          </EnlaceWhatsApp>
+        </div>
+      </div>
+
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <div className="flex items-center gap-2">
-            <Image
-              src="/logo.png"
-              alt=""
-              width={34}
-              height={32}
-              className="h-8 w-auto shrink-0"
-            />
-            <span className="font-bold">
-              panda<span className="text-marca">store</span>
-            </span>
-          </div>
-          <p className="mt-3 text-sm leading-relaxed text-suave">
+          <p className="text-sm leading-relaxed text-suave">
             {SITE.tagline}. Pagá en cuotas, garantía de {GARANTIA_MESES} meses y
             entrega inmediata.
           </p>
@@ -140,8 +163,10 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-borde/70 px-4 py-6">
-        <p className="mx-auto max-w-6xl text-xs text-tenue">
+      {/* El px-4 va en el <p>, como en las grillas de arriba: en el div,
+          a 1440 el texto quedaba 16px a la izquierda de las columnas. */}
+      <div className="border-t border-borde/70 py-6">
+        <p className="mx-auto max-w-6xl px-4 text-xs text-tenue">
           © {new Date().getFullYear()} {SITE.nombre}. Precios sujetos a cambio sin
           previo aviso. Las imágenes son de carácter ilustrativo.
         </p>

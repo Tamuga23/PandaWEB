@@ -147,7 +147,7 @@ export function CatalogoCliente({
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Buscar por nombre o código…"
               aria-label="Buscar productos"
-              className="w-full rounded-xl border border-borde bg-superficie py-3 pl-10 pr-4 text-sm text-texto placeholder:text-tenue focus:border-acento focus:outline-none"
+              className="w-full rounded-xl border border-borde bg-superficie py-3 pl-10 pr-4 text-sm text-texto placeholder:text-tenue focus:border-acento"
             />
           </div>
 
@@ -155,7 +155,7 @@ export function CatalogoCliente({
             value={orden}
             onChange={(e) => setOrden(e.target.value as Orden)}
             aria-label="Ordenar productos"
-            className="rounded-xl border border-borde bg-superficie px-4 py-3 text-sm text-texto focus:border-acento focus:outline-none"
+            className="rounded-xl border border-borde bg-superficie px-4 py-3 text-sm text-texto focus:border-acento"
           >
             <option value="relevancia">Disponibles primero</option>
             <option value="precio-asc">Menor precio</option>

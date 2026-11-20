@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
 import { EventoVerFicha } from "@/components/EventoVerFicha";
+import { DatosClave, MAX_DATOS_CLAVE } from "@/components/DatosClave";
+import { varianteDe } from "@/components/Escenario";
 import { Galeria } from "@/components/Galeria";
 import { PrecioFicha } from "@/components/Precio";
 import { ProductCard } from "@/components/ProductCard";
@@ -33,7 +35,9 @@ import {
   OPEN_GRAPH_BASE,
   descripcionProducto,
   imagenesPublicas,
+  marcaDe,
   migasJsonLd,
+  prefijoMarca,
   productoJsonLd,
   tituloProducto,
 } from "@/lib/seo";
@@ -118,24 +122,37 @@ export default async function ProductoPage({
   // Filas realmente visibles de la ficha técnica (ordenadas y etiquetadas según
   // la categoría). Se calculan acá para decidir si la sección existe.
   const filasSpecs = filasDeSpecs(producto.categorySlug, producto.specs);
-  // Si el POS no cargó beneficio, la ficha no se queda en blanco justo debajo
-  // del precio: se arma un resumen de una línea con las specs más relevantes.
-  // Esas mismas filas se excluyen de la tabla de abajo — mostrar el mismo
-  // dato dos veces lee como ficha técnica generada, no como una razón para
-  // comprar.
-  const beneficioEsDeSpecs = !producto.beneficio && filasSpecs.length > 0;
+  // Datos clave del afiche (la grilla 2x2 con ícono): las primeras filas de
+  // la ficha técnica, que categorySpecs ya ordena por lo que más vende. Con
+  // menos de dos filas no hay grilla.
+  const datosClave = filasSpecs.length >= 2 ? filasSpecs.slice(0, MAX_DATOS_CLAVE) : [];
+  // Sin grilla ni beneficio del POS, la frase bajo el título se arma con las
+  // specs, como antes. Con grilla no: repetiría los mismos datos.
+  const beneficioEsDeSpecs = !producto.beneficio && datosClave.length === 0 && filasSpecs.length > 0;
   const clavesEnBeneficio = beneficioEsDeSpecs
     ? filasSpecs.slice(0, MAX_SPECS_EN_BENEFICIO).map((f) => f.key)
     : [];
-  const beneficioMostrado = producto.beneficio ?? beneficioDesdeSpecs(filasSpecs);
-  const filasParaTabla = filasSpecs.filter((f) => !clavesEnBeneficio.includes(f.key));
+  const beneficioMostrado =
+    producto.beneficio ?? (beneficioEsDeSpecs ? beneficioDesdeSpecs(filasSpecs) : undefined);
+  // Lo que ya está arriba (grilla o frase) no se repite en la tabla: el mismo
+  // dato dos veces lee como ficha técnica generada.
+  const clavesArriba = [...clavesEnBeneficio, ...datosClave.map((f) => f.key)];
+  const filasParaTabla = filasSpecs.filter((f) => !clavesArriba.includes(f.key));
+  const variante = varianteDe(producto.id);
+  const marca = marcaDe(producto.name);
+  // "Amazfit Active Max": la marca va chica encima del modelo, dentro del
+  // h1, en vez de repetirse en el eyebrow (la categoría ya está en las
+  // migas). Así el modelo, que es lo que se busca, pierde una palabra larga.
+  const partesNombre = prefijoMarca(producto.name);
   const descuentoPct = porcentajeDescuento(producto.precio.lista, producto.precio.actual);
 
   return (
     // El espacio para la barra fija de compra lo reserva el body
     // (globals.css, --reserva-barras): acá dejaba el hueco antes del footer
-    // y la barra seguía tapando el final de la página.
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    // y la barra seguía tapando el final de la página. overflow-x-clip
+    // recorta el dial del escenario, que se sale de la galería a propósito
+    // (clip y no hidden: no rompe el sticky de .galeria-ficha).
+    <div className="mx-auto max-w-6xl overflow-x-clip px-4 py-8">
       <nav aria-label="Ruta de navegación" className="mb-6 flex items-center gap-1.5 text-sm text-tenue">
         <Link href="/catalogo" className="transition hover:text-acento">
           Catálogo
@@ -155,31 +172,54 @@ export default async function ProductoPage({
 
       <div className="grid gap-10 lg:grid-cols-2">
         <div className="galeria-ficha">
+          {/* El escenario de los afiches detrás de la foto principal: brillo
+              y dial en verde o azul según el producto, como alterna el feed. */}
           <Galeria
             media={producto.media}
             nombre={producto.name}
             descuentoPct={descuentoPct}
             categoria={producto.categorySlug}
+            variante={variante}
           />
         </div>
 
         <div>
-          <div className="flex flex-wrap items-center gap-2">
+          {/* El código va en la fila de estado y no debajo del h1: ahí
+              costaba una línea entera y, con el nombre largo, "Lo quiero"
+              quedaba debajo del pliegue a 1366x768. */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <Disponibilidad disponible={producto.disponible} />
             {producto.campania && (
               <span className="rounded-full bg-promo/15 px-3 py-1 text-xs font-semibold text-promo">
                 {producto.campania}
               </span>
             )}
+            {producto.sku && (
+              <span className="text-xs text-tenue">Código {producto.sku}</span>
+            )}
           </div>
 
-          <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-            {producto.name}
-          </h1>
-
-          {producto.sku && (
-            <p className="mt-1.5 text-xs text-tenue">Código {producto.sku}</p>
+          {/* Cabecera de afiche: la marca chica y el modelo enorme. Si el
+              nombre arranca con la marca, va dentro del h1 (su texto sigue
+              siendo el nombre completo, para Google y lectores de pantalla);
+              si no, eyebrow MARCA · CATEGORÍA arriba. El nombre nunca va en
+              degradado (en las piezas tampoco): el remate es para titulares,
+              no para productos. */}
+          {!partesNombre && (marca || categoria) && (
+            <p className="eyebrow mt-4 text-tenue">
+              {[marca, categoria].filter(Boolean).join(" · ")}
+            </p>
           )}
+          <h1 className={`${partesNombre ? "mt-4" : "mt-2"} text-balance text-titular`}>
+            {partesNombre ? (
+              <>
+                <span className="eyebrow mb-2 block text-tenue">{partesNombre.prefijo}</span>{" "}
+                {partesNombre.resto}
+              </>
+            ) : (
+              producto.name
+            )}
+          </h1>
 
           {beneficioMostrado && (
             <p className="mt-4 text-lg leading-relaxed text-texto">
@@ -187,14 +227,22 @@ export default async function ProductoPage({
             </p>
           )}
 
-          <div className="mt-7">
-            <PrecioFicha producto={producto} tasa={tasa} />
-          </div>
+          <DatosClave filas={datosClave} variante={variante} />
 
-          {/* CTA de escritorio. En móvil se usa la barra fija de abajo. */}
-          <div className="mt-7 hidden flex-wrap gap-3 lg:flex">
-            <CtaWhatsApp href={wa} disponible={producto.disponible} />
-            <BotonComparar producto={producto} tasa={tasa} variante="completo" />
+          {/* El CTA de escritorio va entre el precio y el detalle de cuotas:
+              después del recuadro, a 1440x900 "Lo quiero" quedaba debajo del
+              pliegue. En móvil se usa la barra fija de abajo. */}
+          <div className="mt-6">
+            <PrecioFicha
+              producto={producto}
+              tasa={tasa}
+              accion={
+                <div className="mt-5 hidden flex-wrap gap-3 lg:flex">
+                  <CtaWhatsApp href={wa} disponible={producto.disponible} />
+                  <BotonComparar producto={producto} tasa={tasa} variante="completo" />
+                </div>
+              }
+            />
           </div>
 
           {/* En móvil el CTA vive en la barra fija, así que el comparar va acá. */}
@@ -217,13 +265,13 @@ export default async function ProductoPage({
 
           {producto.bullets.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-base font-semibold leading-snug text-texto">
+              <h2 className="text-2xl font-bold tracking-tight text-texto">
                 Por qué te sirve
               </h2>
               <ul className="mt-3 space-y-2.5">
                 {producto.bullets.map((b, i) => (
-                  <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-texto">
-                    <IconoCheck className="mt-0.5 h-4 w-4 shrink-0 text-acento" />
+                  <li key={i} className="flex gap-2.5 text-base leading-relaxed text-texto">
+                    <IconoCheck className="mt-1 h-4 w-4 shrink-0 text-precio" />
                     <span>
                       {b.etiqueta && (
                         <span className="mr-1.5 font-semibold uppercase tracking-wide text-suave">
@@ -240,7 +288,7 @@ export default async function ProductoPage({
 
           {producto.description && (
             <section className="mt-8">
-              <h2 className="text-base font-semibold leading-snug text-texto">
+              <h2 className="text-2xl font-bold tracking-tight text-texto">
                 Descripción
               </h2>
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-texto">
@@ -255,14 +303,14 @@ export default async function ProductoPage({
               reales para no mostrar un título sobre una tabla en blanco. */}
           {filasParaTabla.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-base font-semibold leading-snug text-texto">
+              <h2 className="text-2xl font-bold tracking-tight text-texto">
                 Especificaciones
               </h2>
               <div className="mt-3">
                 <TablaSpecs
                   specs={producto.specs ?? {}}
                   categorySlug={producto.categorySlug}
-                  omitirClaves={clavesEnBeneficio}
+                  omitirClaves={clavesArriba}
                 />
               </div>
             </section>
@@ -272,7 +320,7 @@ export default async function ProductoPage({
 
       {relacionados.length > 0 && (
         <section className="mt-16">
-          <h2 className="text-xl font-bold tracking-tight">
+          <h2 className="text-2xl font-bold tracking-tight">
             También te puede servir
           </h2>
           <div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -306,7 +354,7 @@ export default async function ProductoPage({
 
       {/* Producto con su oferta (precio y disponibilidad en el resultado de
           Google) y las mismas migas que se ven arriba. */}
-      <JsonLd datos={productoJsonLd(producto, tasa, beneficioMostrado)} />
+      <JsonLd datos={productoJsonLd(producto, tasa, beneficioMostrado ?? beneficioDesdeSpecs(filasSpecs))} />
       <JsonLd datos={migasJsonLd(producto)} />
       <EventoVerFicha sku={producto.sku} />
     </div>
@@ -318,7 +366,7 @@ function Disponibilidad({ disponible }: { disponible: boolean }) {
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
         disponible
-          ? "bg-precio/10 text-precio"
+          ? "bg-precio/10 text-precio-sello"
           : "bg-agotado/10 text-agotado"
       }`}
     >

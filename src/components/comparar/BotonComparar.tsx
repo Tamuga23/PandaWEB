@@ -50,7 +50,11 @@ export function BotonComparar({
       className={`relative z-20 inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition after:absolute after:-inset-3 after:content-[''] ${
         activo
           ? "border-acento/40 bg-acento/15 text-acento"
-          : "border-borde bg-superficie2 text-tenue hover:border-borde2 hover:text-texto"
+          : // El mismo secundario que la variante completa (borde y texto,
+            // sin relleno): antes "Comparar" se veía distinto en la tarjeta
+            // y en la ficha, y en claro no llegaba a AA (tenue sobre
+            // superficie2, 4.34:1).
+            "border-borde2 text-texto hover:border-acento hover:text-acento"
       }`}
     >
       <IconoComparar className="h-3.5 w-3.5 shrink-0" />

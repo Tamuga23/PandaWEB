@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { youTubeId } from "@/lib/format";
 import type { Media } from "@/lib/types";
+import { Escenario, type Variante } from "./Escenario";
 import { IconoCategoria } from "./IconoCategoria";
 import { IconoPlay } from "./iconos";
 import { ProductImage } from "./ProductImage";
@@ -20,6 +21,7 @@ export function Galeria({
   nombre,
   descuentoPct,
   categoria,
+  variante,
 }: {
   media: Media;
   nombre: string;
@@ -27,6 +29,8 @@ export function Galeria({
   descuentoPct?: number | null;
   /** Slug de la categoría: sin fotos, la banda muestra su ícono. */
   categoria?: string;
+  /** Con variante, la foto principal va sobre el escenario de los afiches. */
+  variante?: Variante;
 }) {
   const fotos = media.gallery ?? [];
   const videoId = youTubeId(media.videoUrl);
@@ -43,76 +47,83 @@ export function Galeria({
 
   return (
     <div>
-      {/* p-1: el mismo marco de 4px que la tarjeta del catálogo, con la
-          bandeja rounded-xl adentro (16 − 4 = 12, concéntricas). */}
-      <div
-        className={`relative overflow-hidden rounded-2xl border border-borde bg-superficie p-1 ${
-          sinMedia ? "aspect-[3/1] lg:aspect-[2/1]" : "aspect-square"
-        }`}
-      >
-        {/* Mismo patrón que la tarjeta del catálogo (ProductCard): el badge
-            de oferta va sobre la imagen, no compitiendo con el precio en
-            texto — y así el cliente ve la misma señal en el mismo lugar en
-            ambas pantallas. Fuera del condicional de video para que siga
-            visible aunque esté viendo la diapositiva de YouTube. */}
-        {descuentoPct != null && (
-          <span className="absolute right-3 top-3 z-10 rounded-lg bg-marca px-2.5 py-1 text-micro font-black uppercase tracking-wider text-white shadow-md">
-            −{descuentoPct}% Oferta
-          </span>
-        )}
-        {sinMedia ? (
-          // Sin foto no hay blanco de estudio que fundir: va sobre la
-          // superficie, con el ícono de la categoría. La leyenda solo existe
-          // acá: con poca señal, una banda gris con un ícono puede leerse
-          // como una foto que todavía está cargando. text-texto y no
-          // text-suave: en claro, suave sobre superficie2 no llega a AA.
-          <span
-            aria-hidden="true"
-            className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-superficie2 text-tenue"
-          >
-            <IconoCategoria slug={categoria} grosor={1.25} className="h-11 w-11 lg:h-14 lg:w-14" />
-            <span className="text-label font-semibold uppercase tracking-wide text-texto">
-              Sin foto
+      {/* El escenario va solo detrás de la foto principal: envolviendo
+          también las miniaturas, el dial quedaba centrado en la galería
+          entera y no en el producto. */}
+      <EnEscenario variante={variante}>
+        {/* p-1: el mismo marco de 4px que la tarjeta del catálogo, con la
+            bandeja rounded-xl adentro (16 − 4 = 12, concéntricas). La sombra
+            de piso en el color del escenario deja ver su brillo, que la
+            bandeja de la foto tapa casi entero. */}
+        <div
+          className={`relative overflow-hidden rounded-2xl border border-borde bg-superficie p-1 ${
+            sinMedia ? "aspect-[3/1] lg:aspect-[2/1]" : "aspect-square"
+          } ${variante ? "shadow-[0_24px_60px_-20px_var(--escenario-halo)]" : ""}`}
+        >
+          {/* Mismo patrón que la tarjeta del catálogo (ProductCard): el badge
+              de oferta va sobre la imagen, no compitiendo con el precio en
+              texto — y así el cliente ve la misma señal en el mismo lugar en
+              ambas pantallas. Fuera del condicional de video para que siga
+              visible aunque esté viendo la diapositiva de YouTube. */}
+          {descuentoPct != null && (
+            <span className="absolute right-3 top-3 z-10 rounded-lg bg-marca px-2.5 py-1 text-micro font-black uppercase tracking-wider text-white shadow-md">
+              −{descuentoPct}% Oferta
             </span>
-          </span>
-        ) : esVideo ? (
-          <iframe
-            src={`https://www.youtube.com/embed/${videoId}`}
-            title={`Video de ${nombre}`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="absolute inset-0 h-full w-full"
-          />
-        ) : (
-          <>
-            {/* key por URL: ProductImage guarda en su estado si la foto
-                falló, y al cambiar de miniatura la misma instancia seguía
-                con el marcador aunque la foto nueva cargara bien. Las fotos
-                con etiqueta del POS ("Con Luz", "A Oscuras", "Funciones"…)
-                son de escena: van sobre la superficie, no sobre blanco. */}
-            <ProductImage
-              key={foto?.url}
-              src={foto?.url}
-              alt={`${nombre}${foto?.label ? ` — ${foto.label}` : ""}`}
-              // La primera foto es el LCP de la ficha. Las que el cliente
-              // elige después cargan enseguida, sin precarga.
-              carga={indice === 0 ? "lcp" : "inmediata"}
-              // En lg la galería es media columna de max-w-6xl (~540px), no
-              // medio ancho de pantalla: con "50vw", 1920px pedía 960px.
-              sizes="(min-width: 1024px) 540px, 100vw"
-              bandeja="rounded-xl"
-              categoria={categoria}
-              escena={!!foto?.label}
-              leyenda
-            />
-            {foto?.label && (
-              <span className="absolute bottom-4 left-4 rounded-full bg-fondo/85 px-3 py-1.5 text-xs font-medium text-texto ring-1 ring-borde2">
-                {foto.label}
+          )}
+          {sinMedia ? (
+            // Sin foto no hay blanco de estudio que fundir: va sobre la
+            // superficie, con el ícono de la categoría. La leyenda solo existe
+            // acá: con poca señal, una banda gris con un ícono puede leerse
+            // como una foto que todavía está cargando. text-texto y no
+            // text-suave: en claro, suave sobre superficie2 no llega a AA.
+            <span
+              aria-hidden="true"
+              className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-superficie2 text-tenue"
+            >
+              <IconoCategoria slug={categoria} grosor={1.25} className="h-11 w-11 lg:h-14 lg:w-14" />
+              <span className="text-label font-semibold uppercase tracking-wide text-texto">
+                Sin foto
               </span>
-            )}
-          </>
-        )}
-      </div>
+            </span>
+          ) : esVideo ? (
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title={`Video de ${nombre}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 h-full w-full"
+            />
+          ) : (
+            <>
+              {/* key por URL: ProductImage guarda en su estado si la foto
+                  falló, y al cambiar de miniatura la misma instancia seguía
+                  con el marcador aunque la foto nueva cargara bien. Las fotos
+                  con etiqueta del POS ("Con Luz", "A Oscuras", "Funciones"…)
+                  son de escena: van sobre la superficie, no sobre blanco. */}
+              <ProductImage
+                key={foto?.url}
+                src={foto?.url}
+                alt={`${nombre}${foto?.label ? ` — ${foto.label}` : ""}`}
+                // La primera foto es el LCP de la ficha. Las que el cliente
+                // elige después cargan enseguida, sin precarga.
+                carga={indice === 0 ? "lcp" : "inmediata"}
+                // En lg la galería es media columna de max-w-6xl (~540px), no
+                // medio ancho de pantalla: con "50vw", 1920px pedía 960px.
+                sizes="(min-width: 1024px) 540px, 100vw"
+                bandeja="rounded-xl"
+                categoria={categoria}
+                escena={!!foto?.label}
+                leyenda
+              />
+              {foto?.label && (
+                <span className="absolute bottom-4 left-4 rounded-full bg-fondo/85 px-3 py-1.5 text-xs font-medium text-texto ring-1 ring-borde2">
+                  {foto.label}
+                </span>
+              )}
+            </>
+          )}
+        </div>
+      </EnEscenario>
 
       {total > 1 && (
         // Grupo de botones con aria-current, no tablist: la foto grande no es
@@ -180,5 +191,15 @@ export function Galeria({
         </div>
       )}
     </div>
+  );
+}
+
+/** Con variante, el escenario (brillo y dial ceñido); sin ella, nada. */
+function EnEscenario({ variante, children }: { variante?: Variante; children: ReactNode }) {
+  if (!variante) return <>{children}</>;
+  return (
+    <Escenario variante={variante} dialAncho="w-[112%]">
+      {children}
+    </Escenario>
   );
 }
