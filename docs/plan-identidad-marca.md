@@ -75,7 +75,7 @@ SEO local), su kit de assets y el gate/hook Stop.
 
 | # | Fase | Estado |
 |---|------|--------|
-| 1 | Tokens: lienzo azulado, AA del tema claro, text-marca por tema, escala display, theme-color y OG | pendiente |
+| 1 | Tokens: lienzo azulado, AA del tema claro, text-marca por tema, escala display, theme-color y OG | hecho |
 | 2 | Escenario de producto: brillo + dial (CSS/SVG), en hero y galería | pendiente |
 | 3 | Portada: hero (eyebrow, remate, pastilla), vitrina, encabezados de sección, ubicación | pendiente |
 | 4 | Ficha tipo afiche: eyebrow, h1, datos clave 2x2, precio protagonista, fila de garantías | pendiente |

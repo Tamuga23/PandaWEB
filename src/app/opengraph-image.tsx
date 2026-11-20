@@ -15,10 +15,10 @@ export const contentType = "image/png";
 
 // Los colores de DESIGN.md: el fondo casi negro de todo el sitio y el
 // degradado de marca solo en el logotipo, como en el header.
-const FONDO = "#09090b";
+const FONDO = "#090c11";
 const TEXTO = "#fafafa";
-const SUAVE = "#a1a1aa";
-const BORDE = "#27272a";
+const SUAVE = "#a3adba";
+const BORDE = "#1f2a37";
 const MARCA = "linear-gradient(135deg, #10b981, #06b6d4, #0284c7)";
 
 export default async function Image() {
