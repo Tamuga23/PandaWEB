@@ -65,7 +65,8 @@ export function PropuestaValorCompacta({
   // La fila de garantías de los afiches ("✓ Cuotas con Banpro ✓ Garantía 3
   // meses"): antes eran cuatro cajitas con ícono que competían con el precio.
   return (
-    <ul aria-label="Lo que incluye tu compra" className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+    // 2x2 parejo: con flex-wrap, a 1440 quedaban tres arriba y una sola abajo.
+    <ul aria-label="Lo que incluye tu compra" className="mt-5 grid grid-cols-2 gap-x-5 gap-y-2">
       {items.map(({ titulo }) => (
         <li key={titulo} className="flex items-center gap-2 text-sm font-medium text-texto">
           <IconoCheck className="h-4 w-4 shrink-0 text-precio" />

@@ -192,7 +192,7 @@ export function PrecioTarjeta({
           {sinInteres && (
             <>
               {" "}
-              <span className="whitespace-nowrap rounded-full bg-precio/15 px-1.5 py-0.5 text-micro font-black uppercase tracking-wider text-precio">
+              <span className="whitespace-nowrap rounded-full bg-precio/15 px-1.5 py-0.5 text-micro font-black uppercase tracking-wider text-precio-sello">
                 0%<span className="sr-only"> de interés</span>
               </span>
             </>

@@ -116,7 +116,7 @@ function Hero({
         <div>
           {/* La pastilla de estado de las piezas ("● Disponible"): borde y
               texto en el verde de precio, no un botón. */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-precio/35 bg-precio/10 px-3.5 py-1.5 text-xs font-semibold text-precio">
+          <span className="inline-flex items-center gap-2 rounded-full border border-precio/35 bg-precio/10 px-3.5 py-1.5 text-xs font-semibold text-precio-sello">
             <span className="h-1.5 w-1.5 rounded-full bg-precio" aria-hidden="true" />
             Entrega inmediata en Managua
           </span>
@@ -126,7 +126,9 @@ function Hero({
               display. text-balance reparte la primera línea si no entra. */}
           <h1 className="mt-6 text-balance text-display">
             Tecnología para tu casa{" "}
-            <span className="block text-marca">y tu negocio</span>
+            {/* w-fit: el degradado se reparte en el ancho de la caja; con
+                block a secas ocupaba toda la columna y no llegaba al azul. */}
+            <span className="block w-fit text-marca">y tu negocio</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-suave">
@@ -387,12 +389,14 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
     <section id="financiamiento" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-16">
       <div className="grid gap-10 rounded-3xl border border-precio/20 bg-precio/5 p-8 lg:grid-cols-2 lg:p-12">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-precio">
+          {/* Eyebrow de los afiches, en gris: el verde queda para precios
+              y para el 0%. */}
+          <p className="eyebrow text-tenue">
             Financiamiento {FINANCIAMIENTO.banco}
           </p>
           <h2 className="mt-3 text-seccion">
             Llevalo hoy{" "}
-            <span className="block text-marca">y pagalo en cuotas</span>
+            <span className="block w-fit text-marca">y pagalo en cuotas</span>
           </h2>
           <p className="mt-4 leading-relaxed text-texto">
             Pagalo en {plazos.join(" o ")} cuotas mensuales, sin prima y sin cargos
@@ -422,7 +426,7 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
         <ol className="space-y-4">
           {pasos.map((paso, i) => (
             <li key={paso} className="flex items-start gap-3">
-              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-precio/15 text-xs font-bold text-precio">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-precio/15 text-xs font-bold text-precio-sello">
                 {i + 1}
               </span>
               <span className="pt-0.5 text-sm leading-relaxed text-texto">
@@ -487,7 +491,7 @@ function Ubicacion() {
               gtag={CONVERSIONES.comoLlegar}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-borde2 px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
+              className="rounded-full border border-borde2 bg-superficie px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
             >
               Cómo llegar
             </EnlaceConversion>
@@ -501,7 +505,7 @@ function Ubicacion() {
             <EnlaceConversion
               href={`tel:+${CONTACTO.whatsapp}`}
               gtag={CONVERSIONES.llamada}
-              className="rounded-full border border-borde2 px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
+              className="rounded-full border border-borde2 bg-superficie px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
             >
               Llamar
             </EnlaceConversion>

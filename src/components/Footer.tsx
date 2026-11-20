@@ -163,8 +163,10 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-borde/70 px-4 py-6">
-        <p className="mx-auto max-w-6xl text-xs text-tenue">
+      {/* El px-4 va en el <p>, como en las grillas de arriba: en el div,
+          a 1440 el texto quedaba 16px a la izquierda de las columnas. */}
+      <div className="border-t border-borde/70 py-6">
+        <p className="mx-auto max-w-6xl px-4 text-xs text-tenue">
           © {new Date().getFullYear()} {SITE.nombre}. Precios sujetos a cambio sin
           previo aviso. Las imágenes son de carácter ilustrativo.
         </p>

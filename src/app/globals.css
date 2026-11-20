@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* La documentación cita clases como ejemplo ("sin focus:outline-none"), y
+   Tailwind las generaba igual: CSS que nadie usa y que confundía las
+   auditorías de foco. */
+@source not "../../docs";
+@source not "../../*.md";
+
 /* ---------------------------------------------------------------------------
    Sistema de diseño de Panda Store.
 
@@ -28,6 +34,7 @@
 
   --color-acento: var(--acento);
   --color-precio: var(--precio);
+  --color-precio-sello: var(--precio-sello);
   --color-agotado: var(--agotado);
   --color-promo: var(--promo);
 
@@ -64,6 +71,9 @@
 
   --acento: #22d3ee; /* cyan-400 — más legible sobre fondo oscuro */
   --precio: #34d399; /* emerald-400 */
+  /* Texto verde sobre tinte verde (pastillas de estado, sello 0% de la
+     tarjeta, pasos numerados). En oscuro el mismo verde ya pasa AA. */
+  --precio-sello: var(--precio);
   --agotado: #fb7185; /* rose-400 */
   --promo: #fbbf24; /* amber-400 */
 
@@ -112,20 +122,27 @@
   --borde2: #cbd5e1; /* slate-300 */
 
   --texto: #0f172a; /* slate-900 */
-  --suave: #64748b; /* slate-500 */
-  /* slate-400 (#94a3b8) medía ~2.56:1 contra el fondo blanco — falla feo.
-     bg-fondo claro (#f8fafc) es tan brillante que el mínimo real que
-     alcanza 4.5:1 ahí es slate-500, el mismo tono que --suave: no hay
-     margen para un tercer nivel más claro y que siga pasando AA en este
-     tema. Mejor compartir el tono que fallar contraste. */
-  --tenue: #64748b; /* slate-500, igual que --suave — ver nota arriba */
+  /* Un solo gris secundario en claro, un poco más oscuro que slate-500:
+     #64748b daba 4.34:1 sobre --superficie2 ("Comparar", el contador de las
+     categorías) y no llegaba a AA en texto chico. #5b6779 da 5.24:1 sobre
+     --superficie2, 5.48:1 sobre --fondo y 5.1:1 sobre la caja teñida de
+     cuotas. slate-400 (#94a3b8) medía ~2.56:1: no hay margen para un tercer
+     nivel más claro que siga pasando AA en este tema, así que --suave y
+     --tenue comparten el tono. */
+  --suave: #5b6779;
+  --tenue: #5b6779;
 
   /* Los acentos se oscurecen en claro: el cyan-400 sobre blanco no cumple
      contraste suficiente para texto. Los tonos 600 tampoco alcanzaban en
      texto chico (cyan-600 3.5:1, emerald-600 3.6:1, amber-600 3.2:1 sobre
-     --fondo): los 700 pasan AA (5.1, 5.2 y 5.0:1). */
+     --fondo): los 700 pasan AA (5.1, 5.2 y 4.8:1 sobre --fondo; el ámbar da
+     5.0:1 sobre --superficie). */
   --acento: #0e7490; /* cyan-700 */
   --precio: #047857; /* emerald-700 */
+  /* Sobre el tinte verde (precio/10-15) el emerald-700 quedaba entre 4.3 y
+     4.5:1; emerald-800 da ~5.4:1 en la pastilla. Los precios siguen en
+     --precio. */
+  --precio-sello: #065f46; /* emerald-800 */
   --agotado: #e11d48; /* rose-600 */
   --promo: #b45309; /* amber-700 */
 
