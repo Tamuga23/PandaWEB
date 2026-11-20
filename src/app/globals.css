@@ -324,6 +324,37 @@
   text-transform: uppercase;
 }
 
+/* Escenario de producto: el brillo de los afiches (un radial de un solo tono,
+   verde o azul según la variante) sobre una trama de 48px que se apaga hacia
+   los bordes. Excepción con nombre a "nada de gradientes de fondo" de
+   DESIGN.md: solo detrás del producto protagonista (vitrina del hero y
+   galería de la ficha), nunca detrás de texto. Sin filter: blur ni
+   imágenes: un ::before pintado una vez. El dial lo pone el componente
+   Escenario. Quien lo use recorta el desborde con overflow-x-clip en un
+   ancestro (clip, no hidden: no rompe el sticky de la galería). */
+@utility escenario {
+  position: relative;
+  isolation: isolate;
+  --escenario-halo: var(--halo-verde);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -10% -8%;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 48% at 50% 56%, var(--escenario-halo), transparent 72%),
+      linear-gradient(var(--trama) 1px, transparent 1px) 0 0 / 48px 48px,
+      linear-gradient(90deg, var(--trama) 1px, transparent 1px) 0 0 / 48px 48px;
+    mask-image: radial-gradient(ellipse 62% 56% at 50% 50%, #000 38%, transparent 78%);
+  }
+}
+
+@utility escenario-azul {
+  --escenario-halo: var(--halo-azul);
+}
+
 /* ---------------------------------------------------------------------------
    Base
 --------------------------------------------------------------------------- */

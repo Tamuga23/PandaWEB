@@ -3,6 +3,7 @@ import Link from "next/link";
 import { EnlaceConversion } from "@/components/EnlaceConversion";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
+import { Escenario } from "@/components/Escenario";
 import { IconoCategoria, colorDeMarca } from "@/components/IconoCategoria";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductImage } from "@/components/ProductImage";
@@ -106,25 +107,26 @@ function Hero({
 }) {
   const plazoMaximo = Math.max(...config.plazos);
 
-  // Antes era texto centrado sobre un resplandor cyan, sin ningún producto:
-  // en el celular la primera foto aparecía recién después de dos pantallas.
-  // Ahora la profundidad la dan los productos reales, no un degradado.
+  // La profundidad la dan los productos reales sobre el escenario de los
+  // afiches (brillo y dial detrás de la vitrina, nunca detrás del texto).
+  // overflow-x-clip recorta el dial, que se sale de la vitrina a propósito.
   return (
-    <section className="border-b border-borde">
+    <section className="overflow-x-clip border-b border-borde">
       <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 sm:py-16 lg:grid-cols-2 lg:gap-12 lg:py-20">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie/60 px-4 py-1.5 text-xs font-medium text-texto">
+          {/* La pastilla de estado de las piezas ("● Disponible"): borde y
+              texto en el verde de precio, no un botón. */}
+          <span className="inline-flex items-center gap-2 rounded-full border border-precio/35 bg-precio/10 px-3.5 py-1.5 text-xs font-semibold text-precio">
             <span className="h-1.5 w-1.5 rounded-full bg-precio" aria-hidden="true" />
             Entrega inmediata en Managua
           </span>
 
-          {/* Sin <br>: con el salto forzado, "Tecnología para tu casa" no
-              entraba en una línea (ni en el celular ni en la columna del
-              hero) y "casa" quedaba sola. text-balance reparte el título en
-              dos líneas parejas. */}
-          <h1 className="mt-6 text-balance text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl xl:text-6xl">
+          {/* El titular de dos líneas de la marca: la primera en blanco y el
+              remate en degradado (Regla del Remate, DESIGN.md), en la escala
+              display. text-balance reparte la primera línea si no entra. */}
+          <h1 className="mt-6 text-balance text-display">
             Tecnología para tu casa{" "}
-            <span className="text-acento">y tu negocio</span>
+            <span className="block text-marca">y tu negocio</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-suave">
@@ -150,7 +152,11 @@ function Hero({
           </div>
         </div>
 
-        {vitrina.length > 0 && <Vitrina productos={vitrina} tasa={tasa} />}
+        {vitrina.length > 0 && (
+          <Escenario dial="escritorio">
+            <Vitrina productos={vitrina} tasa={tasa} />
+          </Escenario>
+        )}
       </div>
     </section>
   );

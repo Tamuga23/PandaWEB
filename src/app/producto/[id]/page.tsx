@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
 import { EventoVerFicha } from "@/components/EventoVerFicha";
+import { Escenario, varianteDe } from "@/components/Escenario";
 import { Galeria } from "@/components/Galeria";
 import { PrecioFicha } from "@/components/Precio";
 import { ProductCard } from "@/components/ProductCard";
@@ -134,8 +135,10 @@ export default async function ProductoPage({
   return (
     // El espacio para la barra fija de compra lo reserva el body
     // (globals.css, --reserva-barras): acá dejaba el hueco antes del footer
-    // y la barra seguía tapando el final de la página.
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    // y la barra seguía tapando el final de la página. overflow-x-clip
+    // recorta el dial del escenario, que se sale de la galería a propósito
+    // (clip y no hidden: no rompe el sticky de .galeria-ficha).
+    <div className="mx-auto max-w-6xl overflow-x-clip px-4 py-8">
       <nav aria-label="Ruta de navegación" className="mb-6 flex items-center gap-1.5 text-sm text-tenue">
         <Link href="/catalogo" className="transition hover:text-acento">
           Catálogo
@@ -155,12 +158,16 @@ export default async function ProductoPage({
 
       <div className="grid gap-10 lg:grid-cols-2">
         <div className="galeria-ficha">
-          <Galeria
-            media={producto.media}
-            nombre={producto.name}
-            descuentoPct={descuentoPct}
-            categoria={producto.categorySlug}
-          />
+          {/* El escenario de los afiches detrás del producto: brillo y dial
+              en verde o azul según el producto, como alterna el feed. */}
+          <Escenario variante={varianteDe(producto.id)}>
+            <Galeria
+              media={producto.media}
+              nombre={producto.name}
+              descuentoPct={descuentoPct}
+              categoria={producto.categorySlug}
+            />
+          </Escenario>
         </div>
 
         <div>
