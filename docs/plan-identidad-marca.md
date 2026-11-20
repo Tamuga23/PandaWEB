@@ -78,7 +78,7 @@ SEO local), su kit de assets y el gate/hook Stop.
 | 1 | Tokens: lienzo azulado, AA del tema claro, text-marca por tema, escala display, theme-color y OG | hecho |
 | 2 | Escenario de producto: brillo + dial (CSS/SVG), en hero y galería | hecho |
 | 3 | Portada: hero (eyebrow, remate, pastilla), vitrina, encabezados de sección, ubicación | en curso (hero hecho) |
-| 4 | Ficha tipo afiche: eyebrow, h1, datos clave 2x2, precio protagonista, fila de garantías | pendiente |
+| 4 | Ficha tipo afiche: eyebrow, h1, datos clave 2x2, precio protagonista, fila de garantías | hecho |
 | 5 | Catálogo y tarjeta: jerarquía, precio, foco visible en filtros | pendiente |
 | 6 | Firma de marca en el footer, skip link, áreas táctiles | pendiente |
 | 7 | QA: verificadores de Taste, checklist de UI UX Pro Max, AA en ambos temas, regresión funcional | pendiente |

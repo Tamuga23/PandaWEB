@@ -1,6 +1,6 @@
 import { FINANCIAMIENTO } from "@/config/site";
 import { planMasBajo, todosSinInteres } from "@/lib/financiamiento";
-import { cordobas } from "@/lib/format";
+import { cordobas, cordobasNumero } from "@/lib/format";
 import type { Producto } from "@/lib/types";
 
 /**
@@ -35,13 +35,24 @@ export function PrecioFicha({
           es la Regla de DESIGN.md ("siempre sobre imagen, nunca en línea de
           texto"), y ya es donde vive en la tarjeta del catálogo. */}
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span
-          className={`font-bold tracking-tight ${
-            disponible ? "text-4xl text-precio" : "text-2xl text-tenue"
-          }`}
-        >
-          {cordobas(actual, tasa)}
-        </span>
+        {disponible && actual != null ? (
+          // La cifra protagonista de los afiches: enorme, verde, con el "C$"
+          // chico arriba. La escala cifra es siempre más chica que el h1 de
+          // la ficha (el precio no le gana al nombre). Son dos spans
+          // seguidos, así que el lector de pantalla sigue diciendo "C$7,270".
+          <span className="inline-flex items-start text-cifra tabular-nums text-precio">
+            <span className="mr-0.5 mt-[0.16em] text-[0.46em] leading-none">C$</span>
+            {cordobasNumero(actual, tasa).toLocaleString("es-NI")}
+          </span>
+        ) : (
+          <span
+            className={`font-bold tracking-tight ${
+              disponible ? "text-4xl text-precio" : "text-2xl text-tenue"
+            }`}
+          >
+            {cordobas(actual, tasa)}
+          </span>
+        )}
         {lista != null && (
           <span className="text-lg text-tenue line-through">
             <span className="sr-only">Antes: </span>

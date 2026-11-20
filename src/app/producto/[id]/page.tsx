@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
 import { EventoVerFicha } from "@/components/EventoVerFicha";
+import { DatosClave, MAX_DATOS_CLAVE } from "@/components/DatosClave";
 import { Escenario, varianteDe } from "@/components/Escenario";
 import { Galeria } from "@/components/Galeria";
 import { PrecioFicha } from "@/components/Precio";
@@ -34,6 +35,7 @@ import {
   OPEN_GRAPH_BASE,
   descripcionProducto,
   imagenesPublicas,
+  marcaDe,
   migasJsonLd,
   productoJsonLd,
   tituloProducto,
@@ -119,17 +121,24 @@ export default async function ProductoPage({
   // Filas realmente visibles de la ficha técnica (ordenadas y etiquetadas según
   // la categoría). Se calculan acá para decidir si la sección existe.
   const filasSpecs = filasDeSpecs(producto.categorySlug, producto.specs);
-  // Si el POS no cargó beneficio, la ficha no se queda en blanco justo debajo
-  // del precio: se arma un resumen de una línea con las specs más relevantes.
-  // Esas mismas filas se excluyen de la tabla de abajo — mostrar el mismo
-  // dato dos veces lee como ficha técnica generada, no como una razón para
-  // comprar.
-  const beneficioEsDeSpecs = !producto.beneficio && filasSpecs.length > 0;
+  // Datos clave del afiche (la grilla 2x2 con ícono): las primeras filas de
+  // la ficha técnica, que categorySpecs ya ordena por lo que más vende. Con
+  // menos de dos filas no hay grilla.
+  const datosClave = filasSpecs.length >= 2 ? filasSpecs.slice(0, MAX_DATOS_CLAVE) : [];
+  // Sin grilla ni beneficio del POS, la frase bajo el título se arma con las
+  // specs, como antes. Con grilla no: repetiría los mismos datos.
+  const beneficioEsDeSpecs = !producto.beneficio && datosClave.length === 0 && filasSpecs.length > 0;
   const clavesEnBeneficio = beneficioEsDeSpecs
     ? filasSpecs.slice(0, MAX_SPECS_EN_BENEFICIO).map((f) => f.key)
     : [];
-  const beneficioMostrado = producto.beneficio ?? beneficioDesdeSpecs(filasSpecs);
-  const filasParaTabla = filasSpecs.filter((f) => !clavesEnBeneficio.includes(f.key));
+  const beneficioMostrado =
+    producto.beneficio ?? (beneficioEsDeSpecs ? beneficioDesdeSpecs(filasSpecs) : undefined);
+  // Lo que ya está arriba (grilla o frase) no se repite en la tabla: el mismo
+  // dato dos veces lee como ficha técnica generada.
+  const clavesArriba = [...clavesEnBeneficio, ...datosClave.map((f) => f.key)];
+  const filasParaTabla = filasSpecs.filter((f) => !clavesArriba.includes(f.key));
+  const variante = varianteDe(producto.id);
+  const marca = marcaDe(producto.name);
   const descuentoPct = porcentajeDescuento(producto.precio.lista, producto.precio.actual);
 
   return (
@@ -160,7 +169,7 @@ export default async function ProductoPage({
         <div className="galeria-ficha">
           {/* El escenario de los afiches detrás del producto: brillo y dial
               en verde o azul según el producto, como alterna el feed. */}
-          <Escenario variante={varianteDe(producto.id)}>
+          <Escenario variante={variante}>
             <Galeria
               media={producto.media}
               nombre={producto.name}
@@ -180,12 +189,18 @@ export default async function ProductoPage({
             )}
           </div>
 
-          <h1 className="mt-3 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-            {producto.name}
-          </h1>
+          {/* Cabecera de afiche: eyebrow MARCA · CATEGORÍA y el nombre del
+              modelo enorme. El nombre nunca va en degradado (en las piezas
+              tampoco): el remate es para titulares, no para productos. */}
+          {(marca || categoria) && (
+            <p className="eyebrow mt-4 text-tenue">
+              {[marca, categoria].filter(Boolean).join(" · ")}
+            </p>
+          )}
+          <h1 className="mt-2 text-balance text-titular">{producto.name}</h1>
 
           {producto.sku && (
-            <p className="mt-1.5 text-xs text-tenue">Código {producto.sku}</p>
+            <p className="mt-2 text-xs text-tenue">Código {producto.sku}</p>
           )}
 
           {beneficioMostrado && (
@@ -193,6 +208,8 @@ export default async function ProductoPage({
               {beneficioMostrado}
             </p>
           )}
+
+          <DatosClave filas={datosClave} variante={variante} />
 
           <div className="mt-7">
             <PrecioFicha producto={producto} tasa={tasa} />
@@ -224,13 +241,13 @@ export default async function ProductoPage({
 
           {producto.bullets.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-base font-semibold leading-snug text-texto">
+              <h2 className="text-lg font-bold tracking-tight text-texto">
                 Por qué te sirve
               </h2>
               <ul className="mt-3 space-y-2.5">
                 {producto.bullets.map((b, i) => (
-                  <li key={i} className="flex gap-2.5 text-sm leading-relaxed text-texto">
-                    <IconoCheck className="mt-0.5 h-4 w-4 shrink-0 text-acento" />
+                  <li key={i} className="flex gap-2.5 text-base leading-relaxed text-texto">
+                    <IconoCheck className="mt-1 h-4 w-4 shrink-0 text-precio" />
                     <span>
                       {b.etiqueta && (
                         <span className="mr-1.5 font-semibold uppercase tracking-wide text-suave">
@@ -247,7 +264,7 @@ export default async function ProductoPage({
 
           {producto.description && (
             <section className="mt-8">
-              <h2 className="text-base font-semibold leading-snug text-texto">
+              <h2 className="text-lg font-bold tracking-tight text-texto">
                 Descripción
               </h2>
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-texto">
@@ -262,14 +279,14 @@ export default async function ProductoPage({
               reales para no mostrar un título sobre una tabla en blanco. */}
           {filasParaTabla.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-base font-semibold leading-snug text-texto">
+              <h2 className="text-lg font-bold tracking-tight text-texto">
                 Especificaciones
               </h2>
               <div className="mt-3">
                 <TablaSpecs
                   specs={producto.specs ?? {}}
                   categorySlug={producto.categorySlug}
-                  omitirClaves={clavesEnBeneficio}
+                  omitirClaves={clavesArriba}
                 />
               </div>
             </section>
@@ -313,7 +330,7 @@ export default async function ProductoPage({
 
       {/* Producto con su oferta (precio y disponibilidad en el resultado de
           Google) y las mismas migas que se ven arriba. */}
-      <JsonLd datos={productoJsonLd(producto, tasa, beneficioMostrado)} />
+      <JsonLd datos={productoJsonLd(producto, tasa, beneficioMostrado ?? beneficioDesdeSpecs(filasSpecs))} />
       <JsonLd datos={migasJsonLd(producto)} />
       <EventoVerFicha sku={producto.sku} />
     </div>
