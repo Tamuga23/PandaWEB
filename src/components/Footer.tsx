@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { CATEGORIAS, CONTACTO, GARANTIA_MESES, HORARIO, REDES, SITE } from "@/config/site";
 import { lineaHorario, linkWhatsApp } from "@/lib/format";
 import { EnlaceConversion } from "./EnlaceConversion";
 import { EnlaceWhatsApp } from "./EnlaceWhatsApp";
+import { LogoPanda } from "./LogoPanda";
 import { CONVERSIONES } from "@/lib/gtag";
 import { ICONOS_RED, IconoReloj, IconoUbicacion, IconoWhatsApp } from "./iconos";
 
@@ -16,9 +16,7 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 pt-12">
         <div className="flex flex-col gap-5 rounded-3xl border border-borde bg-superficie p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
           <div className="flex items-center gap-3">
-            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-borde2 bg-fondo">
-              <Image src="/logo.png" alt="" width={40} height={38} className="h-9 w-auto" />
-            </span>
+            <LogoPanda className="h-12" sizes="56px" carga="lazy" />
             <div>
               <p className="text-xl font-bold tracking-tight">
                 panda<span className="text-marca">store</span>

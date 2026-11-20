@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { CONTACTO, SITE } from "@/config/site";
 import { linkWhatsApp } from "@/lib/format";
 import { EnlaceWhatsApp } from "./EnlaceWhatsApp";
+import { LogoPanda } from "./LogoPanda";
 import { BotonTema } from "./tema/BotonTema";
 import { IconoWhatsApp } from "./iconos";
 
@@ -15,22 +15,10 @@ export function Header() {
           className="flex shrink-0 items-center gap-2 py-1"
           aria-label={`${SITE.nombre} — inicio`}
         >
-          {/* El ícono ya trae sus esquinas redondeadas y el borde degradado
-              horneados, así que no lleva fondo ni recorte del lado del CSS.
-              Es un PNG y no el SVG original: ese pesa 1.4 MB porque Canva le
-              embebió mapas de bits, y a este tamaño se ve idéntico. */}
-          <Image
-            src="/logo.png"
-            alt=""
-            width={38}
-            height={36}
-            // Sin precarga: está arriba en todas las páginas pero nunca es el
-            // LCP. eager + low (ver ProductImage): se pide al leer el HTML y
-            // React no lo precarga por su cuenta.
-            loading="eager"
-            fetchPriority="low"
-            className="h-9 w-auto shrink-0"
-          />
+          {/* El panda solo, sin baldosa: blanco sobre el fondo en oscuro, como
+              en los afiches, y con su tinta en claro (ver LogoPanda). Sin
+              precarga: está arriba en todas las páginas pero nunca es el LCP. */}
+          <LogoPanda className="h-9" sizes="42px" />
           <span className="text-lg font-bold tracking-tight">
             panda<span className="text-marca">store</span>
           </span>

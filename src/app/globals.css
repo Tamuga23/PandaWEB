@@ -359,6 +359,22 @@
   --escenario-halo: var(--halo-azul);
 }
 
+/* Tinta del panda (ver LogoPanda): en claro, orejas, ojos, boca, brazo y un
+   contorno fino, recortados con panda-tinta.png y pintados con el color de
+   texto debajo del panda blanco. En oscuro no lleva nada: lo negro del panda
+   es el fondo, como en los afiches. Sin soporte de máscaras no se pinta: una
+   tinta sin recortar sería justo el rectángulo que se sacó. */
+@supports (mask-image: none) or (-webkit-mask-image: none) {
+  .light .logo-panda::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: var(--texto);
+    -webkit-mask: url("/marca/panda-tinta.png") center / 100% 100% no-repeat;
+    mask: url("/marca/panda-tinta.png") center / 100% 100% no-repeat;
+  }
+}
+
 /* ---------------------------------------------------------------------------
    Base
 --------------------------------------------------------------------------- */

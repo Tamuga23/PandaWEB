@@ -94,11 +94,17 @@ Verificadores de Taste sobre el fixture (portada y ficha del HY450MAX, 1440 y 39
 - Tema claro: --acento #0891b2 (3.5:1), --precio #059669 (3.6:1) y --promo
   #d97706 (3.2:1) fallan AA como texto chico.
 
-## Pendiente del lado de Carlos
+## Lo que respondió Carlos (resuelto)
 
-- Wordmark "pandastore" en SVG (texto en contornos, sin mapas de bits) para
-  reemplazar el texto en Inter del header y el footer.
-- Recortes PNG sin fondo de los productos estrella, si se quiere el escenario sin
-  bandeja blanca (las fotos del POS tienen fondo blanco).
-- Confirmar si la dirección lleva "Mód 2" (aparece en la pieza del Bip 6, no en
-  la web ni en el JSON-LD).
+- **Logo:** no hay SVG. El panda se recortó de la imagen del logo (12.jpg) y va
+  sin baldosa, en dos capas del mismo lienzo (`public/marca/`, componente
+  `LogoPanda`): `panda.png` es solo lo blanco, y en oscuro va solo, como en los
+  afiches; `panda-tinta.png` es la máscara de lo negro del panda (orejas, ojos,
+  boca, brazo) más un contorno fino, que en claro se pinta debajo con
+  `--texto`. El wordmark sigue siendo texto en Inter: nítido a cualquier tamaño
+  y legible para lectores de pantalla. Los íconos de la app (`icon.png`,
+  `apple-icon.png`) conservan la baldosa: un ícono necesita fondo propio.
+- **Fotos sin fondo de los productos:** no hay. El escenario trabaja con las
+  fotos del POS dentro de su bandeja.
+- **Dirección:** lleva "Módulo 2" (`CONTACTO.direccion`, que alimenta el
+  footer, la portada y el JSON-LD).

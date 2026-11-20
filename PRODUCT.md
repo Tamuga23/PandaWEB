@@ -46,9 +46,9 @@ No compite por ser una tienda online con checkout — compite por ser la vidrier
 ## Brand Commitments
 
 - Nombre comercial: **Panda Store**. Tagline: "Tecnología para tu casa y tu negocio".
-- Logo real de Panda Store ya está en uso (`public/logo.png`) — el marcador de PandaLink que señalaba el plan original ya fue reemplazado.
+- Logo real de Panda Store en uso: el panda sin baldosa (`LogoPanda`, capas en `public/marca/`), blanco sobre el fondo en oscuro y con su tinta en claro. Los íconos de la app (`src/app/icon.png`, `apple-icon.png`) conservan la baldosa.
 - Contacto único de venta: WhatsApp **+505 8372 5528** (número real del negocio, vive en un solo archivo de configuración). El mensaje prellenado siempre identifica el producto por nombre y SKU.
-- Ubicación real: Colectivo Dreamy, Camino de Oriente, detrás de INISER, Managua — con coordenadas exactas (no el pin del punto de referencia, que queda a varias cuadras).
+- Ubicación real: Colectivo Dreamy, Módulo 2, Camino de Oriente, detrás de INISER, Managua — con coordenadas exactas (no el pin del punto de referencia, que queda a varias cuadras).
 - Redes: Instagram y Facebook reales, enlazadas en el footer y en los datos estructurados (`sameAs`) para Google.
 
 ## Evidence on Hand

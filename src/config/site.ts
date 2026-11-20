@@ -45,7 +45,7 @@ export const CONTACTO = {
   whatsapp: "50583725528",
   whatsappVisible: "+505 8372 5528",
   email: "pandastorenic@gmail.com",
-  direccion: "Colectivo Dreamy, Camino de Oriente, detrás de INISER",
+  direccion: "Colectivo Dreamy, Módulo 2, Camino de Oriente, detrás de INISER",
   ciudad: "Managua, Nicaragua",
 
   /** Ficha del local en Google Maps. */

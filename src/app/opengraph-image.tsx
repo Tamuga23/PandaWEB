@@ -27,7 +27,8 @@ export default async function Image() {
   const [bold, regular, logo] = await Promise.all([
     readFile(join(process.cwd(), "src/app/_og/Inter-Bold.ttf")),
     readFile(join(process.cwd(), "src/app/_og/Inter-Regular.ttf")),
-    readFile(join(process.cwd(), "public/logo.png"), "base64"),
+    // El panda blanco solo: sobre este fondo se ve como en los afiches.
+    readFile(join(process.cwd(), "public/marca/panda.png"), "base64"),
   ]);
 
   return new ImageResponse(
@@ -47,7 +48,7 @@ export default async function Image() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse no usa next/image */}
-          <img src={`data:image/png;base64,${logo}`} alt="" width={96} height={90} />
+          <img src={`data:image/png;base64,${logo}`} alt="" width={104} height={90} />
           <div style={{ display: "flex", fontSize: 52, fontWeight: 700, letterSpacing: -1.5 }}>
             <span>panda</span>
             <span style={{ backgroundImage: MARCA, backgroundClip: "text", color: "transparent" }}>
