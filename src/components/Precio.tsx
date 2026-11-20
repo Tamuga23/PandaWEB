@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { FINANCIAMIENTO } from "@/config/site";
 import { planMasBajo, todosSinInteres } from "@/lib/financiamiento";
 import { cordobas, cordobasNumero } from "@/lib/format";
@@ -20,21 +21,29 @@ import type { Producto } from "@/lib/types";
 export function PrecioFicha({
   producto,
   tasa,
+  accion,
 }: {
   producto: Producto;
   tasa: number;
+  /** Lo que va entre el precio y el detalle de cuotas (el CTA de escritorio). */
+  accion?: ReactNode;
 }) {
   const { lista, actual } = producto.precio;
   const planes = producto.planes;
   const sinInteres = todosSinInteres(planes);
   const { disponible } = producto;
+  // La cuota más baja al lado de la cifra, como en los afiches. Sale de los
+  // planes ya calculados; un agotado no anuncia cuotas (ver abajo).
+  const cuotaMasBaja = disponible ? planMasBajo(planes) : null;
 
   return (
     <div>
       {/* El badge de "Oferta" vive sobre la imagen de la Galería, no acá —
           es la Regla de DESIGN.md ("siempre sobre imagen, nunca en línea de
-          texto"), y ya es donde vive en la tarjeta del catálogo. */}
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          texto"), y ya es donde vive en la tarjeta del catálogo. items-end:
+          precio, precio tachado y cuota apoyados en la misma línea de abajo;
+          si no entran juntos, la cuota baja entera (flex-wrap). */}
+      <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
         {disponible && actual != null ? (
           // La cifra protagonista de los afiches: enorme, verde, con el "C$"
           // chico arriba. La escala cifra es siempre más chica que el h1 de
@@ -59,7 +68,17 @@ export function PrecioFicha({
             {cordobas(lista, tasa)}
           </span>
         )}
+        {cuotaMasBaja && (
+          <p className="pb-1 text-sm leading-tight text-suave">
+            <span className="block font-bold text-texto">
+              {cuotaMasBaja.meses} cuotas de C${cuotaMasBaja.cuotaNio.toLocaleString("es-NI")}
+            </span>
+            con tu tarjeta {FINANCIAMIENTO.banco}
+          </p>
+        )}
       </div>
+
+      {accion}
 
       {/* Las cuotas no aplican a algo que no se puede comprar ahora mismo:
           mostrar un pago mensual concreto sería anunciar una compra que no
@@ -71,8 +90,11 @@ export function PrecioFicha({
             <p className="text-sm font-semibold text-precio">
               Pagalo en cuotas con {FINANCIAMIENTO.banco}
             </p>
+            {/* El sello de los afiches: verde plano con texto oscuro. Verde
+                sobre tinte verde no llegaba a AA en claro; así da ~10:1 en
+                oscuro y ~5.3:1 en claro. */}
             {sinInteres && (
-              <span className="rounded-full bg-precio/15 px-2 py-0.5 text-micro font-black uppercase tracking-wider text-precio">
+              <span className="rounded-full bg-precio px-2.5 py-0.5 text-xs font-bold text-fondo">
                 0% interés
               </span>
             )}

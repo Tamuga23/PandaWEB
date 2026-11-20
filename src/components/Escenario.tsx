@@ -46,6 +46,7 @@ const ARCOS: Record<Variante, string> = { verde: arco(120, 168), azul: arco(196,
 export function Escenario({
   variante = "verde",
   dial = true,
+  dialAncho = "w-[118%]",
   className = "",
   children,
 }: {
@@ -53,6 +54,9 @@ export function Escenario({
   /** "escritorio": sin dial en el celular, donde el contenido es una tira
       con scroll (la vitrina) y el círculo quedaría cortado a lo ancho. */
   dial?: boolean | "escritorio";
+  /** Ancho del dial respecto del contenido. La foto de la ficha usa uno más
+      ceñido para que el trazo no llegue a la columna de texto. */
+  dialAncho?: "w-[118%]" | "w-[112%]";
   className?: string;
   children: ReactNode;
 }) {
@@ -62,7 +66,7 @@ export function Escenario({
         <svg
           aria-hidden="true"
           viewBox="0 0 100 100"
-          className={`pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square w-[118%] max-w-none -translate-x-1/2 -translate-y-1/2 ${dial === "escritorio" ? "hidden lg:block" : ""}`}
+          className={`pointer-events-none absolute left-1/2 top-1/2 -z-10 aspect-square ${dialAncho} max-w-none -translate-x-1/2 -translate-y-1/2 ${dial === "escritorio" ? "hidden lg:block" : ""}`}
         >
           <circle cx="50" cy="50" r={R} fill="none" stroke="var(--dial-marca)" strokeWidth="0.22" />
           <path d={MARCAS} fill="none" stroke="var(--dial-marca)" strokeWidth="0.32" />

@@ -21,11 +21,15 @@ export function DatosClave({ filas, variante }: { filas: FilaSpec[]; variante: V
     <dl className="mt-6 grid grid-cols-2 gap-x-5 gap-y-5">
       {filas.map((f) => {
         const Icono = ICONO_DE[f.key] ?? IconoDato;
-        const cifra = partirCifra(f.valor);
+        const valor = f.key === "throwRatio" ? relacionProyeccion(f.valor) : f.valor;
+        const cifra = partirCifra(valor);
         return (
           <div key={f.key} className="flex gap-3">
             <Icono className={`mt-1 h-6 w-6 shrink-0 ${tono}`} />
-            <div className="flex min-w-0 flex-col-reverse">
+            {/* justify-end en column-reverse empuja todo hacia arriba: la
+                cifra queda alineada con el ícono aunque la celda vecina sea
+                más alta. */}
+            <div className="flex min-w-0 flex-col-reverse justify-end">
               <dt className="mt-0.5 text-sm text-suave">{f.label}</dt>
               <dd className="font-bold leading-tight tracking-tight text-texto">
                 {cifra ? (
@@ -34,7 +38,7 @@ export function DatosClave({ filas, variante }: { filas: FilaSpec[]; variante: V
                     <span className="text-base">{cifra.unidad}</span>
                   </>
                 ) : (
-                  <span className="text-lg">{f.valor}</span>
+                  <span className="text-lg">{valor}</span>
                 )}
               </dd>
             </div>
@@ -47,12 +51,22 @@ export function DatosClave({ filas, variante }: { filas: FilaSpec[]; variante: V
 
 /**
  * "1100 lúmenes ANSI" → 1100 grande + "lúmenes ANSI" chico, como en los
- * afiches. Los valores del POS son texto libre: si no empieza con una cifra
- * corta, se muestra tal cual (nunca se parte a medias).
+ * afiches. La cifra puede llevar hasta dos letras pegadas ("1080p Full HD",
+ * "4K adelante"), así no cae a la letra chica por una "p". Los valores del
+ * POS son texto libre: si no empieza con una cifra corta, se muestra tal
+ * cual (nunca se parte a medias).
  */
 function partirCifra(valor: string): { numero: string; unidad: string } | null {
-  const m = valor.match(/^(\d[\d.,]{0,6}["”″']?)\s+(.{1,24})$/);
+  const m = valor.match(/^(\d[\d.,]{0,6}[a-zA-Z"”″']{0,2})\s+(.{1,24})$/);
   return m ? { numero: m[1], unidad: m[2] } : null;
+}
+
+/**
+ * La relación de proyección se escribe "1.2:1" (el placeholder del POS), pero
+ * a veces llega solo el número: "1" a secas no dice nada en el afiche.
+ */
+function relacionProyeccion(valor: string): string {
+  return /^\d+([.,]\d+)?$/.test(valor.trim()) ? `${valor.trim()}:1` : valor;
 }
 
 // ---------------------------------------------------------------------------
@@ -97,6 +111,14 @@ const IconoFoco = (p: PropsIcono) => (
   <Svg {...p}>
     <path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3" />
     <circle cx="12" cy="12" r="3" />
+  </Svg>
+);
+// El haz del proyector abriéndose hacia la pantalla: la relación de
+// proyección es cuánta imagen da por metro de distancia.
+const IconoProyeccion = (p: PropsIcono) => (
+  <Svg {...p}>
+    <path d="M3 9h4v6H3z" />
+    <path d="M7 10l13-5v14L7 14" />
   </Svg>
 );
 const IconoChip = (p: PropsIcono) => (
@@ -174,7 +196,7 @@ const ICONO_DE: Record<string, (p: PropsIcono) => React.ReactElement> = {
   tamano: IconoPantalla,
   autofoco: IconoFoco,
   distMinEnfoque: IconoFoco,
-  throwRatio: IconoFoco,
+  throwRatio: IconoProyeccion,
   campoVision: IconoFoco,
   sistema: IconoChip,
   memoria: IconoChip,

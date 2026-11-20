@@ -17,6 +17,7 @@ import {
   imagenesPublicas,
   marcaDe,
   migasJsonLd,
+  prefijoMarca,
   productoJsonLd,
   serializarJsonLd,
   tiendaJsonLd,
@@ -62,6 +63,21 @@ describe("marca del fabricante", () => {
   it("sin marca reconocible no inventa una (ni pone la de la tienda)", () => {
     assert.equal(marcaDe("TRIPODE PARA PROYECTOR"), undefined);
     assert.equal(marcaDe("Enchufe inteligente compatible con Alexa"), undefined);
+  });
+
+  it("separa la marca del modelo solo cuando el nombre arranca con ella", () => {
+    assert.deepEqual(prefijoMarca("MagCubic Proyector Portatil HY450MAX 1100 ANSI"), {
+      prefijo: "MagCubic",
+      resto: "Proyector Portatil HY450MAX 1100 ANSI",
+    });
+    assert.deepEqual(prefijoMarca("Amazfit Active Max"), { prefijo: "Amazfit", resto: "Active Max" });
+    assert.deepEqual(prefijoMarca("Amazon Echo Dot Max"), { prefijo: "Amazon", resto: "Echo Dot Max" });
+    assert.deepEqual(prefijoMarca("TP-Link - Cámara Tapo C200"), { prefijo: "TP-Link", resto: "Cámara Tapo C200" });
+    // Una línea de producto no es la marca: el nombre queda entero.
+    assert.equal(prefijoMarca("Echo Dot Max"), undefined);
+    // La marca en el medio, o sin nada después, tampoco se separa.
+    assert.equal(prefijoMarca("Parlante ANKER SoundCore 2"), undefined);
+    assert.equal(prefijoMarca("Amazfit"), undefined);
   });
 
   it("todo el catálogo de prueba con marca conocida la tiene", async () => {

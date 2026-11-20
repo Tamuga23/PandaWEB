@@ -5,7 +5,7 @@ import { EnlaceWhatsApp } from "@/components/EnlaceWhatsApp";
 import { ErrorDatos } from "@/components/ErrorDatos";
 import { EventoVerFicha } from "@/components/EventoVerFicha";
 import { DatosClave, MAX_DATOS_CLAVE } from "@/components/DatosClave";
-import { Escenario, varianteDe } from "@/components/Escenario";
+import { varianteDe } from "@/components/Escenario";
 import { Galeria } from "@/components/Galeria";
 import { PrecioFicha } from "@/components/Precio";
 import { ProductCard } from "@/components/ProductCard";
@@ -37,6 +37,7 @@ import {
   imagenesPublicas,
   marcaDe,
   migasJsonLd,
+  prefijoMarca,
   productoJsonLd,
   tituloProducto,
 } from "@/lib/seo";
@@ -139,6 +140,10 @@ export default async function ProductoPage({
   const filasParaTabla = filasSpecs.filter((f) => !clavesArriba.includes(f.key));
   const variante = varianteDe(producto.id);
   const marca = marcaDe(producto.name);
+  // "Amazfit Active Max": la marca va chica encima del modelo, dentro del
+  // h1, en vez de repetirse en el eyebrow (la categoría ya está en las
+  // migas). Así el modelo, que es lo que se busca, pierde una palabra larga.
+  const partesNombre = prefijoMarca(producto.name);
   const descuentoPct = porcentajeDescuento(producto.precio.lista, producto.precio.actual);
 
   return (
@@ -167,16 +172,15 @@ export default async function ProductoPage({
 
       <div className="grid gap-10 lg:grid-cols-2">
         <div className="galeria-ficha">
-          {/* El escenario de los afiches detrás del producto: brillo y dial
-              en verde o azul según el producto, como alterna el feed. */}
-          <Escenario variante={variante}>
-            <Galeria
-              media={producto.media}
-              nombre={producto.name}
-              descuentoPct={descuentoPct}
-              categoria={producto.categorySlug}
-            />
-          </Escenario>
+          {/* El escenario de los afiches detrás de la foto principal: brillo
+              y dial en verde o azul según el producto, como alterna el feed. */}
+          <Galeria
+            media={producto.media}
+            nombre={producto.name}
+            descuentoPct={descuentoPct}
+            categoria={producto.categorySlug}
+            variante={variante}
+          />
         </div>
 
         <div>
@@ -189,15 +193,27 @@ export default async function ProductoPage({
             )}
           </div>
 
-          {/* Cabecera de afiche: eyebrow MARCA · CATEGORÍA y el nombre del
-              modelo enorme. El nombre nunca va en degradado (en las piezas
-              tampoco): el remate es para titulares, no para productos. */}
-          {(marca || categoria) && (
+          {/* Cabecera de afiche: la marca chica y el modelo enorme. Si el
+              nombre arranca con la marca, va dentro del h1 (su texto sigue
+              siendo el nombre completo, para Google y lectores de pantalla);
+              si no, eyebrow MARCA · CATEGORÍA arriba. El nombre nunca va en
+              degradado (en las piezas tampoco): el remate es para titulares,
+              no para productos. */}
+          {!partesNombre && (marca || categoria) && (
             <p className="eyebrow mt-4 text-tenue">
               {[marca, categoria].filter(Boolean).join(" · ")}
             </p>
           )}
-          <h1 className="mt-2 text-balance text-titular">{producto.name}</h1>
+          <h1 className={`${partesNombre ? "mt-4" : "mt-2"} text-balance text-titular`}>
+            {partesNombre ? (
+              <>
+                <span className="eyebrow mb-2 block text-tenue">{partesNombre.prefijo}</span>{" "}
+                {partesNombre.resto}
+              </>
+            ) : (
+              producto.name
+            )}
+          </h1>
 
           {producto.sku && (
             <p className="mt-2 text-xs text-tenue">Código {producto.sku}</p>
@@ -211,14 +227,20 @@ export default async function ProductoPage({
 
           <DatosClave filas={datosClave} variante={variante} />
 
+          {/* El CTA de escritorio va entre el precio y el detalle de cuotas:
+              después del recuadro, a 1440x900 "Lo quiero" quedaba debajo del
+              pliegue. En móvil se usa la barra fija de abajo. */}
           <div className="mt-7">
-            <PrecioFicha producto={producto} tasa={tasa} />
-          </div>
-
-          {/* CTA de escritorio. En móvil se usa la barra fija de abajo. */}
-          <div className="mt-7 hidden flex-wrap gap-3 lg:flex">
-            <CtaWhatsApp href={wa} disponible={producto.disponible} />
-            <BotonComparar producto={producto} tasa={tasa} variante="completo" />
+            <PrecioFicha
+              producto={producto}
+              tasa={tasa}
+              accion={
+                <div className="mt-6 hidden flex-wrap gap-3 lg:flex">
+                  <CtaWhatsApp href={wa} disponible={producto.disponible} />
+                  <BotonComparar producto={producto} tasa={tasa} variante="completo" />
+                </div>
+              }
+            />
           </div>
 
           {/* En móvil el CTA vive en la barra fija, así que el comparar va acá. */}
@@ -241,7 +263,7 @@ export default async function ProductoPage({
 
           {producto.bullets.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-lg font-bold tracking-tight text-texto">
+              <h2 className="text-2xl font-bold tracking-tight text-texto">
                 Por qué te sirve
               </h2>
               <ul className="mt-3 space-y-2.5">
@@ -264,7 +286,7 @@ export default async function ProductoPage({
 
           {producto.description && (
             <section className="mt-8">
-              <h2 className="text-lg font-bold tracking-tight text-texto">
+              <h2 className="text-2xl font-bold tracking-tight text-texto">
                 Descripción
               </h2>
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-texto">
@@ -279,7 +301,7 @@ export default async function ProductoPage({
               reales para no mostrar un título sobre una tabla en blanco. */}
           {filasParaTabla.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-lg font-bold tracking-tight text-texto">
+              <h2 className="text-2xl font-bold tracking-tight text-texto">
                 Especificaciones
               </h2>
               <div className="mt-3">
@@ -296,7 +318,7 @@ export default async function ProductoPage({
 
       {relacionados.length > 0 && (
         <section className="mt-16">
-          <h2 className="text-xl font-bold tracking-tight">
+          <h2 className="text-2xl font-bold tracking-tight">
             También te puede servir
           </h2>
           <div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">

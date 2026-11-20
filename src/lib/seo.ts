@@ -78,6 +78,27 @@ export function marcaDe(nombre: string): string | undefined {
   return MARCAS.find(({ patron }) => patron.test(nombre))?.marca;
 }
 
+// Las marcas (y submarcas, como Redmi o Soundcore) que pueden encabezar el
+// nombre. A diferencia de MARCAS, sin líneas de producto ("Echo Dot", "Fire
+// TV"): esas son parte del modelo, no la marca. Si se suma una marca a
+// MARCAS, va también acá.
+const PREFIJO_MARCA = /^(mag ?cubic|70 ?mai|amazfit|xiaomi|redmi|amazon|anker|soundcore|tp-?link)\b[\s\-–—·:]*/i;
+
+/**
+ * Si el nombre arranca con la marca ("Amazfit Active Max"), la separa del
+ * modelo: { prefijo: "Amazfit", resto: "Active Max" }. La ficha muestra la
+ * marca chica encima del modelo, dentro del mismo h1, así el texto del
+ * título sigue siendo el nombre completo y la marca no se repite en el
+ * eyebrow. Sin marca al principio, o sin nada después, devuelve undefined.
+ */
+export function prefijoMarca(nombre: string): { prefijo: string; resto: string } | undefined {
+  const limpio = nombre.trim();
+  const m = limpio.match(PREFIJO_MARCA);
+  if (!m) return undefined;
+  const resto = limpio.slice(m[0].length);
+  return resto ? { prefijo: m[1], resto } : undefined;
+}
+
 /** Los nombres del POS a veces traen espacios dobles ("HY320PRO  400 ANSI"). */
 function limpiar(texto: string): string {
   return texto.replace(/\s+/g, " ").trim();
