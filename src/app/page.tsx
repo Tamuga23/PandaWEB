@@ -146,7 +146,9 @@ function Hero({
             </Link>
             <EnlaceWhatsApp
               href={linkWhatsApp(CONTACTO.whatsapp)}
-              className="inline-flex items-center gap-2 rounded-full border border-borde2 bg-superficie px-6 py-3.5 text-sm font-semibold text-texto transition hover:border-precio hover:text-precio"
+              // El secundario de todo el sitio: borde y texto, sin relleno, y
+              // acento en hover (también el de WhatsApp: el verde es del precio).
+              className="inline-flex items-center gap-2 rounded-full border border-borde2 px-6 py-3.5 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
             >
               <IconoWhatsApp className="h-4 w-4" />
               Hablar con un asesor
@@ -491,7 +493,7 @@ function Ubicacion() {
               gtag={CONVERSIONES.comoLlegar}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-borde2 bg-superficie px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
+              className="rounded-full border border-borde2 px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
             >
               Cómo llegar
             </EnlaceConversion>
@@ -505,7 +507,7 @@ function Ubicacion() {
             <EnlaceConversion
               href={`tel:+${CONTACTO.whatsapp}`}
               gtag={CONVERSIONES.llamada}
-              className="rounded-full border border-borde2 bg-superficie px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
+              className="rounded-full border border-borde2 px-5 py-3 text-sm font-semibold text-texto transition hover:border-acento hover:text-acento"
             >
               Llamar
             </EnlaceConversion>

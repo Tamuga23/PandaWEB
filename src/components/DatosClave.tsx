@@ -34,8 +34,13 @@ export function DatosClave({ filas, variante }: { filas: FilaSpec[]; variante: V
               <dd className="font-bold leading-tight tracking-tight text-texto">
                 {cifra ? (
                   <>
-                    <span className="text-2xl">{cifra.numero}</span>{" "}
-                    <span className="text-base">{cifra.unidad}</span>
+                    <span className="text-2xl">{cifra.numero}</span>
+                    {cifra.unidad && (
+                      <>
+                        {" "}
+                        <span className="text-base">{cifra.unidad}</span>
+                      </>
+                    )}
                   </>
                 ) : (
                   <span className="text-lg">{valor}</span>
@@ -52,13 +57,14 @@ export function DatosClave({ filas, variante }: { filas: FilaSpec[]; variante: V
 /**
  * "1100 lúmenes ANSI" → 1100 grande + "lúmenes ANSI" chico, como en los
  * afiches. La cifra puede llevar hasta dos letras pegadas ("1080p Full HD",
- * "4K adelante"), así no cae a la letra chica por una "p". Los valores del
- * POS son texto libre: si no empieza con una cifra corta, se muestra tal
- * cual (nunca se parte a medias).
+ * "4K adelante") o ser una relación ("1.2:1"), y la unidad es opcional: un
+ * "1080P" a secas también va grande, no en la letra de los textos. Los
+ * valores del POS son texto libre: si no empieza con una cifra corta, se
+ * muestra tal cual (nunca se parte a medias).
  */
 function partirCifra(valor: string): { numero: string; unidad: string } | null {
-  const m = valor.match(/^(\d[\d.,]{0,6}[a-zA-Z"”″']{0,2})\s+(.{1,24})$/);
-  return m ? { numero: m[1], unidad: m[2] } : null;
+  const m = valor.trim().match(/^(\d[\d.,]{0,6}(?::\d+)?[a-zA-Z"”″']{0,2})(?:\s+(.{1,24}))?$/);
+  return m ? { numero: m[1], unidad: m[2] ?? "" } : null;
 }
 
 /**

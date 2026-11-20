@@ -91,8 +91,8 @@ export function PrecioFicha({
               Pagalo en cuotas con {FINANCIAMIENTO.banco}
             </p>
             {/* El sello de los afiches: verde plano con texto oscuro. Verde
-                sobre tinte verde no llegaba a AA en claro; así da ~10:1 en
-                oscuro y ~5.3:1 en claro. */}
+                sobre tinte verde no llegaba a AA en claro; así da 10.2:1 en
+                oscuro y 5.2:1 en claro. */}
             {sinInteres && (
               <span className="rounded-full bg-precio px-2.5 py-0.5 text-xs font-bold text-fondo">
                 0% interés

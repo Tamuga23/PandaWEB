@@ -184,12 +184,18 @@ export default async function ProductoPage({
         </div>
 
         <div>
-          <div className="flex flex-wrap items-center gap-2">
+          {/* El código va en la fila de estado y no debajo del h1: ahí
+              costaba una línea entera y, con el nombre largo, "Lo quiero"
+              quedaba debajo del pliegue a 1366x768. */}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <Disponibilidad disponible={producto.disponible} />
             {producto.campania && (
               <span className="rounded-full bg-promo/15 px-3 py-1 text-xs font-semibold text-promo">
                 {producto.campania}
               </span>
+            )}
+            {producto.sku && (
+              <span className="text-xs text-tenue">Código {producto.sku}</span>
             )}
           </div>
 
@@ -215,10 +221,6 @@ export default async function ProductoPage({
             )}
           </h1>
 
-          {producto.sku && (
-            <p className="mt-2 text-xs text-tenue">Código {producto.sku}</p>
-          )}
-
           {beneficioMostrado && (
             <p className="mt-4 text-lg leading-relaxed text-texto">
               {beneficioMostrado}
@@ -230,12 +232,12 @@ export default async function ProductoPage({
           {/* El CTA de escritorio va entre el precio y el detalle de cuotas:
               después del recuadro, a 1440x900 "Lo quiero" quedaba debajo del
               pliegue. En móvil se usa la barra fija de abajo. */}
-          <div className="mt-7">
+          <div className="mt-6">
             <PrecioFicha
               producto={producto}
               tasa={tasa}
               accion={
-                <div className="mt-6 hidden flex-wrap gap-3 lg:flex">
+                <div className="mt-5 hidden flex-wrap gap-3 lg:flex">
                   <CtaWhatsApp href={wa} disponible={producto.disponible} />
                   <BotonComparar producto={producto} tasa={tasa} variante="completo" />
                 </div>

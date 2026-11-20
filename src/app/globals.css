@@ -139,9 +139,9 @@
      5.0:1 sobre --superficie). */
   --acento: #0e7490; /* cyan-700 */
   --precio: #047857; /* emerald-700 */
-  /* Sobre el tinte verde (precio/10-15) el emerald-700 quedaba entre 4.3 y
-     4.5:1; emerald-800 da ~5.4:1 en la pastilla. Los precios siguen en
-     --precio. */
+  /* Sobre el tinte verde (precio/10-15) el emerald-700 quedaba entre 4.0 y
+     4.6:1 (los pasos del financiamiento, 3.99); emerald-800 da de 5.6 a
+     6.4:1. Los precios siguen en --precio. */
   --precio-sello: #065f46; /* emerald-800 */
   --agotado: #e11d48; /* rose-600 */
   --promo: #b45309; /* amber-700 */
