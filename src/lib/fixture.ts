@@ -52,6 +52,7 @@ export async function leerFixture(): Promise<CatalogoData> {
       config,
       categoria: p.categorySlug,
       override: p.financiamientoOverride,
+      precioRegularUsd: p.precio.lista,
     }),
   }));
 

@@ -43,6 +43,7 @@ function producto(datos: Partial<Producto> & Pick<Producto, "name">): Producto {
     planes: calcularPlanes(base.precio.actual, TASA, {
       config: CONFIG_FINANCIAMIENTO_DEFAULT,
       categoria: base.categorySlug,
+      precioRegularUsd: base.precio.lista,
     }),
   };
 }
@@ -123,6 +124,22 @@ describe("meta descripción de la ficha", () => {
     assert.match(d, /^El más potente/);
     assert.match(d, /hasta 6 cuotas al 0% de interés con Banpro/);
     assert.ok(d.length <= 160, `${d.length} caracteres: ${d}`);
+  });
+
+  it("en oferta aclara que el precio es de contado y las cuotas, a precio regular", () => {
+    const proyector = descripcionProducto(
+      producto({ name: "MagCubic HY300", categorySlug: "proyector", precio: { lista: 220, actual: 180 } }),
+      TASA,
+    );
+    assert.match(proyector, /de contado o hasta 6 cuotas al 0% de interés sobre el precio regular/);
+    assert.ok(proyector.length <= 160, `${proyector.length} caracteres: ${proyector}`);
+
+    const reloj = descripcionProducto(
+      producto({ name: "Amazfit Active 2", categorySlug: "smartwatch", precio: { lista: 220, actual: 180 } }),
+      TASA,
+    );
+    assert.match(reloj, /de contado o en cuotas con Banpro a precio regular/);
+    assert.doesNotMatch(reloj, /0%/);
   });
 
   it("una categoría con recargo nunca promete 0%", () => {

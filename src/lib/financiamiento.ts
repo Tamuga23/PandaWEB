@@ -21,6 +21,15 @@
 //   total = precio × (1 + recargo)
 // Los proyectores quedan en recargo 0 → siguen siendo 0% interés de verdad.
 //
+// PROMOCIONES (decisión de Carlos, nov-2026): si el producto tiene un precio
+// promocional vigente, las cuotas se calculan sobre el PRECIO REGULAR, en
+// todas las categorías. El descuento es solo de contado: financiado, el banco
+// cobra su porcentaje encima y el margen no aguanta las dos cosas juntas.
+// `calcularPlanes` recibe el regular en `precioRegularUsd`; quien no lo pasa
+// sigue calculando sobre el precio vigente, como antes. `sobrePrecioNio` se
+// mide siempre contra el precio de CONTADO (el promocional): incluye el
+// descuento que se pierde al financiar.
+//
 // LO QUE EL BANCO LE COBRA A LA TIENDA NO VIVE ACÁ. Este archivo llega al
 // navegador del cliente; el costo interno (6%/9%) es dato de margen y se maneja
 // en scripts/reporte_financiamiento.mjs, que corre con Admin SDK.
@@ -124,8 +133,27 @@ export interface PlanCuotas {
   totalNio: number;
   /** Total en USD, derivado del total en córdobas. Informativo. */
   totalUsd: number;
-  /** Cuánto más que el precio de contado, en córdobas. 0 si es sin interés. */
+  /**
+   * Cuánto más que el precio de contado, en córdobas. Sin interés y sin
+   * promoción es 0 (o el redondeo de la cuota); con promoción incluye el
+   * descuento, que es solo de contado.
+   */
   sobrePrecioNio: number;
+}
+
+/**
+ * Precio sobre el que se financia: el regular si hay una promoción vigente
+ * (regular mayor que el de contado); si no, el de contado.
+ */
+export function precioBaseCuotas(
+  precioContadoUsd: number,
+  precioRegularUsd?: number | null,
+): number {
+  return precioRegularUsd != null &&
+    Number.isFinite(precioRegularUsd) &&
+    precioRegularUsd > precioContadoUsd
+    ? precioRegularUsd
+    : precioContadoUsd;
 }
 
 /**
@@ -137,8 +165,11 @@ export interface PlanCuotas {
  * web verían números que no cuadran entre sí. Hacia arriba y no al más cercano
  * para que el redondeo nunca juegue en contra de la tienda.
  *
- * @param precioUsd  precio vigente (promo si existe). NO se modifica nunca.
+ * @param precioUsd  precio vigente de contado (promo si existe). NO se modifica nunca.
  * @param tasaNio    tasa USD→NIO
+ * @param opciones.precioRegularUsd  precio regular. Si es mayor que `precioUsd`
+ *   (hay promoción), el plan, el total y el mínimo se calculan sobre él: la
+ *   promoción es solo de contado. Ver PROMOCIONES arriba.
  */
 export function calcularPlanes(
   precioUsd: number | undefined | null,
@@ -147,17 +178,21 @@ export function calcularPlanes(
     config: ConfigFinanciamiento;
     categoria?: string | null;
     override?: FinanciamientoOverride | null;
+    precioRegularUsd?: number | null;
   },
 ): PlanCuotas[] {
-  const { config, categoria, override } = opciones;
+  const { config, categoria, override, precioRegularUsd } = opciones;
   if (precioUsd == null || !Number.isFinite(precioUsd) || precioUsd <= 0) return [];
   if (!Number.isFinite(tasaNio) || tasaNio <= 0) return [];
 
   const regla = reglaEfectiva(config, categoria, override);
   if (!regla.habilitado) return [];
-  if (precioUsd < regla.minUsd) return [];
+  // El mínimo se mide contra lo que de verdad se financia.
+  const baseUsd = precioBaseCuotas(precioUsd, precioRegularUsd);
+  if (baseUsd < regla.minUsd) return [];
 
-  const precioNio = precioUsd * tasaNio;
+  const precioNio = baseUsd * tasaNio;
+  const contadoNio = Math.round(precioUsd * tasaNio);
 
   return [...regla.plazos]
     .filter((m) => Number.isFinite(m) && m > 0)
@@ -174,7 +209,7 @@ export function calcularPlanes(
         cuotaNio,
         totalNio,
         totalUsd: totalNio / tasaNio,
-        sobrePrecioNio: Math.max(0, totalNio - Math.round(precioNio)),
+        sobrePrecioNio: Math.max(0, totalNio - contadoNio),
       };
     });
 }

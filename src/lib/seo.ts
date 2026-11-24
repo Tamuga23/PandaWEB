@@ -143,14 +143,21 @@ function textoPrecioYCuotas(producto: Pick<Producto, "precio" | "planes">, tasa:
   const precio = producto.precio.actual != null ? cordobas(producto.precio.actual, tasa) : null;
   const sinInteres = producto.planes.filter((p: PlanCuotas) => p.sinInteres);
   const banco = FINANCIAMIENTO.banco;
+  // En oferta, el precio de oferta es de contado y las cuotas salen del
+  // regular (lib/financiamiento.ts, PROMOCIONES): sin decirlo, "C$X o hasta
+  // 6 cuotas al 0%" prometería cuotas sobre el precio de oferta.
+  const enOferta = producto.precio.lista != null;
+  const contado = precio && enOferta ? `${precio} de contado` : precio;
 
   if (sinInteres.length > 0) {
     const meses = Math.max(...sinInteres.map((p) => p.meses));
-    const cuotas = `hasta ${meses} cuotas al 0% de interés con ${banco}.`;
-    return precio ? `${precio} o ${cuotas}` : `Pagalo en ${cuotas}`;
+    const sobre = enOferta ? " sobre el precio regular" : "";
+    const cuotas = `hasta ${meses} cuotas al 0% de interés${sobre} con ${banco}.`;
+    return contado ? `${contado} o ${cuotas}` : `Pagalo en ${cuotas}`;
   }
   if (producto.planes.length > 0) {
-    return precio ? `${precio} o en cuotas con ${banco}.` : `Pagalo en cuotas con ${banco}.`;
+    const cuotas = `en cuotas con ${banco}${enOferta ? " a precio regular" : ""}.`;
+    return contado ? `${contado} o ${cuotas}` : `Pagalo ${cuotas}`;
   }
   return precio ? `${precio}.` : "";
 }

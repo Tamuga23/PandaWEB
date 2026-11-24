@@ -16,6 +16,7 @@ import {
   calcularPlanes,
   esCategoriaSinInteres,
   planMasBajo,
+  precioBaseCuotas,
   todosSinInteres,
 } from "../src/lib/financiamiento";
 import { proximaSeleccion } from "../src/components/comparar/CompararProvider";
@@ -325,6 +326,49 @@ describe("precios y cuotas", () => {
     assert.equal(planMasBajo(planes(50, "proyector")), null);
   });
 
+  // Con promoción, las cuotas van sobre el precio regular, en todas las
+  // categorías (decisión de Carlos, nov-2026): la oferta es solo de contado.
+  const planesOferta = (contado: number, regular: number, categoria: string) =>
+    calcularPlanes(contado, TASA, { config: CFG, categoria, precioRegularUsd: regular });
+
+  it("en oferta, las cuotas salen del precio regular y no del de oferta", () => {
+    for (const categoria of ["proyector", "smartwatch", "dashcam"]) {
+      assert.deepEqual(
+        planesOferta(150, 199, categoria).map((x) => [x.meses, x.cuotaNio, x.totalNio]),
+        planes(199, categoria).map((x) => [x.meses, x.cuotaNio, x.totalNio]),
+        categoria,
+      );
+    }
+  });
+
+  it("en oferta, lo que se paga de más se mide contra el precio de contado", () => {
+    // Plan al 0% sobre el regular: de más es el descuento que se pierde.
+    const [tres] = planesOferta(150, 199, "proyector");
+    assert.ok(tres.sinInteres);
+    assert.ok(Math.abs(tres.sobrePrecioNio - 49 * TASA) < 5, `${tres.sobrePrecioNio}`);
+    // Con recargo, el descuento y el recargo juntos.
+    const [tresSw] = planesOferta(150, 199, "smartwatch");
+    assert.equal(tresSw.sobrePrecioNio, tresSw.totalNio - Math.round(150 * TASA));
+  });
+
+  it("el mínimo se mide contra lo que se financia, el precio regular", () => {
+    assert.equal(planes(95, "smartwatch").length, 0);
+    assert.equal(planesOferta(95, 110, "smartwatch").length, 2);
+  });
+
+  it("sin oferta, o con un regular que no es mayor, no cambia nada", () => {
+    const sinOferta = planes(199, "smartwatch");
+    assert.deepEqual(planesOferta(199, 199, "smartwatch"), sinOferta);
+    assert.deepEqual(planesOferta(199, 150, "smartwatch"), sinOferta);
+    assert.deepEqual(
+      calcularPlanes(199, TASA, { config: CFG, categoria: "smartwatch", precioRegularUsd: null }),
+      sinOferta,
+    );
+    assert.equal(precioBaseCuotas(150, 199), 199);
+    assert.equal(precioBaseCuotas(150, undefined), 150);
+    assert.equal(precioBaseCuotas(150, Number.NaN), 150);
+  });
+
   it("solo los proyectores se anuncian como 0% interés", () => {
     assert.equal(esCategoriaSinInteres(CFG, "proyector"), true);
     for (const c of ["smartwatch", "camara", "dashcam", "parlante", "smarthome"]) {
@@ -506,6 +550,7 @@ describe("datos de prueba locales (CATALOG_SOURCE=fixture)", () => {
           config: configFinanciamiento,
           categoria: p.categorySlug,
           override: p.financiamientoOverride,
+          precioRegularUsd: p.precio.lista,
         }),
       );
     }
@@ -514,6 +559,27 @@ describe("datos de prueba locales (CATALOG_SOURCE=fixture)", () => {
     assert.ok(
       productos.some((p) => p.categorySlug === "proyector" && p.disponible && p.planes.length > 0),
     );
+  });
+
+  it("una oferta del catálogo financia sobre su precio regular", async () => {
+    const { productos, tasa, configFinanciamiento } = await leerFixture();
+    const enOferta = productos.filter(
+      (p) => p.disponible && p.precio.lista != null && p.planes.length > 0,
+    );
+    // Sin una oferta disponible con cuotas no hay con qué revisar la ficha.
+    assert.ok(enOferta.length > 0, "el fixture necesita una oferta disponible con cuotas");
+    for (const p of enOferta) {
+      const sobreRegular = calcularPlanes(p.precio.lista, tasa, {
+        config: configFinanciamiento,
+        categoria: p.categorySlug,
+        override: p.financiamientoOverride,
+      });
+      assert.deepEqual(
+        p.planes.map((x) => x.cuotaNio),
+        sobreRegular.map((x) => x.cuotaNio),
+        p.name,
+      );
+    }
   });
 });
 

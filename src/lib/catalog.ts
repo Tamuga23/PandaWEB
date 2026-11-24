@@ -110,6 +110,9 @@ const leerCatalogo = unstable_cache(async (): Promise<CatalogoData> => {
         config: configFinanciamiento,
         categoria: p.categorySlug,
         override: p.financiamientoOverride,
+        // Con promoción, las cuotas van sobre el precio regular: la oferta
+        // es solo de contado (lib/financiamiento.ts, PROMOCIONES).
+        precioRegularUsd: p.precio.lista,
       }),
     }))
     .sort(ordenarPorDefecto);
