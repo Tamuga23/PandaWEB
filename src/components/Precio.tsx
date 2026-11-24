@@ -35,6 +35,11 @@ export function PrecioFicha({
   // La cuota más baja al lado de la cifra, como en los afiches. Sale de los
   // planes ya calculados; un agotado no anuncia cuotas (ver abajo).
   const cuotaMasBaja = disponible ? planMasBajo(planes) : null;
+  // `lista` solo existe con una promoción activa (lib/normalize.ts). Ahí la
+  // oferta es de contado y las cuotas van sobre el precio regular
+  // (lib/financiamiento.ts, PROMOCIONES): hay que decirlo, o el cliente
+  // divide el precio de oferta y no le da la cuota.
+  const enOferta = lista != null;
 
   return (
     <div>
@@ -73,7 +78,7 @@ export function PrecioFicha({
             <span className="block font-bold text-texto">
               {cuotaMasBaja.meses} cuotas de C${cuotaMasBaja.cuotaNio.toLocaleString("es-NI")}
             </span>
-            con tu tarjeta {FINANCIAMIENTO.banco}
+            {enOferta ? "a precio regular" : `con tu tarjeta ${FINANCIAMIENTO.banco}`}
           </p>
         )}
       </div>
@@ -100,6 +105,13 @@ export function PrecioFicha({
             )}
           </div>
 
+          {enOferta && (
+            <p className="mt-2 text-sm leading-snug text-texto">
+              La oferta es de contado. En cuotas se toma el precio regular,{" "}
+              <span className="font-semibold">{cordobas(lista, tasa)}</span>.
+            </p>
+          )}
+
           <div className="mt-3 grid grid-cols-2 gap-3">
             {planes.map((p) => (
               <div
@@ -121,8 +133,10 @@ export function PrecioFicha({
                     "vs. contado"): "+C$Y vs. contado" en un renglón cabe o
                     no según la cifra (a 360 entra con 1px de sobra en una
                     casilla y en la otra se parte), así que el corte va a
-                    propósito. Desde sm la casilla es ancha y son dos. */}
-                {p.recargoPct > 0 && (
+                    propósito. Desde sm la casilla es ancha y son dos.
+                    En oferta va siempre, aunque el plan sea al 0%: el total
+                    en cuotas supera al precio de contado por el descuento. */}
+                {(p.recargoPct > 0 || enOferta) && (
                   <p className="mt-1 text-xs text-tenue">
                     <span className="block">
                       Total C${p.totalNio.toLocaleString("es-NI")}
@@ -161,6 +175,10 @@ export function PrecioTarjeta({
   // de una compra que hoy no se puede hacer.
   const cuota = disponible ? planMasBajo(producto.planes) : null;
   const sinInteres = todosSinInteres(producto.planes);
+  // En oferta la cuota sale del precio regular (ver PrecioFicha): en vez del
+  // sello 0%, que al lado del precio de oferta haría pensar en 0% sobre la
+  // oferta, va "a precio regular". Ocupa los mismos dos renglones.
+  const enOferta = lista != null;
 
   return (
     // En móvil la tarjeta mide ~124px por dentro: la cuota con el sello 0%
@@ -189,13 +207,17 @@ export function PrecioTarjeta({
           / mes
           {/* Sello, no texto suelto: cuando no entra en el renglón baja
               entero como píldora en vez de quedar "· 0%" colgando solo. */}
-          {sinInteres && (
-            <>
-              {" "}
-              <span className="whitespace-nowrap rounded-full bg-precio/15 px-1.5 py-0.5 text-micro font-black uppercase tracking-wider text-precio-sello">
-                0%<span className="sr-only"> de interés</span>
-              </span>
-            </>
+          {enOferta ? (
+            <span className="block">a precio regular</span>
+          ) : (
+            sinInteres && (
+              <>
+                {" "}
+                <span className="whitespace-nowrap rounded-full bg-precio/15 px-1.5 py-0.5 text-micro font-black uppercase tracking-wider text-precio-sello">
+                  0%<span className="sr-only"> de interés</span>
+                </span>
+              </>
+            )
           )}
         </p>
       )}

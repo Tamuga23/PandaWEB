@@ -276,7 +276,10 @@ export function ModalComparar() {
                     <>
                       C${c.cuotaNio.toLocaleString("es-NI")}
                       <span className="text-tenue"> / {c.meses} meses</span>
-                      {c.sinInteres ? (
+                      {/* En oferta, aunque el plan sea al 0%, va lo que cuesta
+                          de más que el contado: las cuotas salen del precio
+                          regular y el descuento es solo de contado. */}
+                      {c.sinInteres && p.precio.lista == null ? (
                         <span className="text-precio"> · 0%</span>
                       ) : (
                         <span className="text-tenue">

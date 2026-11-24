@@ -412,7 +412,9 @@ function Financiamiento({ config }: { config: ConfigFinanciamiento }) {
           </p>
           <p className="mt-3 text-sm text-tenue">
             Aplica a productos desde US${minUsd}. Cada producto muestra su cuota
-            exacta en la ficha; los que van a 0% llevan el sello.{" "}
+            exacta en la ficha; los que van a 0% llevan el sello. En los
+            productos en oferta el descuento es de contado: las cuotas se
+            calculan sobre el precio regular.{" "}
             Necesitás tarjeta de crédito {FINANCIAMIENTO.banco} — se aplica
             directo en el POS de la tienda, sin trámites.
           </p>
